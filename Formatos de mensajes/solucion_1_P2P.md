@@ -4,8 +4,8 @@
 
 #### FILEINFO
 
-Type (1 byte)| Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes) | Hash (20 bytes)
-------|------|------|------|------
+Type (1 byte) | Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes) | Hash (20 bytes)
+------|------|------|------|------|------|------
 siempre 2 | | N | N veces | N veces | N veces | N veces
 
 
@@ -25,7 +25,7 @@ siempre 3 o 4| | | N | N veces | N veces
 #### El peer envia al track un mensaje FILEINFO tipo ADD_SEED
 
 Type (1 byte)| Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes)| Hash (20 bytes)| Filename length (2 bytes)| Filename (filename length bytes)| Size (5 bytes)| Hash (20 bytes)
----|---------|------|------|------
+---|-----|----|------|------|------|-----|-----|----|------|----
  2| 4533| 2| 15| ubuntu14.04.iso | 1.024.572.864 | b9153318862f0f7b5f82c913ecb2117f97c3153e | 18 | android-studio.zip| 380.943.097| af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d
 
 
