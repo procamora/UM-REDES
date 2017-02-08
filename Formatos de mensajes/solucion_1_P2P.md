@@ -4,16 +4,16 @@
 
 #### FILEINFO
 
-|Type (1 byte)| Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes) | Hash (20 bytes)|
-|------|------|------|------|------|
-| siempre 2 | | N | N veces | N veces | N veces | N veces |
+Type (1 byte)| Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes) | Hash (20 bytes)
+------|------|------|------|------
+siempre 2 | | N | N veces | N veces | N veces | N veces
 
 
 #### SEEDINFO
 
-| Type (1 byte) | hash (20 bytes) | size (5 bytes)| seeds (2 bytes) | ip (5 bytes) | port (2 bytes)
-|----|----|-----|---:--|---|---|
-| siempre 3 o 4 | | | N | N veces | N veces
+Type (1 byte)  | hash (20 bytes) | size (5 bytes)| seeds (2 bytes) | ip (5 bytes) | port (2 bytes)
+----|----|-----|-----|---|---
+siempre 3 o 4| | | N | N veces | N veces
 
 
 
@@ -22,18 +22,22 @@
 - ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
 - android-studio.zip (hash af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d , tamaño 380.943.097 bytes).
 
-#### El peer envia al track un mensaje fileinfo add_seed
+#### El peer envia al track un mensaje FILEINFO tipo ADD_SEED
 
-|Type (1 byte)| Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes) | Hash (20 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes) | Hash (20 bytes)
-|------|------|------|------|------|
-| 2 | 4533 | 2 | 15 | ubuntu14.04.iso | 1.024.572.864 | b9153318862f0f7b5f82c913ecb2117f97c3153e | 18 | android-studio.zip | 380.943.097 | af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d
+Type (1 byte)| Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes)| Hash (20 bytes)| Filename length (2 bytes)| Filename (filename length bytes)| Size (5 bytes)| Hash (20 bytes)
+---|---------|------|------|------
+ 2| 4533| 2| 15| ubuntu14.04.iso | 1.024.572.864 | b9153318862f0f7b5f82c913ecb2117f97c3153e | 18 | android-studio.zip| 380.943.097| af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d
 
 
-#### El track responde mensaje de control add_sede_ack al peer
 
-| Type (1 byte) |
+#### El track responde mensaje de CONTROL tipo ADD_SEED_ACK al peer
+
+
+|Type (1 byte) |
 |-----|
-| 1 |
+|1 |
+
+
 
 ## 1.2. Usando un lenguaje de marcas especificar la comunicación del apartado 1.1
 
