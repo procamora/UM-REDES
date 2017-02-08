@@ -55,6 +55,48 @@ Repasar el campo Filename length (2 bytes), si solo quiero buscar por peso ver c
 ## 2.2. Usando lenguaje de marcas especificar la comunicación del apartado 2.1.
 
 
+Peer Informa a tracker:
+
+
+<message>
+
+<operation> querry_files <\operation>
+<port> 00000... <\port>
+<file> ubuntu14.04.iso <\file>
+<size> 1.024.572.864 bytes <\size>
+<seeds> 1 <\seed>
+<hash> b9153318862f0f7b5f82c913ecb2117f97c3153e <\hash>
+<length> 2 bytes <\length>
+
+
+<file> android-studio.zip <\file>
+<size> 380.943.097 bytes <\size>
+<hash> af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d <\hash>
+<length> 2 bytes <\length>
+
+
+
+<\message>
+
+
+
+El tracker responde:
+
+
+<message>
+
+<operation> seed_list <\operation>
+<file> ubuntu14.04.iso <\file>
+<file_length> 18 bytes <\file_length>
+
+
+<file> android-studio.zip <\file>
+<size> 380.943.097 bytes <\size>
+<IP_adress> 18 bytes	<\IP_adress>
+
+<\message>
+ 
+ 
 ```xml
 
 
