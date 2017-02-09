@@ -4,30 +4,68 @@
 # 2.Completar y modificar el repertorio de mensajes para considerar el mensaje QUERY_FILES y su respuesta. Imaginemos que la base de datos del tracker contiene los siguientes ficheros:
 
 
-Type = 5 (QUERY_FILES)
-- Formato del mensaje: SEED_QUERY_FILES
-- Un peer solicita al tracker la lista de ficheros que coinciden con su patron de busqueda.
+#### Formato del mensaje: SEEDQUERY para el tipo QUERY_FILES
+
+- Type = 5 (QUERY_FILES)
+    - Formato del mensaje: SEEDQUERY
+    - Un peer solicita al tracker la lista de ficheros que coinciden con su patron de busqueda.
 
 
-Type = 6 (QUERY_FILES_RESPONSE)
-- Formato del mensaje: FILEINFO
-- el tracker la lista de ficheros que coinciden con su patron de busqueda.
+<table>
+    <tr align="center">
+        <td>Type (1 byte)</td>
+        <td>Size (5 bytes)</td>
+        <td>Filename length (2 bytes)</td>
+    </tr>
+    <tr align="center">
+        <td colspan="3" align="center">Filename (filename length bytes)</td>
+    </tr>
+</table>
 
 
-#### QUERY_FILES
+Informacion del paquete:
 
-Type (1 byte) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes)
-------|------|------|-------
-Siempre 5 | | |
+- Type: Siempre sera 5 para indicar que es un QUERY_FILES
+- Size: Tamaño del fichero que estamos buscando en bytes
+- Filename length: Longitud del nombre del fichero
+- Filename (filename length bytes): nombre del fichero que buscamos
 
 
-#### QUERY_FILES_RESPONSE
 
-Type (1 byte) | Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes) | Hash (20 bytes)
-------|------|------|------|------|-----|------
-siempre 6| todo a 0 | N | N veces | N veces | N veces | N veces
+#### Formato del mensaje: FILEINFO para el tipo QUERY_FILES_RESPONSE
 
-El puerto lo pongo a 0 ya que no necesito indicarlo
+
+- Type = 6 (QUERY_FILES_RESPONSE)
+    - Formato del mensaje: FILEINFO
+    - el tracker la lista de ficheros que coinciden con su patron de busqueda.
+
+<table>
+    <tr align="center">
+        <td>Type (1 byte)</td>
+        <td>Port (2 bytes)</td>
+        <td>Files (2 bytes)</td>
+    </tr>
+    <tr align="center">
+        <td>Filename length (2 bytes)</td>
+        <td colspan="2">Filename (filename length bytes)</td>
+    </tr>
+    <tr align="center">
+        <td>Size (5 bytes)</td>
+        <td colspan="2">Hash (20 bytes)</td>
+    </tr>
+</table>
+
+
+Informacion del paquete:
+
+- Type: Siempre sera 6 para indicar que es un QUERY_FILES_RESPONSE
+- Port: Todo a 0, ya que no se usa
+- Files: Numero de ficheros que tiene el Tracker con el patron que queremos
+- Filename length: Longitud del nombre del fichero, se repetira por cada fichero enviado
+- Filename (filename length bytes): nombre del fichero, se repetira por cada fichero enviado
+- Size: Tamaño del fichero en bytes, se repetira por cada fichero enviado
+- Hash: Hash del fichero, se repetira por cada fichero enviado
+
 
 
 ## 2.1. Usando mensajes multiformato el peer solicita un QUERY_FILES al tracker y éste responde con la lista de archivos correspondiente.
@@ -36,47 +74,63 @@ El puerto lo pongo a 0 ya que no necesito indicarlo
 - android-studio.zip (hash af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d , tamaño 380.943.097 bytes).
 
 
-#### El peer envia al track un mensaje SEED_QUERY_FILES tipo QUERY_FILES
-
-Type (1 byte) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes)
-------|------|------|-------
-5 | 1 | 000... | 100000
-
-Repasar el campo Filename length (2 bytes), si solo quiero buscar por peso ver como indicarlo ya que tengo que indicar la longitud del nombre,  y creo que no podemos poner de longitud 0 para saltarnos el nombre y llegar directamente al campo size.
+#### El peer envia al track un mensaje SEED_QUERY_FILES tipo QUERY_FILES para buscar los ficheros de tamaño superior a 250000 bytes
 
 
-#### El tracker le responde con un mensaje FILEINFO tipo QUERY_FILES_RESPONSE
+<table>
+    <tr align="center">
+        <td>5</td>
+        <td>250000</td>
+        <td>0000000000000000</td>
+    </tr>
+    <tr align="center">
+        <td colspan="3" align="center">000000000....</td>
+    </tr>
+</table>
 
- Type (1 byte) | Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes) | Hash (20 bytes)| Filename length (2 bytes) | Filename (filename length bytes)| Size (5 bytes)| Hash (20 bytes)
- ---|-----|----|------|------|------|-----|-----|----|------|----
-6 | 00000... | 2 | 15 | ubuntu14.04.iso | 1.024.572.864 | b9153318862f0f7b5f82c913ecb2117f97c3153e | 18 | android-studio.zip| 380.943.097| af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d
+
+#### El tracker le responde con un mensaje FILEINFO tipo QUERY_FILES_RESPONSE con los ficheros de tamaño superior a 250000 bytes
+
+
+<table>
+    <tr align="center">
+        <td>6</td>
+        <td>00000</td>
+        <td>2</td>
+    </tr>
+    <tr align="center">
+        <td>15</td>
+        <td colspan="2">ubuntu14.04.iso</td>
+    </tr>
+    <tr align="center">
+        <td>1024572864</td>
+        <td colspan="2">b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
+    </tr>
+    <tr align="center">
+        <td>18</td>
+        <td colspan="2">android-studio.zip</td>
+    </tr>
+    <tr align="center">
+        <td>380943097</td>
+        <td colspan="2">af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</td>
+    </tr>
+</table>
+
 
 
 ## 2.2. Usando lenguaje de marcas especificar la comunicación del apartado 2.1.
 
 
-Peer Informa a tracker con un mensaje SEED_QUERY_FILES:
+Peer Informa a tracker con un mensaje SEEDQUERY:
 
 
 ```xml
 <message>
 	<operation>query_files</operation>
 	<file>
+        <size>250000</size>
 		<name></name>
-		<size>100000</size>```xml
-<message>
-	<operation>add_seed</operation>
-	<port>4533</port>
-	<file>
-		<name>ubuntu14.04.iso</name>
-		<size>1024572864</size>
-		<hash>b9153318862f0f7b5f82c913ecb2117f97c3153e<hash>
-	</file>
-	<file>
-		<name>android-studio.zip</name>
-		<size>380943097</size>
-		<hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d<hash>
-	</file>
+    </file>
 </message>
 ```
 
@@ -90,12 +144,12 @@ El tracker responde con un mensaje FILEINFO:
 	<file>
 		<name>ubuntu14.04.iso</name>
 		<size>1024572864</size>
-		<hash>b9153318862f0f7b5f82c913ecb2117f97c3153e<hash>
+		<hash>b9153318862f0f7b5f82c913ecb2117f97c3153e</hash>
 	</file>
 	<file>
 		<name>android-studio.zip</name>
 		<size>380943097</size>
-		<hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d<hash>
+		<hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</hash>
 	</file>
 </message>
 ```

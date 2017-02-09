@@ -2,19 +2,71 @@
 
 # 1. Completar y modificar el repertorio de mensajes para contemplar la información anterior y especificar los mensajes intercambiados entre peer y tracker en los siguientes casos:
 
-#### FILEINFO
-
-Type (1 byte) | Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes) | Hash (20 bytes)
-------|------|------|------|------|------|------
-siempre 2 | | N | N veces | N veces | N veces | N veces
 
 
-#### SEEDINFO
+#### Formato del mensaje: FILEINFO para el tipo ADD_SEED
 
-Type (1 byte)  | hash (20 bytes) | size (5 bytes)| seeds (2 bytes) | ip (5 bytes) | port (2 bytes)
-----|----|-----|-----|---|---
-siempre 3 o 4| | | N | N veces | N veces
+- Type = 2 (ADD_SEED)
+    - Formato del mensaje: FILEINFO
+    - Un peer solicita al tracker unirse a la red compartiendo una serie de ficheros.
 
+<table>
+    <tr align="center">
+        <td>Type (1 byte)</td>
+        <td>Port (2 bytes)</td>
+        <td>Files (2 bytes)</td>
+    </tr>
+    <tr align="center">
+        <td>Filename length (2 bytes)</td>
+        <td colspan="2">Filename (filename length bytes)</td>
+    </tr>
+    <tr align="center">
+        <td>Size (5 bytes)</td>
+        <td colspan="2">Hash (20 bytes)</td>
+    </tr>
+</table>
+
+Informacion del paquete:
+
+- Type: Siempre sera 2 para indicar que es un ADD_SEED
+- Port: Indica el puerto por el que escuchara el peer
+- Files: Numero de ficheros que mandamos al Tracker
+- Filename length: Longitud del nombre del fichero, se repetira por cada fichero enviado
+- Filename (filename length bytes): nombre del fichero, se repetira por cada fichero enviado
+- Size: Tamaño del fichero en bytes, se repetira por cada fichero enviado
+- Hash: Hash del fichero, se repetira por cada fichero enviado
+
+
+#### Formato del mensaje: SEEDINFO para el tipo GET_SEEDS
+
+- Type = 3 (GET_SEEDS)
+    - Formato del mensaje: SEEDINFO
+    - Un peer solicita al tracker la lista de semillas para un fichero.
+
+
+<table>
+    <tr align="center">
+        <td>Type (1 byte)</td>
+        <td>Size (5 bytes)</td>
+        <td>Seeds (2 bytes)</td>
+    </tr>
+    <tr align="center">
+        <td colspan="3">Hash (20 bytes)</td>
+    </tr>
+    <tr align="center">
+        <td colspan="2">IP (5 bytes)</td>
+        <td>Port (2 bytes)</td>
+    </tr>
+</table>
+
+Informacion del paquete:
+
+- Type: Siempre sera 3 para indicar que es un GET_SEEDS
+- Size: Tamaño del fichero en bytes
+- Seeds: Numero de peers que tienen trozos del fichero
+- Hash: Hash del fichero
+- IP: IP del peer que tiene trozos del fichero, se repetira por cada fichero enviado
+- Port: Puerto que tiene a la escucha el peer que tiene trozos del fichero, se repetira por cada fichero enviado
 
 
 ## 1.1. Usando mensajes multiformato un peer (155.54.2.3) se agrega como seed en el puerto 4533, y con los ficheros:
@@ -24,18 +76,38 @@ siempre 3 o 4| | | N | N veces | N veces
 
 #### El peer envia al track un mensaje FILEINFO tipo ADD_SEED
 
-Type (1 byte)| Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | Filename (filename length bytes) | Size (5 bytes)| Hash (20 bytes)| Filename length (2 bytes)| Filename (filename length bytes)| Size (5 bytes)| Hash (20 bytes)
----|-----|----|------|------|------|-----|-----|----|------|----
- 2| 4533| 2| 15| ubuntu14.04.iso | 1.024.572.864 | b9153318862f0f7b5f82c913ecb2117f97c3153e | 18 | android-studio.zip| 380.943.097| af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d
-
+<table>
+    <tr align="center">
+        <td>2</td>
+        <td>4533</td>
+        <td>2</td>
+    </tr>
+    <tr align="center">
+        <td>15</td>
+        <td colspan="2">ubuntu14.04.iso</td>
+    </tr>
+    <tr align="center">
+        <td>1024572864</td>
+        <td colspan="2">b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
+    </tr>
+    <tr align="center">
+        <td>18</td>
+        <td colspan="2">android-studio.zip</td>
+    </tr>
+    <tr align="center">
+        <td>380943097</td>
+        <td colspan="2">af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</td>
+    </tr>
+</table>
 
 
 #### El track responde mensaje de CONTROL tipo ADD_SEED_ACK al peer
 
-
-|Type (1 byte) |
-|-----|
-|1 |
+<table>
+    <tr align="center">
+        <td>1</td>
+    </tr>
+</table>
 
 
 
@@ -48,12 +120,12 @@ Type (1 byte)| Port (2 bytes) | #Files (2 bytes) | Filename length (2 bytes) | F
 	<file>
 		<name>ubuntu14.04.iso</name>
 		<size>1024572864</size>
-		<hash>b9153318862f0f7b5f82c913ecb2117f97c3153e<hash>
+		<hash>b9153318862f0f7b5f82c913ecb2117f97c3153e</hash>
 	</file>
 	<file>
 		<name>android-studio.zip</name>
 		<size>380943097</size>
-		<hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d<hash>
+		<hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</hash>
 	</file>
 </message>
 ```
