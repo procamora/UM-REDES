@@ -1,5 +1,5 @@
 
-> Una de las operaciones más comunes de un peer con un tracker es solicitarle la lista de ficheros compartidos. Para ello le enviará un mensaje QUERY_FILES al que el tracker responderá con la lista de ficheros de su base de datos. Dicha consulta puede estar filtrada por ciertos valores, como se refleja en la especificación de la práctica de diseño.
+> Una de las operaciones más comunes de un peer con un Tracker es solicitarle la lista de ficheros compartidos. Para ello le enviará un mensaje QUERY_FILES al que el Tracker responderá con la lista de ficheros de su base de datos. Dicha consulta puede estar filtrada por ciertos valores, como se refleja en la especificación de la práctica de diseño.
 
 # 2.Completar y modificar el repertorio de mensajes para considerar el mensaje QUERY_FILES y su respuesta. Imaginemos que la base de datos del tracker contiene los siguientes ficheros:
 
@@ -8,7 +8,7 @@
 
 - Type = 5 (QUERY_FILES)
     - Formato del mensaje: SEEDQUERY
-    - Un peer solicita al tracker la lista de ficheros que coinciden con su patron de busqueda.
+    - Un peer solicita al Tracker la lista de ficheros que coinciden con su patrón de búsqueda.
 
 
 <table>
@@ -23,7 +23,7 @@
 </table>
 
 
-Informacion del paquete:
+Información del paquete:
 
 - Type: Siempre sera 5 para indicar que es un QUERY_FILES
 - Size: Tamaño del fichero que estamos buscando en bytes
@@ -37,7 +37,7 @@ Informacion del paquete:
 
 - Type = 6 (QUERY_FILES_RESPONSE)
     - Formato del mensaje: FILEINFO
-    - el tracker la lista de ficheros que coinciden con su patron de busqueda.
+    - el Tracker lista los ficheros que coinciden con su patrón de búsqueda.
 
 <table>
     <tr align="center">
@@ -56,15 +56,15 @@ Informacion del paquete:
 </table>
 
 
-Informacion del paquete:
+Información del paquete:
 
 - Type: Siempre sera 6 para indicar que es un QUERY_FILES_RESPONSE
 - Port: Todo a 0, ya que no se usa
-- Files: Numero de ficheros que tiene el Tracker con el patron que queremos
-- Filename length: Longitud del nombre del fichero, se repetira por cada fichero enviado
-- Filename (filename length bytes): nombre del fichero, se repetira por cada fichero enviado
-- Size: Tamaño del fichero en bytes, se repetira por cada fichero enviado
-- Hash: Hash del fichero, se repetira por cada fichero enviado
+- Files: Numero de ficheros que tiene el Tracker con el patrón que queremos
+- Filename length: Longitud del nombre del fichero, se repetirá n veces, siendo n: Files
+- Filename (filename length bytes): nombre del fichero, se repetirá n veces, siendo n: Files
+- Size: Tamaño del fichero en bytes, se repetirá n veces, siendo n: Files
+- Hash: Hash del fichero, se repetirá n veces, siendo n: Files
 
 
 

@@ -8,7 +8,7 @@
 
 - Type = 2 (ADD_SEED)
     - Formato del mensaje: FILEINFO
-    - Un peer solicita al tracker unirse a la red compartiendo una serie de ficheros.
+    - Un peer solicita al Tracker unirse a la red compartiendo una serie de ficheros.
 
 <table>
     <tr align="center">
@@ -26,22 +26,22 @@
     </tr>
 </table>
 
-Informacion del paquete:
+Información del paquete:
 
 - Type: Siempre sera 2 para indicar que es un ADD_SEED
 - Port: Indica el puerto por el que escuchara el peer
 - Files: Numero de ficheros que mandamos al Tracker
-- Filename length: Longitud del nombre del fichero, se repetira por cada fichero enviado
-- Filename (filename length bytes): nombre del fichero, se repetira por cada fichero enviado
-- Size: Tamaño del fichero en bytes, se repetira por cada fichero enviado
-- Hash: Hash del fichero, se repetira por cada fichero enviado
+- Filename length: Longitud del nombre del fichero, se repetirá n veces, siendo n: Files
+- Filename (filename length bytes): nombre del fichero, se repetirá n veces, siendo n: Files
+- Size: Tamaño del fichero en bytes, se repetirá n veces, siendo n: Files
+- Hash: Hash del fichero, se repetirá n veces, siendo n: Files
 
 
 #### Formato del mensaje: SEEDINFO para el tipo GET_SEEDS
 
 - Type = 3 (GET_SEEDS)
     - Formato del mensaje: SEEDINFO
-    - Un peer solicita al tracker la lista de semillas para un fichero.
+    - Un peer solicita al trapacero la lista de semillas para un fichero.
 
 
 <table>
@@ -59,14 +59,20 @@ Informacion del paquete:
     </tr>
 </table>
 
-Informacion del paquete:
+Información del paquete:
 
 - Type: Siempre sera 3 para indicar que es un GET_SEEDS
 - Size: Tamaño del fichero en bytes
 - Seeds: Numero de peers que tienen trozos del fichero
 - Hash: Hash del fichero
-- IP: IP del peer que tiene trozos del fichero, se repetira por cada fichero enviado
-- Port: Puerto que tiene a la escucha el peer que tiene trozos del fichero, se repetira por cada fichero enviado
+- IP: IP del peer que tiene trozos del fichero, se repetirá n veces, siendo n: Seeds
+- Port: Puerto que tiene a la escucha el peer que tiene trozos del fichero, se repetirá n veces, siendo n: Seeds
+
+
+<br/>
+<br/>
+<br/>
+
 
 
 ## 1.1. Usando mensajes multiformato un peer (155.54.2.3) se agrega como seed en el puerto 4533, y con los ficheros:
