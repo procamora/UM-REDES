@@ -10,18 +10,16 @@
 #### Formato del mensaje: SEEDQUERY para el tipo QUERY_CHUNKS
 
 - Type = 7 (QUERY_CHUNKS)
-    - Formato del mensaje: SEEDQUERY
+    - Formato del mensaje: REQCHUNKS
     - Un peer solicita al otro peer la lista de chunks que tiene de un determinado fichero
 
 
 <table>
     <tr align="center">
         <td>Type (1 byte)</td>
-        <td>Size (5 bytes)</td>
-        <td>Filename length (2 bytes)</td>
     </tr>
     <tr align="center">
-        <td colspan="3" align="center">Filename (filename length bytes)</td>
+        <td align="center">Hash (20 bytes)</td>
     </tr>
 </table>
 
@@ -29,10 +27,10 @@
 Información del paquete:
 
 - Type: Siempre sera 7 para indicar que es un QUERY_CHUNKS
-- Size: Todo a 0 ya que no se usa
-- Filename length: Longitud del nombre del fichero
-- Filename (filename length bytes): nombre del fichero del que deseamos saber los chunks disponibles, puede que en vez del nombre del fichero podamos poner el Hash del fichero ya que evitaría fallos por nombre duplicado.
+- Hash: hash del fichero del que deseamos saber los chunks disponibles, puede que en vez del nombre del fichero podamos poner el Hash del fichero ya que evitaría fallos por nombre duplicado.
 
+
+## HACER PAQUETE INFORMASE TAMAÑO DE CHUNKS
 
 
 #### Formato del mensaje: CHUNKSRESPONSE para el tipo QUERY_CHUNKS_RESPONSE
@@ -61,6 +59,4 @@ Información del paquete:
 - Type: Siempre sera 8 para indicar que es un QUERY_CHUNKS_RESPONSE
 - Num Chunks: Numero de chunks que tiene para compartir
 - Hash: Hash del fichero del que nos esta informando
-- Chunk: numero del chunk que tiene disponible, se repetirá n veces, siendo n: Num Chunks
-
-
+- Chunk: Chunks que tiene el peer, se repite n veces, siendo n: Num Chunks
