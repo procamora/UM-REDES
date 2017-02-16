@@ -7,56 +7,55 @@
 
 
 
-#### Formato del mensaje: SEEDQUERY para el tipo QUERY_CHUNKS
+#### Formato del mensaje: CHUNKQUERY para el tipo QUERY_CHUNK
 
-- Type = 9 (QUERY_CHUNKS)
-    - Formato del mensaje: REQCHUNKS
+- Type = 3 (QUERY_CHUNK)
+    - Formato del mensaje: CHUNKQUERY
     - Un peer solicita al otro peer un chunk de un fichero especifico
 
 
 <table>
     <tr align="center">
         <td>Type (1 byte)</td>
-		<td>Num Chunks</td>
+        <td>Hash (20 bytes)</td>
     </tr>
     <tr align="center">
-        <td colspan="3">Hash (20 bytes)</td>
+        <td colspan="2">Num Chunks (longitud variable)</td>
     </tr>
 </table>
 
 
 Información del paquete:
 
-- Type: Siempre sera 7 para indicar que es un QUERY_CHUNKS
-- Num Chunks: numero de chunks que solicitas
-- Hash: hash del fichero del que deseamos saber los chunks disponibles, puede que en vez del nombre del fichero podamos poner el Hash del fichero ya que evitaría fallos por nombre duplicado.
+- Type: Siempre sera 3 para indicar que es un QUERY_CHUNK
+- Hash: Hash del fichero del que deseamos obtener un chunk.
+- Num Chunks: numero de chunks que solicitas.
 
 
-#### Formato del mensaje: CHUNKSRESPONSE para el tipo QUERY_CHUNKS_RESPONSE
+
+#### Formato del mensaje: CHUNKQUERYRESPONSE para el tipo QUERY_CHUNK_RESPONSE
 
 
-- Type = 10 (QUERY_CHUNKS_RESPONSE)
-    - Formato del mensaje: CHUNKSRESPONSE
-    - Un peer informa a otro peer de la lista de chunks que tiene de un determinado fichero listo para compartir.
+- Type = 4 (QUERY_CHUNK_RESPONSE)
+    - Formato del mensaje: CHUNKQUERYRESPONSE
+    - Un peer manda a otro peer el chunk que le ha solicitado.
+
 
 <table>
     <tr align="center">
         <td>Type (1 byte)</td>
-        <td colspan="2">Num Chunks (2 bytes)</td>
+        <td>Hash (20 bytes)</td>
     </tr>
+        <td>Num Chunks (longitud variable)</td>
+        <td>Chunk (longitud indicada por el tracker)</td>
     <tr align="center">
-        <td colspan="3">Hash (20 bytes)</td>
-    </tr>
-    <tr align="center">
-        <td colspan="3">Chunk (X bytes)</td>
     </tr>
 </table>
 
 
-
 Información del paquete:
 
-- Type: Siempre sera 8 para indicar que es un QUERY_CHUNKS_RESPONSE
-- Num Chunks: Todo a 0 ya que no se usa
-- Hash: Hash del fichero del que nos esta informando
-- Chunk: Datos del chunk, el tamaña se establece acorde al tamaño que nos indica el tracker
+- Type: Siempre sera 4 para indicar que es un QUERY_CHUNK_RESPONSE.
+- Num Chunks: Numero del chunk del que procede el dato.
+- Hash: Hash del fichero del que procede el chunk.
+- Chunk: Dato del chunk, el tamaño se establece acorde al tamaño que nos indica el tracker.
