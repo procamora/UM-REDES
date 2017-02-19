@@ -1,6 +1,5 @@
 
-
-# 1. Completar y modificar el repertorio de mensajes para contemplar la información anterior y especificar los mensajes intercambiados entre peer y tracker en los siguientes casos:
+## 1. Completar y modificar el repertorio de mensajes para contemplar la información anterior y especificar los mensajes intercambiados entre peer y tracker en los siguientes casos:
 
 #### Formato del mensaje: CONTROL para el tipo  ADD_SEED_ACK
 
@@ -128,7 +127,7 @@ Información del paquete:
 
 
 
-## 1.1. Usando mensajes multiformato un peer (155.54.2.3) se agrega como seed en el puerto 4533, y con los ficheros:
+### 1.1. Usando mensajes multiformato un peer (155.54.2.3) se agrega como seed en el puerto 4533, y con los ficheros:
 
 - ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
 - android-studio.zip (hash af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d , tamaño 380.943.097 bytes).
@@ -172,7 +171,7 @@ Información del paquete:
 
 
 
-## 1.2. Usando un lenguaje de marcas especificar la comunicación del apartado 1.1
+### 1.2. Usando un lenguaje de marcas especificar la comunicación del apartado 1.1
 
 #### peer -> tracker
 

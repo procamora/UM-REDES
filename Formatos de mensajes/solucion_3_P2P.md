@@ -1,9 +1,5 @@
 
-
-> Una vez el peer dispone de la información de las semillas para un fichero, puede solicitar a otros peers la descarga de trozos (de tamaño fijo) del fichero, a los que denominaremos normalmente como chunks, a través de un canal confiable. Utilizando multiformato o lenguaje de marcas especificar, al menos, los siguientes aspectos del protocolo peer to peer:
-
-
-# 3. Puesto los peers pueden servir trozos de un fichero aunque no lo hayan descargado por completo, es necesario que un peer averigüe qué trozos pueden obtener de otro peer. Diseña los mensajes para dicha consulta y la correspondiente respuesta. Diseño los mensajes necesarios para solicitar y servir los trozos del fichero.
+## 3. Puesto los peers pueden servir trozos de un fichero aunque no lo hayan descargado por completo, es necesario que un peer averigüe qué trozos pueden obtener de otro peer. Diseña los mensajes para dicha consulta y la correspondiente respuesta. Diseño los mensajes necesarios para solicitar y servir los trozos del fichero.
 
 
 
@@ -44,9 +40,9 @@ Información del paquete:
         <td>Type (1 byte)</td>
         <td>Hash (20 bytes)</td>
     </tr>
+    <tr align="center">
         <td>Num Chunks (longitud variable)</td>
         <td>Chunk (X bytes)</td>
-    <tr align="center">
     </tr>
 </table>
 
@@ -55,8 +51,56 @@ Información del paquete:
 
 - Type: Siempre sera 2 para indicar que es un GET_CHUNK_RESPONSE.
 - Hash: Hash del fichero del que nos esta informando.
-- Num Chunks: Numero de chunks que tiene para compartir, El tamaño es :[^1], SI SE TIENEN TODOS LOS CHUNKS PONER TODO A 1 PARA INDICARLO EN VEZ DE PONER EN CHUNK TODOS LOS PAQUETES
+- Num Chunks: Numero de chunks que tiene para compartir, El tamaño lo obtenemos con la formula: (sale abajo), Si se tienen todos los chunks de un fichero este campo ira todo a 1 para indicarlo.
 - Chunk: Chunks que tiene el peer, se repite n veces, siendo n: Num Chunks.
 
+![CodeCogsEqn.png](CodeCogsEqn.png)
 
-[^1]: $\log_2 \frac{Tamaño Maximo de un fichero (2^32)}{tamaño de chunks}$
+<!--[^1]: $\log_2 \frac{Tamano Maximo De Un fichero = 2^{32}}{Tamano De Chunks}$-->
+
+
+
+
+### 3.1 Ejemplo.
+
+#### Un peer A solicita al otro peer B la lista de chunks que tiene de un fichero ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
+
+<table>
+    <tr align="center">
+        <td>1</td>
+        <td>b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
+    </tr>
+    <tr align="center">
+        <td colspan="2">0000000...</td>
+    </tr>
+</table>
+
+
+
+#### Un peer B informa a otro peer A de la lista de chunks que tiene de un determinado fichero listo para compartir ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
+
+Le responde que tiene 4 chunks del fichero solicitado (1, 3, 4, 5)
+
+<br/>
+<br/>
+<br/>
+
+<table>
+    <tr align="center">
+        <td>2</td>
+        <td>b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
+    </tr>
+	<tr align="center">
+        <td>4</td>
+        <td>1</td>
+    </tr>
+    <tr align="center">
+        <td colspan="2">3</td>
+    </tr>
+    <tr align="center">
+        <td colspan="2">4</td>
+    </tr>
+    <tr align="center">
+        <td colspan="2">5</td>
+    </tr>
+</table>

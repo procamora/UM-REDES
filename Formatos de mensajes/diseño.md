@@ -125,9 +125,9 @@ Tipos que lo usan:
         <td>Type (1 byte)</td>
         <td>Hash (20 bytes)</td>
     </tr>
+    <tr align="center">
         <td>Num Chunks (longitud variable)</td>
         <td>Chunk (X bytes)</td>
-    <tr align="center">
     </tr>
 </table>
 

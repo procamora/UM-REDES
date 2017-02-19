@@ -1,7 +1,5 @@
 
-> Una de las operaciones más comunes de un peer con un Tracker es solicitarle la lista de ficheros compartidos. Para ello le enviará un mensaje QUERY_FILES al que el Tracker responderá con la lista de ficheros de su base de datos. Dicha consulta puede estar filtrada por ciertos valores, como se refleja en la especificación de la práctica de diseño.
-
-# 2.Completar y modificar el repertorio de mensajes para considerar el mensaje QUERY_FILES y su respuesta. Imaginemos que la base de datos del tracker contiene los siguientes ficheros:
+## 2.Completar y modificar el repertorio de mensajes para considerar el mensaje QUERY_FILES y su respuesta. Imaginemos que la base de datos del tracker contiene los siguientes ficheros:
 
 
 #### Formato del mensaje: SEEDQUERY para el tipo QUERY_FILES
@@ -117,7 +115,7 @@ Información del paquete:
 
 
 
-## 2.1. Usando mensajes multiformato el peer solicita un QUERY_FILES al tracker y éste responde con la lista de archivos correspondiente.
+### 2.1. Usando mensajes multiformato el peer solicita un QUERY_FILES al tracker y éste responde con la lista de archivos correspondiente.
 
 - ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
 - android-studio.zip (hash af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d , tamaño 380.943.097 bytes).
@@ -169,7 +167,7 @@ Información del paquete:
 
 
 
-## 2.2. Usando lenguaje de marcas especificar la comunicación del apartado 2.1.
+### 2.2. Usando lenguaje de marcas especificar la comunicación del apartado 2.1.
 
 
 #### Peer Informa a tracker con un mensaje SEEDQUERY:
