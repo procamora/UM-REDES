@@ -21,6 +21,14 @@
 </table>
 
 
+
+```xml
+<message>
+	<operation>query_chunk</operation>
+    <num_Chunk></num_Chunk>
+</message>
+```
+
 Información del paquete:
 
 - Type: Siempre sera 3 para indicar que es un QUERY_CHUNK
@@ -48,6 +56,15 @@ Información del paquete:
     </tr>
 </table>
 
+
+```xml
+<message>
+	<operation>chunk_response</operation>
+    <hash></hash>
+    <Num_Chunk></Num_Chunk>
+    <Chunk_data></Chunk_data>
+</message>
+```
 
 Información del paquete:
 
