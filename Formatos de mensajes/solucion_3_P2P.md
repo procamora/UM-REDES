@@ -20,6 +20,15 @@
 </table>
 
 
+
+```xml
+<message>
+	<operation>get_chunk</operation>
+	<hash>HASH</hash>
+	<Numchunks></Numchunks>
+</message>
+```
+
 Información del paquete:
 
 - Type: Siempre sera 1 para indicar que es un GET_CHUNK.
@@ -46,6 +55,17 @@ Información del paquete:
     </tr>
 </table>
 
+
+
+```xml
+<message>
+	<operation>get_chunk</operation>
+	<hash>HASH</hash>
+	<!--<Numchunks></Numchunks> no es necesario-->
+	<chunk></chunk>
+	<chunk></chunk>
+</message>
+```
 
 Información del paquete:
 
