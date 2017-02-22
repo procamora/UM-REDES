@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 6.4.--><structure>
+	<type>fa</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="q0">
+			<x>118.0</x>
+			<y>265.0</y>
+			<initial/>
+			<final/>
+		</state>
+		<state id="1" name="q1">
+			<x>432.0</x>
+			<y>53.0</y>
+		</state>
+		<state id="2" name="q2">
+			<x>424.0</x>
+			<y>197.0</y>
+		</state>
+		<state id="3" name="q3">
+			<x>387.0</x>
+			<y>346.0</y>
+		</state>
+		<state id="4" name="q4">
+			<x>389.0</x>
+			<y>476.0</y>
+		</state>
+		<state id="5" name="q5">
+			<x>689.0</x>
+			<y>51.0</y>
+		</state>
+		<state id="6" name="q6">
+			<x>680.0</x>
+			<y>200.0</y>
+		</state>
+		<state id="7" name="q7">
+			<x>626.0</x>
+			<y>354.0</y>
+		</state>
+		<state id="8" name="q8">
+			<x>637.0</x>
+			<y>473.0</y>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>0</from>
+			<to>2</to>
+			<read>send(getSeeds)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>send(addSeed)</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>5</to>
+			<read>timeout</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>1</to>
+			<read>send(addSeed)</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>7</to>
+			<read>timeout</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>0</to>
+			<read>rcv(query_chunk_response)</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>6</to>
+			<read>timeout</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>8</to>
+			<read>timeout</read>
+		</transition>
+		<transition>
+			<from>7</from>
+			<to>3</to>
+			<read>send(query_Files)</read>
+		</transition>
+		<transition>
+			<from>8</from>
+			<to>4</to>
+			<read>send(query_chunk)</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>2</to>
+			<read>send(getSeeds)</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>0</to>
+			<read>rcv(fileList)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>4</to>
+			<read>send(query_chunk)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>3</to>
+			<read>send(query_files)</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>rcv(ack_addseed)</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>0</to>
+			<read>rcv(seedList)</read>
+		</transition>
+	</automaton>
+</structure>
