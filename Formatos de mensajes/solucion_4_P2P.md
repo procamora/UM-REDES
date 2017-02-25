@@ -24,7 +24,7 @@
 
 ```xml
 <message>
-	<operation>query_chunk</operation>
+    <operation>query_chunk</operation>
     <num_Chunk></num_Chunk>
 </message>
 ```
@@ -59,7 +59,7 @@ Información del paquete:
 
 ```xml
 <message>
-	<operation>chunk_response</operation>
+    <operation>chunk_response</operation>
     <hash></hash>
     <Num_Chunk></Num_Chunk>
     <Chunk_data></Chunk_data>

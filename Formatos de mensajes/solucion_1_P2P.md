@@ -4,21 +4,26 @@
 #### Formato del mensaje: CONTROL para el tipo  ADD_SEED_ACK
 
 - Type = 1 (ADD_SEED_ACK)
-	- Formato del mensaje: CONTROL
-	- El tracker confirma que ha recibido la solicitud de un peer para unirse a la red p2p.
+    - Formato del mensaje: CONTROL
+    - El tracker confirma que ha recibido la solicitud de un peer para unirse a la red P2P.
 
 <table>
     <tr align="center">
         <td>Type (1 byte)</td>
-        <td>Num Seq (2 bytes)</td>
     </tr>
 </table>
+
+
+```xml
+<message>
+    <operation>add_seed_ack</operation>
+</message>
+```
+
 
 Información del paquete:
 
 - Type: Siempre sera 1 para indicar que es un ADD_SEED_ACK.
-- Num Seq: Numero de secuencia del paquete, lo usamos para saber que ACK recibimos, solo podremos tener 65535 paquetes a la espera de recibir un ACK, cuando llegamos al 65535 reiniciamos a 0 para continuar.
-
 
 
 
@@ -31,7 +36,6 @@ Información del paquete:
 <table>
     <tr align="center">
         <td>Type (1 byte)</td>
-        <td>Num Seq (2 bytes)</td>
         <td>Port (2 bytes)</td>
         <td>Files (2 bytes)</td>
     </tr>
@@ -45,10 +49,21 @@ Información del paquete:
     </tr>
 </table>
 
+```xml
+<message>
+    <operation>add_seed</operation>
+    <port></port>
+    <file>
+        <name></name>
+        <size></size>
+        <hash></hash>
+    </file>
+</message>
+```
+
 Información del paquete:
 
 - Type: Siempre sera 2 para indicar que es un ADD_SEED.
-- Num Seq: Numero de secuencia del paquete, lo usamos para saber que ACK recibimos, solo podremos tener 65535 paquetes a la espera de recibir un ack, cuando llegamos al 65535 reiniciamos a 0 para continuar.
 - Port: Indica el puerto por el que escuchara el peer.
 - Files: Numero de ficheros que mandamos al tracker.
 - Filename length: Longitud del nombre del fichero, se repetirá n veces, siendo n: Files.
@@ -80,6 +95,18 @@ Información del paquete:
         <td>Port (2 bytes)</td>
     </tr>
 </table>
+
+```xml
+<message>
+    <operation>get_seeds</operation>
+    <hash></hash>
+    <!--<size></size>
+    <seeds>
+        <ip></ip>
+        <port></port>
+    </seeds>-->
+    </message>
+```
 
 Información del paquete:
 
@@ -114,6 +141,18 @@ Información del paquete:
         <td>Port (2 bytes)</td>
     </tr>
 </table>
+
+```xml
+<message>
+    <operation>get_seeds</operation>
+    <hash></hash>
+    <size></size>
+    <seeds>
+        <ip></ip>
+        <port></port>
+    </seeds>
+</message>
+```
 
 Información del paquete:
 
@@ -177,19 +216,19 @@ Información del paquete:
 
 ```xml
 <message>
-	<operation>add_seed</operation>
-	<num_seq>784</num_seq>
-	<port>4533</port>
-	<file>
-		<name>ubuntu14.04.iso</name>
-		<size>1024572864</size>
-		<hash>b9153318862f0f7b5f82c913ecb2117f97c3153e</hash>
-	</file>
-	<file>
-		<name>android-studio.zip</name>
-		<size>380943097</size>
-		<hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</hash>
-	</file>
+    <operation>add_seed</operation>
+    <num_seq>784</num_seq>
+    <port>4533</port>
+    <file>
+        <name>ubuntu14.04.iso</name>
+        <size>1024572864</size>
+        <hash>b9153318862f0f7b5f82c913ecb2117f97c3153e</hash>
+    </file>
+    <file>
+        <name>android-studio.zip</name>
+        <size>380943097</size>
+        <hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</hash>
+    </file>
 </message>
 ```
 
@@ -198,7 +237,7 @@ Información del paquete:
 
 ```xml
 <message>
-	<operation>add_seed_ack</operation>
-	<num_seq>784</num_seq>
+    <operation>add_seed_ack</operation>
+    <num_seq>784</num_seq>
 </message>
 ```

@@ -23,9 +23,9 @@
 
 ```xml
 <message>
-	<operation>get_chunk</operation>
-	<hash>HASH</hash>
-	<Numchunks></Numchunks>
+    <operation>get_chunk</operation>
+    <hash>HASH</hash>
+    <Numchunks></Numchunks>
 </message>
 ```
 
@@ -59,11 +59,11 @@ Información del paquete:
 
 ```xml
 <message>
-	<operation>get_chunk</operation>
-	<hash>HASH</hash>
-	<!--<Numchunks></Numchunks> no es necesario-->
-	<chunk></chunk>
-	<chunk></chunk>
+    <operation>get_chunk</operation>
+    <hash>HASH</hash>
+    <!--<Numchunks></Numchunks> no es necesario-->
+    <chunk></chunk>
+    <chunk></chunk>
 </message>
 ```
 
@@ -110,7 +110,7 @@ Le responde que tiene 4 chunks del fichero solicitado (1, 3, 4, 5)
         <td>2</td>
         <td>b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
     </tr>
-	<tr align="center">
+    <tr align="center">
         <td>4</td>
         <td>1</td>
     </tr>
