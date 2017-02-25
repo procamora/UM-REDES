@@ -3,43 +3,32 @@
 	<automaton>
 		<!--The list of states.-->
 		<state id="0" name="q0">
-			<x>118.0</x>
-			<y>265.0</y>
+			<x>672.0</x>
+			<y>238.0</y>
 			<initial/>
 			<final/>
 		</state>
 		<state id="1" name="q1">
-			<x>524.0</x>
-			<y>41.0</y>
+			<x>468.0</x>
+			<y>450.0</y>
 		</state>
 		<state id="2" name="q2">
-			<x>518.0</x>
-			<y>171.0</y>
+			<x>414.0</x>
+			<y>241.0</y>
 		</state>
 		<state id="3" name="q3">
-			<x>516.0</x>
-			<y>317.0</y>
+			<x>672.0</x>
+			<y>26.0</y>
 		</state>
 		<state id="4" name="q4">
-			<x>526.0</x>
-			<y>460.0</y>
+			<x>921.0</x>
+			<y>252.0</y>
+		</state>
+		<state id="5" name="q5">
+			<x>860.0</x>
+			<y>445.0</y>
 		</state>
 		<!--The list of transitions.-->
-		<transition>
-			<from>3</from>
-			<to>0</to>
-			<read>send(fileList)</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>4</to>
-			<read>rcv(query_chunk)</read>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>0</to>
-			<read>send(seedList)</read>
-		</transition>
 		<transition>
 			<from>4</from>
 			<to>0</to>
@@ -47,23 +36,52 @@
 		</transition>
 		<transition>
 			<from>0</from>
-			<to>1</to>
-			<read>rcv(addSeed)</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>2</to>
-			<read>rcv(getSeeds)</read>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>0</to>
-			<read>send(ack_addSeed)</read>
+			<to>5</to>
+			<read>rvc(remove_seed)</read>
 		</transition>
 		<transition>
 			<from>0</from>
 			<to>3</to>
+			<controlx>639</controlx>
+			<controly>136</controly>
 			<read>rcv(query_files)</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>0</to>
+			<controlx>699</controlx>
+			<controly>126</controly>
+			<read>send(query_files_response)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>rcv(add_seed)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>2</to>
+			<read>rcv(get_seeds)</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>0</to>
+			<read>send(seed_list)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>4</to>
+			<read>rcv(query_chunk)</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>0</to>
+			<read>send(remove_seed_ack)</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>send(add_seed_ack)</read>
 		</transition>
 	</automaton>
 </structure>

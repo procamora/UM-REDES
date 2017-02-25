@@ -3,8 +3,8 @@
 	<automaton>
 		<!--The list of states.-->
 		<state id="0" name="q0">
-			<x>165.0</x>
-			<y>210.0</y>
+			<x>185.0</x>
+			<y>218.0</y>
 			<initial/>
 		</state>
 		<state id="1" name="q1">
@@ -16,73 +16,73 @@
 			<y>302.0</y>
 		</state>
 		<state id="3" name="q3">
-			<x>541.0</x>
-			<y>113.0</y>
+			<x>601.0</x>
+			<y>105.0</y>
 			<final/>
 		</state>
 		<state id="4" name="q4">
-			<x>754.0</x>
-			<y>116.0</y>
+			<x>864.0</x>
+			<y>107.0</y>
 		</state>
 		<state id="5" name="q5">
-			<x>566.0</x>
-			<y>297.0</y>
+			<x>605.0</x>
+			<y>302.0</y>
 			<final/>
 		</state>
 		<state id="6" name="q6">
-			<x>760.0</x>
-			<y>296.0</y>
+			<x>841.0</x>
+			<y>301.0</y>
 		</state>
 		<!--The list of transitions.-->
 		<transition>
-			<from>1</from>
-			<to>3</to>
-			<read>rcv(chunk_response)</read>
-		</transition>
-		<transition>
-			<from>3</from>
-			<to>1</to>
-			<read>send(query_chunk)</read>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>5</to>
-			<read>send(chunk_response)</read>
-		</transition>
-		<transition>
 			<from>4</from>
 			<to>3</to>
-			<read>rcv(chunk)</read>
+			<read>rcv(query_chunk_response)</read>
 		</transition>
 		<transition>
 			<from>0</from>
 			<to>1</to>
+			<read>send(get_chunk)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>2</to>
+			<read>rcv(get_chunk)</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>4</to>
 			<read>send(query_chunk)</read>
 		</transition>
 		<transition>
 			<from>5</from>
 			<to>6</to>
-			<read>rcv(req_chunk)</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>2</to>
 			<read>rcv(query_chunk)</read>
 		</transition>
 		<transition>
-			<from>6</from>
-			<to>5</to>
-			<read>send(chunk)</read>
+			<from>3</from>
+			<to>1</to>
+			<read>send(get_chunk)</read>
 		</transition>
 		<transition>
-			<from>3</from>
-			<to>4</to>
-			<read>send(req_chunk)</read>
+			<from>2</from>
+			<to>5</to>
+			<read>send(get_chunk_response)</read>
 		</transition>
 		<transition>
 			<from>5</from>
 			<to>2</to>
-			<read>rcv(query_chunk)</read>
+			<read>rcv(get_chunk)</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>3</to>
+			<read>rcv(get_chunk_response)</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>5</to>
+			<read>send(query_chunk_response)</read>
 		</transition>
 	</automaton>
 </structure>
