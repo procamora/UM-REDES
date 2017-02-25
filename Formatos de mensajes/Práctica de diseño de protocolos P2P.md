@@ -2,8 +2,8 @@
 title: Práctica de diseño de protocolos P2P
 subtitle: Redes de Comunicaciones
 author:
-    - Pablo José Rocamora Zamora
-    - Mourad
+    - Mourad Abbou Aazaz G2.1
+    - Pablo José Rocamora Zamora G2.2
 date: Febrero 24, 2017
 header: dsad
 footer: So is this
@@ -20,7 +20,7 @@ documentclass: scrartcl
 
 # Introducción.
 
-## Resumen de los paquetes UDP: PEER - TRACKER que usamos:
+## Resumen de los paquetes UDP: peer - tracker que usamos:
 
 #### Formato del mensaje: CONTROL
 
@@ -69,7 +69,7 @@ Tipos que lo usan:
 
 
 
-## Resumen de los paquetes TCP: PEER - PEER que usamos:
+## Resumen de los paquetes TCP: peer - peer que usamos:
 
 #### Formato del mensaje: CHUNKQUERY
 
@@ -95,16 +95,17 @@ Tipos que lo usan:
 
 ## Peer-peer: Autómata unificado
 
+![Automata para el peer (unificada) con TCP](automata2.jpg)
+
 
 
 \newpage
 
 ## Peer-tracker: Cliente y servidor
 
+![Automata del cliente con UDP](automata3.png)
 
-
-
-
+![Automata del servidor con UDP](automata4.png)
 
 \newpage
 
@@ -476,7 +477,7 @@ Información del paquete:
 
 ### 1.2. Usando un lenguaje de marcas especificar la comunicación del apartado 1.1
 
-#### peer -> tracker
+#### El peer envía al tracker un mensaje FILEINFO tipo ADD_SEED
 
 ```xml
 <message>
@@ -497,7 +498,7 @@ Información del paquete:
 ```
 
 
-#### tracker -> peer
+#### El tracker responde con un mensaje de CONTROL tipo ADD_SEED_ACK
 
 ```xml
 <message>
@@ -803,6 +804,10 @@ Información del paquete:
 </message>
 ```
 
+### Errores que pueden surgir durante las comunicaciones:
+
+1. Un peer se desconecte sin avisar al tracker, en ese caso el peer que detecte al peer desconectado debera de informar al tracker para que le de de baja.
+2. Un peer deje de tener un fichero que estaba compartiendo, en este caso tendra que mandar al tracker un remove del fichero que ya no tiene.
 
 
 \newpage
