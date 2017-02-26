@@ -66,9 +66,39 @@
 		</state>
 		<!--The list of transitions.-->
 		<transition>
-			<from>3</from>
-			<to>8</to>
-			<read>rcv(query_files_response)</read>
+			<from>5</from>
+			<to>1</to>
+			<read>send(addSeed)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>send(add_seed)</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>0</to>
+			<read>rcv(query_chunk_response)</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>0</to>
+			<read>rcv(seed_list)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>13</to>
+			<read>send(remove_seed)</read>
+		</transition>
+		<transition>
+			<from>13</from>
+			<to>0</to>
+			<read>rcv(remove_seed_ack)</read>
+		</transition>
+		<transition>
+			<from>8</from>
+			<to>0</to>
+			<read>lista_vacia</read>
 		</transition>
 		<transition>
 			<from>9</from>
@@ -78,18 +108,23 @@
 			<read>no rcv(all_listas)</read>
 		</transition>
 		<transition>
-			<from>14</from>
-			<to>13</to>
-			<read>remove_seed</read>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>0</to>
-			<read>rcv(seed_list)</read>
-		</transition>
-		<transition>
 			<from>10</from>
 			<to>11</to>
+			<read>timeout</read>
+		</transition>
+		<transition>
+			<from>8</from>
+			<to>7</to>
+			<read>lista_no_vacia</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>8</to>
+			<read>rcv(query_files_response)</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>5</to>
 			<read>timeout</read>
 		</transition>
 		<transition>
@@ -98,9 +133,9 @@
 			<read>timeout</read>
 		</transition>
 		<transition>
-			<from>1</from>
-			<to>0</to>
-			<read>rcv(add_seed_ack)</read>
+			<from>7</from>
+			<to>9</to>
+			<read>if(todas_lista_leidas)</read>
 		</transition>
 		<transition>
 			<from>12</from>
@@ -108,29 +143,14 @@
 			<read>send(query_chunk)</read>
 		</transition>
 		<transition>
-			<from>5</from>
-			<to>1</to>
-			<read>send(addSeed)</read>
-		</transition>
-		<transition>
-			<from>8</from>
-			<to>0</to>
-			<read>lista_vacia</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>13</to>
-			<read>send(remove_seed)</read>
-		</transition>
-		<transition>
-			<from>10</from>
-			<to>7</to>
-			<read>rcv(lista)</read>
-		</transition>
-		<transition>
 			<from>3</from>
 			<to>11</to>
 			<read>timeout</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>rcv(add_seed_ack)</read>
 		</transition>
 		<transition>
 			<from>7</from>
@@ -138,59 +158,19 @@
 			<read>if(quedan_listas)</read>
 		</transition>
 		<transition>
-			<from>0</from>
-			<to>1</to>
-			<read>send(add_seed)</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>3</to>
-			<read>send(query_files)</read>
-		</transition>
-		<transition>
-			<from>4</from>
-			<to>0</to>
-			<read>rcv(query_chunk_response)</read>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>6</to>
-			<read>timeout</read>
-		</transition>
-		<transition>
-			<from>6</from>
-			<to>2</to>
-			<read>send(get_seeds)</read>
-		</transition>
-		<transition>
-			<from>7</from>
-			<to>9</to>
-			<read>if(todas_lista_leidas)</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>2</to>
-			<read>send(get_seeds)</read>
-		</transition>
-		<transition>
-			<from>9</from>
-			<to>0</to>
-			<read>rcv(all_listas)</read>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>5</to>
-			<read>timeout</read>
-		</transition>
-		<transition>
-			<from>13</from>
-			<to>0</to>
-			<read>rcv(remove_seed_ack)</read>
-		</transition>
-		<transition>
 			<from>13</from>
 			<to>14</to>
-			<read>timeour</read>
+			<read>timeout</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>2</to>
+			<read>send(get_seeds)</read>
+		</transition>
+		<transition>
+			<from>14</from>
+			<to>13</to>
+			<read>remove_seed</read>
 		</transition>
 		<transition>
 			<from>11</from>
@@ -198,9 +178,29 @@
 			<read>send(querry_files)</read>
 		</transition>
 		<transition>
-			<from>8</from>
+			<from>0</from>
+			<to>3</to>
+			<read>send(query_files)</read>
+		</transition>
+		<transition>
+			<from>10</from>
 			<to>7</to>
-			<read>lista_no_vacia</read>
+			<read>rcv(lista)</read>
+		</transition>
+		<transition>
+			<from>9</from>
+			<to>0</to>
+			<read>rcv(all_listas)</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>2</to>
+			<read>send(get_seeds)</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>6</to>
+			<read>timeout</read>
 		</transition>
 	</automaton>
 </structure>

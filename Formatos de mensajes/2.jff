@@ -35,12 +35,22 @@
 		</state>
 		<!--The list of transitions.-->
 		<transition>
-			<from>4</from>
-			<to>3</to>
-			<read>rcv(query_chunk_response)</read>
+			<from>0</from>
+			<to>1</to>
+			<read>send(get_chunk)</read>
 		</transition>
 		<transition>
-			<from>0</from>
+			<from>3</from>
+			<to>4</to>
+			<read>send(chunk)</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>5</to>
+			<read>send(chunk_response)</read>
+		</transition>
+		<transition>
+			<from>3</from>
 			<to>1</to>
 			<read>send(get_chunk)</read>
 		</transition>
@@ -50,19 +60,9 @@
 			<read>rcv(get_chunk)</read>
 		</transition>
 		<transition>
-			<from>3</from>
-			<to>4</to>
-			<read>send(query_chunk)</read>
-		</transition>
-		<transition>
-			<from>5</from>
-			<to>6</to>
-			<read>rcv(query_chunk)</read>
-		</transition>
-		<transition>
-			<from>3</from>
-			<to>1</to>
-			<read>send(get_chunk)</read>
+			<from>1</from>
+			<to>3</to>
+			<read>rcv(get_chunk_response)</read>
 		</transition>
 		<transition>
 			<from>2</from>
@@ -75,14 +75,14 @@
 			<read>rcv(get_chunk)</read>
 		</transition>
 		<transition>
-			<from>1</from>
-			<to>3</to>
-			<read>rcv(get_chunk_response)</read>
+			<from>5</from>
+			<to>6</to>
+			<read>rcv(chunk)</read>
 		</transition>
 		<transition>
-			<from>6</from>
-			<to>5</to>
-			<read>send(query_chunk_response)</read>
+			<from>4</from>
+			<to>3</to>
+			<read>rcv(chunk_response)</read>
 		</transition>
 	</automaton>
 </structure>

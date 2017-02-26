@@ -79,7 +79,7 @@ Tipos que lo usan:
 Tipos que lo usan:
 
 - Type = 1 (GET_CHUNK)
-- Type = 3 (QUERY_CHUNK)
+- Type = 3 (CHUNK)
 
 
 
@@ -88,7 +88,7 @@ Tipos que lo usan:
 Tipos que lo usan:
 
 - Type = 2 (GET_CHUNK_RESPONSE)
-- Type = 4 (QUERY_CHUNK_RESPONSE)
+- Type = 4 (CHUNK_RESPONSE)
 
 
 
@@ -98,27 +98,27 @@ Tipos que lo usan:
 
 ## Peer-peer: Autómata unificado
 
-![Autómata para el peer (unificada) con TCP](automata2.jpg)
+![Autómata para el peer (unificada) con TCP](automata2.png)
 
-El autómata de conexión cliente - servidor entre distintos peer es bastante simple:
+El autómata del Peer para la conexión cliente - servidor entre distintos Peer es bastante simple:
 
-1. El peer hace de cliente y pide la lista de chunks a un fichero, cuando recibe la lista de chunks puede terminar, volver a pedir la lista de chunks para actualizarla o empezar a pedir chunks uno a uno.
-2. El peer hace de servidor y recibe una solicitud de lista de chunks de un fichero, cuando envía la lista de chunks puede terminar, volver a enviar la lista de chunks para actualizarla o empezar a enviar chunks uno a uno.
+1. El peer hace de cliente y pide la lista de chunks a un fichero, cuando recibe la lista de chunks puede terminar, volver a pedir la lista de chunks para actualizarla o empezar a pedir los datos de los chunks uno a uno.
+2. El peer hace de servidor y recibe una solicitud de lista de chunks de un fichero, cuando envía la lista de chunks puede terminar, volver a enviar la lista de chunks para actualizarla o empezar a enviar los datos de los chunks uno a uno.
 
 \newpage
 
 ## Peer-tracker: Cliente y servidor
 
-![Autómata del cliente con UDP](3.png)
+![Autómata del cliente con UDP](automata3.png)
 
-El autómata de conexión del peer con el tracker es un poco complejo ya que es el que lleva toda el control de estados para así poder hacer que el autómata del servidor sea muy simple:
+El autómata del peer para la conexión del peer con el tracker es un poco mas complejo, ya que es el que lleva toda el control de los estados para así poder hacer que el autómata del servidor sea muy simple:
 
 1. En cada comunicación con el Tracker el Peer lo primero que solicita es el tamaño de chunk, una vez que tiene ese dato puede hacer el resto de consultas.
 2. Envía un *add_seed*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta.
 3. Envía un *get_seeds*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta.
-4. Envía un *query_files*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta. Si obtiene respuesta pueden pasar 2 acciones diferentes:
+4. Envía un *query_files*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta. Si obtiene respuesta pueden pasar 2 opciones diferentes:
     - Es una lista vacía, este caso es correcto ya que no hay ningún fichero que satisface los criterios de búsqueda.
-    - La lista contiene ficheros, se mete en un bucle en el que esperaremos recibir el mismo numero de paquetes que indica un campo del paquete, si al terminar de recibir todos los paquetes he recibido el numero de paquetes esperado finalizo correctamente, por el contrario si no he recibido todos los paquetes o hay un *timeout* de algún paquete vuelvo a enviar el paquete *query_files* para solicitar todos los paquetes de nuevo.
+    - La lista contiene ficheros, se mete en un bucle en el que esperaremos recibir el mismo numero de paquetes que indica un campo del paquete, si al terminar de recibir todos los paquetes he recibido el numero de paquetes esperado, finalizo correctamente, por el contrario si no he recibido todos los paquetes o hay un *timeout* de algún paquete vuelvo a enviar el paquete *query_files* para solicitar todos los paquetes de nuevo.
 5. Envía un *remove_seed*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta.
 
 \pagebreak
@@ -127,7 +127,7 @@ El autómata de conexión del peer con el tracker es un poco complejo ya que es 
 ![Autómata del servidor con UDP](automata4.png)
 
 
-El autómata de conexión del tracker es muy simple ya que solo se encarga de responder las solicitudes de los clientes, si su paquete no llega sera el peer el que se encargue de volver a pedir la información:
+El autómata de conexión del tracker es muy simple ya que solo se encarga de responder las solicitudes de los clientes, si su paquete no llega sera el Peer el que se encargue de volver a pedir la información:
 
 1. Cuando recibe un *add_seed* responde con un *add_seed_ack*.
 2. Cuando recibe un *get_seeds* responde con un *seed_list*.
@@ -253,9 +253,9 @@ Le responde que tiene 4 chunks del fichero solicitado (1, 3, 4, 5)
 -->
 
 
-### Formato del mensaje: CHUNKQUERY para el tipo QUERY_CHUNK
+### Formato del mensaje: CHUNKQUERY para el tipo CHUNK
 
-- Type = 3 (QUERY_CHUNK)
+- Type = 3 (CHUNK)
     - Formato del mensaje: CHUNKQUERY.
     - Un Peer solicita al otro Peer un Chunk de un fichero específico indicado a través de su Hash.
 
@@ -278,15 +278,15 @@ Le responde que tiene 4 chunks del fichero solicitado (1, 3, 4, 5)
 
 Información del paquete:
 
-- Type: Siempre será 3 para indicar que es un QUERY_CHUNK.
+- Type: Siempre será 3 para indicar que es un CHUNK.
 - Hash: Hash del fichero del que deseamos obtener un chunk.
 - Num Chunks: Número del chunk del fichero que solicita.
 
 
 
-### Formato del mensaje: CHUNKQUERYRESPONSE para el tipo QUERY_CHUNK_RESPONSE
+### Formato del mensaje: CHUNKQUERYRESPONSE para el tipo CHUNK_RESPONSE
 
-- Type = 4 (QUERY_CHUNK_RESPONSE)
+- Type = 4 (CHUNK_RESPONSE)
     - Formato del mensaje: CHUNKQUERYRESPONSE.
     - Un Peer manda a otro Peer el chunk que le ha solicitado.
 
@@ -307,7 +307,7 @@ Información del paquete:
 
 Información del paquete:
 
-- Type: Siempre sera 4 para indicar que es un QUERY_CHUNK_RESPONSE.
+- Type: Siempre sera 4 para indicar que es un CHUNK_RESPONSE.
 - Hash: Hash del fichero del que procede el chunk.
 - Num Chunk: Número del chunk del que procede el dato.
 - Chunk: Dato del chunk, el tamaño se establece acorde al tamaño que nos indica el Tracker.
@@ -316,7 +316,7 @@ Información del paquete:
 #### Un peer A solicita al otro peer B el chunk 30 del fichero ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
 
 
-![Ejemplo: QUERY_CHUNK](QUERY_CHUNK.png)
+![Ejemplo: CHUNK](CHUNK.png)
 
 \pagebreak
 
@@ -336,7 +336,7 @@ Información del paquete:
 #### El peer B manda el dato del chunk 30 a el peer A del fichero ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
 
 
-![Ejemplo: QUERY_CHUNK_RESPONSE](QUERY_CHUNK_RESPONSE.png)
+![Ejemplo: CHUNK_RESPONSE](CHUNK_RESPONSE.png)
 
 <!--
 <table>
