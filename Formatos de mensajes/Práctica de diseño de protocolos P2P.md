@@ -20,6 +20,9 @@ documentclass: scrartcl
 
 # Introducción.
 
+Este documento contiene el diseño del protocolo Peer - Tracker y Peer - Peer que hemos llevado acabo durante el curso académico 2016/17.
+
+
 ## Resumen de los paquetes UDP: peer - tracker que usamos:
 
 #### Formato del mensaje: CONTROL
@@ -95,17 +98,43 @@ Tipos que lo usan:
 
 ## Peer-peer: Autómata unificado
 
-![Automata para el peer (unificada) con TCP](automata2.jpg)
+![Autómata para el peer (unificada) con TCP](automata2.jpg)
 
+El autómata de conexión cliente - servidor entre distintos peer es bastante simple:
 
+1. El peer hace de cliente y pide la lista de chunks a un fichero, cuando recibe la lista de chunks puede terminar, volver a pedir la lista de chunks para actualizarla o empezar a pedir chunks uno a uno.
+2. El peer hace de servidor y recibe una solicitud de lista de chunks de un fichero, cuando envía la lista de chunks puede terminar, volver a enviar la lista de chunks para actualizarla o empezar a enviar chunks uno a uno.
 
 \newpage
 
 ## Peer-tracker: Cliente y servidor
 
-![Automata del cliente con UDP](automata3.png)
+![Autómata del cliente con UDP](3.png)
 
-![Automata del servidor con UDP](automata4.png)
+El autómata de conexión del peer con el tracker es un poco complejo ya que es el que lleva toda el control de estados para así poder hacer que el autómata del servidor sea muy simple:
+
+1. En cada comunicación con el Tracker el Peer lo primero que solicita es el tamaño de chunk, una vez que tiene ese dato puede hacer el resto de consultas.
+2. Envía un *add_seed*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta.
+3. Envía un *get_seeds*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta.
+4. Envía un *query_files*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta. Si obtiene respuesta pueden pasar 2 acciones diferentes:
+    - Es una lista vacía, este caso es correcto ya que no hay ningún fichero que satisface los criterios de búsqueda.
+    - La lista contiene ficheros, se mete en un bucle en el que esperaremos recibir el mismo numero de paquetes que indica un campo del paquete, si al terminar de recibir todos los paquetes he recibido el numero de paquetes esperado finalizo correctamente, por el contrario si no he recibido todos los paquetes o hay un *timeout* de algún paquete vuelvo a enviar el paquete *query_files* para solicitar todos los paquetes de nuevo.
+5. Envía un *remove_seed*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta.
+
+\pagebreak
+
+
+![Autómata del servidor con UDP](automata4.png)
+
+
+El autómata de conexión del tracker es muy simple ya que solo se encarga de responder las solicitudes de los clientes, si su paquete no llega sera el peer el que se encargue de volver a pedir la información:
+
+1. Cuando recibe un *add_seed* responde con un *add_seed_ack*.
+2. Cuando recibe un *get_seeds* responde con un *seed_list*.
+3. Cuando recibe un *query_files* responde con un *query_files_response*.
+4. Cuando recibe un *query_chunk* responde con un *query_chunk_response*.
+5. Cuando recibe un *remove_seed* responde con un *remove_seed_ack*.
+
 
 \newpage
 
@@ -167,12 +196,12 @@ Información del paquete:
 Información del paquete:
 
 - Type: Siempre sera 2 para indicar que es un GET_CHUNK_RESPONSE.
-- Hash: Hash del fichero del que nos esta informando.
-- Num Chunks: Numero de chunks que tiene para compartir, El tamaño del campo lo obtenemos con la formula: (sale abajo)[^1], Si se tienen todos los chunks de un fichero este campo ira todo a 1 para indicarlo.
+- Hash: Hash del fichero del que nos está informando.
+- Num Chunks: Numero de chunks que tiene para compartir. El tamaño del campo lo obtenemos con la fórmula: (sale abajo)[^1], Si se tienen todos los chunks de un fichero este campo irá todo a 1 para indicarlo.
 - Chunk: Chunks que tiene el peer, se repite n veces, siendo n: Num Chunks.
 
 
-[^1]: $\log_2 \frac{Tamaño Maximo De Un fichero = 2^{32}}{Tamaño De Chunks}$
+[^1]: $\log_2 \frac{Tamaño Máximo De Un fichero = 2^{32}}{Tamaño De Chunks}$
 
 
 ### 3.1 Ejemplo.
@@ -228,7 +257,7 @@ Le responde que tiene 4 chunks del fichero solicitado (1, 3, 4, 5)
 
 - Type = 3 (QUERY_CHUNK)
     - Formato del mensaje: CHUNKQUERY.
-    - Un Peer solicita al otro Peer un Chunk de un fichero especifico indicado a través de su Hash.
+    - Un Peer solicita al otro Peer un Chunk de un fichero específico indicado a través de su Hash.
 
 
 ![Formato del mensaje: CHUNKQUERY](CHUNKQUERY.png)
@@ -249,16 +278,16 @@ Le responde que tiene 4 chunks del fichero solicitado (1, 3, 4, 5)
 
 Información del paquete:
 
-- Type: Siempre sera 3 para indicar que es un QUERY_CHUNK
+- Type: Siempre será 3 para indicar que es un QUERY_CHUNK.
 - Hash: Hash del fichero del que deseamos obtener un chunk.
-- Num Chunks: Numero del chunk del fichero que solicita.
+- Num Chunks: Número del chunk del fichero que solicita.
 
 
 
 ### Formato del mensaje: CHUNKQUERYRESPONSE para el tipo QUERY_CHUNK_RESPONSE
 
 - Type = 4 (QUERY_CHUNK_RESPONSE)
-    - Formato del mensaje: CHUNKQUERYRESPONSE
+    - Formato del mensaje: CHUNKQUERYRESPONSE.
     - Un Peer manda a otro Peer el chunk que le ha solicitado.
 
 ![Formato del mensaje: CHUNKQUERYRESPONSE](CHUNKQUERYRESPONSE.png)
@@ -280,7 +309,7 @@ Información del paquete:
 
 - Type: Siempre sera 4 para indicar que es un QUERY_CHUNK_RESPONSE.
 - Hash: Hash del fichero del que procede el chunk.
-- Num Chunk: Numero del chunk del que procede el dato.
+- Num Chunk: Número del chunk del que procede el dato.
 - Chunk: Dato del chunk, el tamaño se establece acorde al tamaño que nos indica el Tracker.
 
 
@@ -324,12 +353,6 @@ Información del paquete:
 
 
 
-
-
-
-
-
-
 \newpage
 
 ## Peer-tracker
@@ -355,7 +378,7 @@ Información del paquete:
 
 - Type = 2 (ADD_SEED)
     - Formato del mensaje: FILEINFO.
-    - Un Peer solicita al Tracker unirse a la red compartiendo una serie de ficheros. Si la lista de ficheros no cabe en un único paquete se partirá en los paquetes que sean necesarios, por cada paquete que se envíe se esperara un ACK y cuando llegue ese ACK se mandara el siguiente paquete. Cambien es usado mas tarde por el Peer para añadir ficheros conforme quiera compartirlos.
+    - Un Peer solicita al Tracker unirse a la red compartiendo una serie de ficheros. Si la lista de ficheros no cabe en un único paquete se partirá en los paquetes que sean necesarios, por cada paquete que se envíe se esperara un ACK y cuando llegue ese ACK se mandará el siguiente paquete. También es usado mas tarde por el Peer para añadir ficheros conforme quiera compartirlos.
 
 ```xml
 <message>
@@ -374,8 +397,8 @@ Información del paquete:
 
 - Type: Siempre sera 2 o add_seed para indicar que es un ADD_SEED.
 - Port: Indica el puerto por el que escuchara el peer.
-- paquetes: Numero de ficheros que mandamos al tracker.
-- Filename: nombre del fichero, se repetirá n veces.
+- Paquetes: Número de ficheros que mandamos al tracker.
+- Filename: Nombre del fichero, se repetirá n veces.
 - Size: Tamaño del fichero en bytes, se repetirá n veces.
 - Hash: Hash del fichero, se repetirá n veces.
 
@@ -436,6 +459,7 @@ Información del paquete:
 ![Ejemplo: ADD_SEED](ADD_SEED.png)
 
 \pagebreak
+
 <!--
 <table>
     <tr align="center">
@@ -511,7 +535,7 @@ Información del paquete:
 ### Formato del mensaje: SEEDQUERY para el tipo QUERY_FILES
 
 - Type = 5 (QUERY_FILES)
-    - Formato del mensaje: SEEDQUERY
+    - Formato del mensaje: SEEDQUERY.
     - Un Peer solicita al Tracker la lista de ficheros que coinciden con su patrón de búsqueda. Podemos buscar por tamaño, nombre o ambas, para tamaño tenemos varios operadores aritméticos.
 
 ```xml
@@ -527,7 +551,7 @@ Información del paquete:
 
 Información del paquete:
 
-- Type: Siempre sera 5 o query_files para indicar que es un QUERY_FILES.
+- Type: Siempre será 5 o query_files para indicar que es un QUERY_FILES.
 - Op: Operador de condición para tamaño: *(podemos usar operadores bash: gt, lt, ge, etc)*
     - 0: >
     - 1: >=
@@ -542,8 +566,8 @@ Información del paquete:
 ### Formato del mensaje: FILEINFO para el tipo QUERY_FILES_RESPONSE
 
 - Type = 6 (QUERY_FILES_RESPONSE)
-    - Formato del mensaje: FILEINFO
-    - El tracker lista los ficheros que coinciden con su patrón de búsqueda. Si la lista de ficheros no cabe en un único paquete se partirá en los paquetes que sean necesarios, y se enviaran todos, el Peer tendrá que comprobar si se han recibido todos los paquetes, sino se han recibido volverá a hacer la solicitud.
+    - Formato del mensaje: FILEINFO.
+    - El tracker lista los ficheros que coinciden con su patrón de búsqueda. Si la lista de ficheros no cabe en un único paquete se partirá en los paquetes que sean necesarios, y se enviarán todos, el Peer tendrá que comprobar si se han recibido todos los paquetes, sino se han recibido volverá a hacer la solicitud.
 
 ```xml
 <message>
@@ -559,8 +583,8 @@ Información del paquete:
 
 Información del paquete:
 
-- Type: Siempre sera 6 o query_files_response para indicar que es un QUERY_FILES_RESPONSE.
-- Paquetes: Numero de paquetes que se van a enviar, normalmente sera 1.
+- Type: Siempre será 6 o query_files_response para indicar que es un QUERY_FILES_RESPONSE.
+- Paquetes: Número de paquetes que se van a enviar, normalmente será 1.
 - Filename: nombre del fichero, se repetirá n veces.
 - Size: Tamaño del fichero en bytes, se repetirá n veces.
 - Hash: Hash del fichero, se repetirá n veces.
@@ -570,8 +594,8 @@ Información del paquete:
 ### Formato del mensaje: CHUNKINFO para el tipo QUERY_CHUNK
 
 - Type = 7 (QUERY_CHUNK)
-    - Formato del mensaje: CHUNKINFO
-    - El Peer pregunta al Tracker cual es el tamaño de los chunks. Este mensaje sera el primero que se mande para iniciar la comunicación con el Tracker.
+    - Formato del mensaje: CHUNKINFO.
+    - El Peer pregunta al Tracker cuál es el tamaño de los chunks. Este mensaje será el primero que se mande para iniciar la comunicación con el Tracker.
 
 ```xml
 <message>
@@ -581,15 +605,15 @@ Información del paquete:
 
 Información del paquete:
 
-- Type: Siempre sera 7 para indicar que es un QUERY_CHUNK.
+- Type: Siempre será 7 para indicar que es un QUERY_CHUNK.
 
 
 
 ### Formato del mensaje: CHUNKINFO para el tipo QUERY_CHUNK_RESPONSE
 
 - Type = 8 (QUERY_CHUNK_RESPONSE)
-    - Formato del mensaje: CHUNKINFO
-    - El Tracker responde al Peer cual es el tamaño de los chunks.
+    - Formato del mensaje: CHUNKINFO.
+    - El Tracker responde al Peer cuál es el tamaño de los chunks.
 
 ```xml
 <message>
@@ -600,15 +624,15 @@ Información del paquete:
 
 Información del paquete:
 
-- Type: Siempre sera 8 para indicar que es un QUERY_CHUNK_RESPONSE.
+- Type: Siempre será 8 para indicar que es un QUERY_CHUNK_RESPONSE.
 - Tamaño Chunk: Indica el tamaño del chunk.
 
 
 ### Formato del mensaje: REMOVE para el tipo REMOVE_SEED
 
 - Type = 9 (REMOVE_SEED)
-    - Formato del mensaje: REMOVE
-    - El Peer informa al Tracker que quiero hacer una solicitud de borrado, hay 2 opciones:
+    - Formato del mensaje: REMOVE.
+    - El Peer informa al Tracker de que quiere hacer una solicitud de borrado, hay 2 opciones:
         - Darse de baja como peer: si queremos dejar de ser un Peer activo pondremos el Hash todo a 1.
         - Dar de baja un fichero: Si solo queremos borrar un fichero de la lista de activos pondremos el Hash del fichero.
 
@@ -625,14 +649,14 @@ Información del paquete:
 
 - Type: Siempre sera 9 o remove_seed para indicar que es un REMOVE_SEED.
 - Port: Indica el puerto del peer.
-- Hash: Hash del fichero al que damos de baja o todo a 1
+- Hash: Hash del fichero al que damos de baja o todo a 1.
 
 
 
 ### Formato del mensaje: CONTROL para el tipo REMOVE_SEED_ACK
 
 - Type = 10 (REMOVE_SEED_ACK)
-    - Formato del mensaje: CONTROL
+    - Formato del mensaje: CONTROL.
     - El Tracker confirma que ha recibido la solicitud de un Peer para borrar al Peer o a un fichero.
 
 ```xml
@@ -644,7 +668,7 @@ Información del paquete:
 
 Información del paquete:
 
-- Type: Siempre sera 10 o remove_seed_ack para indicar que es un REMOVE_SEED_ACK.
+- Type: Siempre será 10 o remove_seed_ack para indicar que es un REMOVE_SEED_ACK.
 
 
 
@@ -678,6 +702,7 @@ Información del paquete:
 ![Ejemplo: QUERY_FILES_RESPONSE](QUERY_FILES_RESPONSE.png)
 
 \pagebreak
+
 <!--
 <table>
     <tr align="center">
@@ -806,10 +831,12 @@ Información del paquete:
 
 ### Errores que pueden surgir durante las comunicaciones:
 
-1. Un peer se desconecte sin avisar al tracker, en ese caso el peer que detecte al peer desconectado debera de informar al tracker para que le de de baja.
-2. Un peer deje de tener un fichero que estaba compartiendo, en este caso tendra que mandar al tracker un remove del fichero que ya no tiene.
+1. Un peer se desconecte sin avisar al tracker: en ese caso el peer que detecte al peer desconectado deberá informar al tracker para que le dé de baja.
+2. Un peer deje de tener un fichero que estaba compartiendo: en este caso tendrá que mandar al tracker un *remove* del fichero que ya no tiene.
 
 
 \newpage
 
 # Conclusiones
+
+El diseño esta completo, aunque se le podrían añadir algunas mejoras en los paquetes para aumentar la funcionalidad del tracker y de los peers.
