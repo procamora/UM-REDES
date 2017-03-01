@@ -30,21 +30,16 @@
 		</state>
 		<!--The list of transitions.-->
 		<transition>
-			<from>4</from>
-			<to>0</to>
-			<read>send(query_chunk_response)</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>5</to>
-			<read>rvc(remove_seed)</read>
-		</transition>
-		<transition>
 			<from>0</from>
 			<to>3</to>
 			<controlx>639</controlx>
 			<controly>136</controly>
 			<read>rcv(query_files)</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>0</to>
+			<read>send(remove_seed_ack)</read>
 		</transition>
 		<transition>
 			<from>3</from>
@@ -60,8 +55,8 @@
 		</transition>
 		<transition>
 			<from>0</from>
-			<to>2</to>
-			<read>rcv(get_seeds)</read>
+			<to>4</to>
+			<read>rcv(query_chunk)</read>
 		</transition>
 		<transition>
 			<from>2</from>
@@ -70,13 +65,23 @@
 		</transition>
 		<transition>
 			<from>0</from>
-			<to>4</to>
-			<read>rcv(query_chunk)</read>
+			<to>2</to>
+			<read>rcv(get_seeds)</read>
 		</transition>
 		<transition>
-			<from>5</from>
+			<from>3</from>
+			<to>3</to>
+			<read>send(query_file_response)</read>
+		</transition>
+		<transition>
+			<from>4</from>
 			<to>0</to>
-			<read>send(remove_seed_ack)</read>
+			<read>send(query_chunk_response)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>5</to>
+			<read>rvc(remove_seed)</read>
 		</transition>
 		<transition>
 			<from>1</from>

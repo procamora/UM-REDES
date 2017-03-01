@@ -30,39 +30,48 @@
 			<final/>
 		</state>
 		<state id="6" name="q6">
-			<x>841.0</x>
-			<y>301.0</y>
+			<x>852.0</x>
+			<y>303.0</y>
+		</state>
+		<state id="7" name="q7">
+			<x>1080.0</x>
+			<y>209.0</y>
 		</state>
 		<!--The list of transitions.-->
 		<transition>
-			<from>0</from>
+			<from>1</from>
+			<to>3</to>
+			<read>rcv(get_chunk_response)</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>7</to>
+			<read>send(chunk_error)</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>3</to>
+			<read>rcv(chunk_response)</read>
+		</transition>
+		<transition>
+			<from>3</from>
 			<to>1</to>
 			<read>send(get_chunk)</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>6</to>
+			<read>rcv(chunk)</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>7</to>
+			<read>rcv(chunk_error)</read>
 		</transition>
 		<transition>
 			<from>3</from>
 			<to>4</to>
 			<read>send(chunk)</read>
-		</transition>
-		<transition>
-			<from>6</from>
-			<to>5</to>
-			<read>send(chunk_response)</read>
-		</transition>
-		<transition>
-			<from>3</from>
-			<to>1</to>
-			<read>send(get_chunk)</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>2</to>
-			<read>rcv(get_chunk)</read>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>3</to>
-			<read>rcv(get_chunk_response)</read>
 		</transition>
 		<transition>
 			<from>2</from>
@@ -75,14 +84,19 @@
 			<read>rcv(get_chunk)</read>
 		</transition>
 		<transition>
-			<from>5</from>
-			<to>6</to>
-			<read>rcv(chunk)</read>
+			<from>0</from>
+			<to>1</to>
+			<read>send(get_chunk)</read>
 		</transition>
 		<transition>
-			<from>4</from>
-			<to>3</to>
-			<read>rcv(chunk_response)</read>
+			<from>0</from>
+			<to>2</to>
+			<read>rcv(get_chunk)</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>5</to>
+			<read>send(chunk_response)</read>
 		</transition>
 	</automaton>
 </structure>
