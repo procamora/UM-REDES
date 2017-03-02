@@ -104,7 +104,6 @@ El autómata del Peer para la conexión cliente - servidor entre distintos Peer 
 
 1. El peer hace de cliente y pide la lista de chunks a un fichero, cuando recibe la lista de chunks puede terminar, volver a pedir la lista de chunks para actualizarla o empezar a pedir los datos de los chunks uno a uno.
 2. El peer hace de servidor y recibe una solicitud de lista de chunks de un fichero, cuando envía la lista de chunks puede terminar, volver a enviar la lista de chunks para actualizarla o empezar a enviar los datos de los chunks uno a uno.
-3. Cuando un peer solicita un chunk a otro peer servidor que lo contenía, y por factores externos el peer servidor ya no lo contiene o se ha desconectado, se notifica un mensaje de error.
 
 \newpage
 
@@ -115,8 +114,7 @@ El autómata del Peer para la conexión cliente - servidor entre distintos Peer 
 El autómata del peer para la conexión del peer con el tracker es un poco mas complejo, ya que es el que lleva toda el control de los estados para así poder hacer que el autómata del servidor sea muy simple:
 
 1. En cada comunicación con el Tracker el Peer lo primero que solicita es el tamaño de chunk, una vez que tiene ese dato puede hacer el resto de consultas.
-2. Envía un *add_seed*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta. Al
-   recibir una respuesta comprueba que hay mas trozos por enviar. En ese caso vuelve a enviar un un *add_seed, hasta que no hayan mas trozos por enviar.
+2. Envía un *add_seed*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta.
 3. Envía un *get_seeds*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta.
 4. Envía un *query_files*, si no recibe respuesta y pasa el *timeout* el peer vuelve a retransmitir el mensaje hasta que obtenga respuesta. Si obtiene respuesta pueden pasar 2 opciones diferentes:
     - Es una lista vacía, este caso es correcto ya que no hay ningún fichero que satisface los criterios de búsqueda.
@@ -160,7 +158,7 @@ El autómata de conexión del tracker es muy simple ya que solo se encarga de re
         <td>Hash (20 bytes)</td>
     </tr>
     <tr align="center">
-        <td colspan="2">Num Chunks (longitud variable)</td>
+        <td colspan="2">Num Chunks (14 bytes)</td>
     </tr>
 </table>
 -->
@@ -181,19 +179,18 @@ Información del paquete:
 
 ![Formato del mensaje: CHUNKQUERYRESPONSE](CHUNKQUERYRESPONSE.png)
 
+
 <!--
 <table>
     <tr align="center">
         <td>Type (1 byte)</td>
-        <td>Hash (20 bytes)</td>
+        <td>Num Chunk 14 bytes</td>
     </tr>
     <tr align="center">
-        <td>Num Chunk (longitud variable)</td>
         <td>Chunk (longitud indicada por el tracker)</td>
     </tr>
 </table>
 -->
-
 
 Información del paquete:
 
@@ -203,56 +200,7 @@ Información del paquete:
 - Chunk: Chunks que tiene el peer, se repite n veces, siendo n: Num Chunks.
 
 
-[^1]: $\log_2 \frac{Tamaño Máximo De Un fichero = 2^{32}}{Tamaño De Chunks}$
-
-
-### 3.1 Ejemplo.
-
-#### Un peer A solicita al otro peer B la lista de chunks que tiene de un fichero ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
-
-![Ejemplo: GET_CHUNK](GET_CHUNK.png)
-
-<!--
-<table>
-    <tr align="center">
-        <td>1</td>
-        <td>b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
-    </tr>
-    <tr align="center">
-        <td colspan="2">0000000...</td>
-    </tr>
-</table>
--->
-
-
-#### Un peer B informa a otro peer A de la lista de chunks que tiene de un determinado fichero listo para compartir ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
-
-Le responde que tiene 4 chunks del fichero solicitado (1, 3, 4, 5)
-
-
-![Ejemplo: GET_CHUNK_RESPONSE](GET_CHUNK_RESPONSE.png)
-
-<!--
-<table>
-    <tr align="center">
-        <td>2</td>
-        <td>b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
-    </tr>
-    <tr align="center">
-        <td>4</td>
-        <td>1</td>
-    </tr>
-    <tr align="center">
-        <td colspan="2">3</td>
-    </tr>
-    <tr align="center">
-        <td colspan="2">4</td>
-    </tr>
-    <tr align="center">
-        <td colspan="2">5</td>
-    </tr>
-</table>
--->
+[^1]: $\log_2 \frac{Tamaño Máximo De Un fichero = 2^{32}}{Tamaño De Chunks = 256Kb}$
 
 
 ### Formato del mensaje: CHUNKQUERY para el tipo CHUNK
@@ -271,12 +219,11 @@ Le responde que tiene 4 chunks del fichero solicitado (1, 3, 4, 5)
         <td>Hash (20 bytes)</td>
     </tr>
     <tr align="center">
-        <td colspan="2">Num Chunks (longitud variable)</td>
+        <td colspan="2">Num Chunks (14 bytes)</td>
     </tr>
 </table>
 -->
 
-\pagebreak
 
 Información del paquete:
 
@@ -298,11 +245,10 @@ Información del paquete:
 <table>
     <tr align="center">
         <td>Type (1 byte)</td>
-        <td>Hash (20 bytes)</td>
+        <td>Num Chunk (14 bytes)</td>
     </tr>
     <tr align="center">
-        <td>Num Chunk (longitud variable)</td>
-        <td>Chunk (longitud indicada por el Tracker)</td>
+        <td colspan="2">Chunk (longitud indicada por el Tracker)</td>
     </tr>
 </table>
 -->
@@ -313,45 +259,6 @@ Información del paquete:
 - Hash: Hash del fichero del que procede el chunk.
 - Num Chunk: Número del chunk del que procede el dato.
 - Chunk: Dato del chunk, el tamaño se establece acorde al tamaño que nos indica el Tracker.
-
-
-#### Un peer A solicita al otro peer B el chunk 30 del fichero ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
-
-
-![Ejemplo: CHUNK](CHUNK.png)
-
-\pagebreak
-
-<!--
-<table>
-    <tr align="center">
-        <td>3</td>
-        <td>b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
-    </tr>
-    <tr align="center">
-        <td colspan="2">30</td>
-    </tr>
-</table>
--->
-
-
-#### El peer B manda el dato del chunk 30 a el peer A del fichero ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
-
-
-![Ejemplo: CHUNK_RESPONSE](CHUNK_RESPONSE.png)
-
-<!--
-<table>
-    <tr align="center">
-        <td>4</td>
-        <td>b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
-    </tr>
-    <tr align="center">
-        <td>30</td>
-        <td>DATOS</td>
-    </tr>
-</table>
--->
 
 
 
@@ -386,7 +293,6 @@ Información del paquete:
 <message>
     <operation>add_seed</operation>
     <port></port>
-    <paquetes></paquetes>
     <file>
         <name></name>
         <size></size>
@@ -399,7 +305,6 @@ Información del paquete:
 
 - Type: Siempre sera 2 o add_seed para indicar que es un ADD_SEED.
 - Port: Indica el puerto por el que escuchara el peer.
-- Paquetes: Número de ficheros que mandamos al tracker.
 - Filename: Nombre del fichero, se repetirá n veces.
 - Size: Tamaño del fichero en bytes, se repetirá n veces.
 - Hash: Hash del fichero, se repetirá n veces.
@@ -434,7 +339,6 @@ Información del paquete:
 <message>
     <operation>seed_list</operation>
     <hash></hash>
-    <size></size>
     <seeds>
         <ip></ip>
         <port></port>
@@ -446,92 +350,8 @@ Información del paquete:
 
 - Type: Siempre sera 4 o seed_list para indicar que es un SEED_LIST.
 - Hash: Hash del fichero del que obtenemos los Seeds.
-- Size: Tamaño del fichero en bytes.
 - IP: IP del peer que tiene trozos del fichero, se repetirá n veces.
 - Port: Puerto que tiene a la escucha el peer que tiene trozos del fichero, se repetirá n veces.
-
-
-### 1.1. Usando mensajes multiformato un peer (155.54.2.3) se agrega como seed en el puerto 4533, y con los ficheros:
-
-- ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
-- android-studio.zip (hash af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d , tamaño 380.943.097 bytes).
-
-#### El peer envía al tracker un mensaje FILEINFO tipo ADD_SEED
-
-![Ejemplo: ADD_SEED](ADD_SEED.png)
-
-\pagebreak
-
-<!--
-<table>
-    <tr align="center">
-        <td>2</td>
-        <td>4533</td>
-        <td>2</td>
-    </tr>
-    <tr align="center">
-        <td>15</td>
-        <td colspan="3">ubuntu14.04.iso</td>
-    </tr>
-    <tr align="center">
-        <td>1024572864</td>
-        <td colspan="3">b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
-    </tr>
-    <tr align="center">
-        <td>18</td>
-        <td colspan="3">android-studio.zip</td>
-    </tr>
-    <tr align="center">
-        <td>380943097</td>
-        <td colspan="3">af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</td>
-    </tr>
-</table>
--->
-
-#### El tracker responde con un mensaje de CONTROL tipo ADD_SEED_ACK
-
-![Ejemplo: ADD_SEED_ACK](ADD_SEED_ACK.png)
-
-<!--
-<table>
-    <tr align="center">
-        <td>1</td>
-    </tr>
-</table>
--->
-
-
-### 1.2. Usando un lenguaje de marcas especificar la comunicación del apartado 1.1
-
-#### El peer envía al tracker un mensaje FILEINFO tipo ADD_SEED
-
-```xml
-<message>
-    <operation>add_seed</operation>
-    <port>4533</port>
-    <paquetes>1</paquetes>
-    <file>
-        <name>ubuntu14.04.iso</name>
-        <size>1024572864</size>
-        <hash>b9153318862f0f7b5f82c913ecb2117f97c3153e</hash>
-    </file>
-    <file>
-        <name>android-studio.zip</name>
-        <size>380943097</size>
-        <hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</hash>
-    </file>
-</message>
-```
-
-
-#### El tracker responde con un mensaje de CONTROL tipo ADD_SEED_ACK
-
-```xml
-<message>
-    <operation>add_seed_ack</operation>
-</message>
-```
-
 
 
 ### Formato del mensaje: SEEDQUERY para el tipo QUERY_FILES
@@ -543,8 +363,8 @@ Información del paquete:
 ```xml
 <message>
     <operation>query_files</operation>
-    <op></op>
     <file>
+        <op></op>
         <size></size>
         <name></name>
     </file>
@@ -636,13 +456,13 @@ Información del paquete:
     - Formato del mensaje: REMOVE.
     - El Peer informa al Tracker de que quiere hacer una solicitud de borrado, hay 2 opciones:
         - Darse de baja como peer: si queremos dejar de ser un Peer activo pondremos el Hash todo a 1.
-        - Dar de baja un fichero: Si solo queremos borrar un fichero de la lista de activos pondremos el Hash del fichero.
+        - Dar de baja un unico fichero: Si solo queremos borrar un fichero de la lista de activos pondremos el Hash del fichero.
 
 ```xml
 <message>
     <operation>remove_seed</operation>
     <port></port>
-    <hash></hash>
+    <hash></hash><!--si se da de baja el peer esta campo no aparecera-->
 </message>
 ```
 
@@ -651,7 +471,7 @@ Información del paquete:
 
 - Type: Siempre sera 9 o remove_seed para indicar que es un REMOVE_SEED.
 - Port: Indica el puerto del peer.
-- Hash: Hash del fichero al que damos de baja o todo a 1.
+- Hash: Hash del fichero al que damos de baja o no lo ponemos si nos damos de baja como peer
 
 
 
@@ -672,164 +492,6 @@ Información del paquete:
 
 - Type: Siempre será 10 o remove_seed_ack para indicar que es un REMOVE_SEED_ACK.
 
-
-
-### 2.1. Usando mensajes multiformato el peer solicita un QUERY_FILES al tracker y éste responde con la lista de archivos correspondiente.
-
-- ubuntu14.04.iso (hash b9153318862f0f7b5f82c913ecb2117f97c3153e, tamaño 1.024.572.864 bytes)
-- android-studio.zip (hash af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d , tamaño 380.943.097 bytes).
-
-
-#### El peer envía al track un mensaje SEED_QUERY_FILES tipo QUERY_FILES para buscar los ficheros de tamaño superior o igual a 250000 bytes
-
-![Ejemplo: QUERY_FILES](QUERY_FILES.png)
-
-<!--
-<table>
-    <tr align="center">
-        <td>5</td>
-        <td>1</td>
-        <td>250000</td>
-    </tr>
-    <tr align="center">
-        <td>0000000000000000</td>
-        <td colspan="2">000000000....</td>
-    </tr>
-</table>
--->
-
-
-#### El tracker le responde con un mensaje FILEINFO tipo QUERY_FILES_RESPONSE con los ficheros de tamaño superior a 250000 bytes
-
-![Ejemplo: QUERY_FILES_RESPONSE](QUERY_FILES_RESPONSE.png)
-
-\pagebreak
-
-<!--
-<table>
-    <tr align="center">
-        <td>6</td>
-        <td>0000000000000000</td>
-        <td>0000000000000000</td>
-        <td>2</td>
-    </tr>
-    <tr align="center">
-        <td>15</td>
-        <td colspan="3">ubuntu14.04.iso</td>
-    </tr>
-    <tr align="center">
-        <td>1024572864</td>
-        <td colspan="3">b9153318862f0f7b5f82c913ecb2117f97c3153e</td>
-    </tr>
-    <tr align="center">
-        <td>18</td>
-        <td colspan="3">android-studio.zip</td>
-    </tr>
-    <tr align="center">
-        <td>380943097</td>
-        <td colspan="3">af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</td>
-    </tr>
-</table>
--->
-
-
-### 2.2. Usando lenguaje de marcas especificar la comunicación del apartado 2.1.
-
-
-#### Peer informa a tracker con un mensaje SEEDQUERY:
-
-
-```xml
-<message>
-    <operation>query_files</operation>
-    <op>1</op> <!--podemos usar operadores bash: gt, lt, ge, etc-->
-    <file>
-        <size>250000</size>
-        <name></name>
-    </file>
-</message>
-```
-
-
-#### El tracker responde con un mensaje FILEINFO:
-
-```xml
-<message>
-    <operation>query_files_response</operation>
-    <num_seq></num_seq>
-    <port></port>
-    <file>
-        <name>ubuntu14.04.iso</name>
-        <size>1024572864</size>
-        <hash>b9153318862f0f7b5f82c913ecb2117f97c3153e</hash>
-    </file>
-    <file>
-        <name>android-studio.zip</name>
-        <size>380943097</size>
-        <hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</hash>
-    </file>
-</message>
-```
-
-
-#### El Peer pregunta al Tracker el tamaño de los chunks
-
-```xml
-<message>
-    <operation>query_chunk</operation>
-</message>
-```
-
-#### El Tracker responda al peer con el tamaño
-
-
-```xml
-<message>
-    <operation>query_chunk_response</operation>
-    <size>1500</size>
-</message>
-```
-
-
-#### El peer elimina un fichero de la lista del tracker
-
-
-```xml
-<message>
-    <operation>remove_seed</operation>
-    <port>9541</port>
-    <hash>af09cc0a33340d8daccdf3cbfefdc9ab45b97b5d</hash>
-</message>
-```
-
-#### El tracker confirma la eliminación
-
-
-```xml
-<message>
-    <operation>remove_seed_ack</operation>
-</message>
-```
-
-#### El peer se da de baja como peer activo de la lista del tracker
-
-
-```xml
-<message>
-    <operation>remove_seed</operation>
-    <port>9541</port>
-    <hash>11111111111111111111111111111111111111111</hash>
-</message>
-```
-
-#### El tracker confirma la eliminación
-
-
-```xml
-<message>
-    <operation>remove_seed_ack</operation>
-</message>
-```
 
 ### Errores que pueden surgir durante las comunicaciones:
 
