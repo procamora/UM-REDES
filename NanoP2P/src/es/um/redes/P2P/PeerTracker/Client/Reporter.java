@@ -6,6 +6,7 @@ import es.um.redes.P2P.PeerTracker.Message.Message;
 
 public class Reporter implements ReporterIface {
 
+	private final int PORT = 4450;
 	/**
 	 * Tracker hostname, used for establishing connection
 	 */
@@ -15,6 +16,7 @@ public class Reporter implements ReporterIface {
 	 * UDP socket for communication with tracker
 	 */
 	private DatagramSocket peerTrackerSocket;
+	private InetSocketAddress address;
 
 	/***
 	 * 
@@ -23,6 +25,7 @@ public class Reporter implements ReporterIface {
 	 */
 	public Reporter(String tracker) {
 		trackerHostname = tracker;
+		address = new InetSocketAddress(trackerHostname, PORT);
 		try {
 			peerTrackerSocket = new DatagramSocket();
 		} catch (SocketException e) {
@@ -53,7 +56,9 @@ public class Reporter implements ReporterIface {
 
 	@Override
 	public Message conversationWithTracker(Message request) {
-		// TODO Auto-generated method stub
+		//si hay fallos habra que retransmitir
+		sendMessageToTracker(peerTrackerSocket, request, address);
+		receiveMessageFromTracker(peerTrackerSocket);
 		return null;
 	}
 
