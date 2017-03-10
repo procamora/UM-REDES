@@ -1,12 +1,18 @@
 package es.um.redes.P2P.PeerTracker.Client;
 
+import java.io.IOException;
 import java.net.*;
 
 import es.um.redes.P2P.PeerTracker.Message.Message;
+import es.um.redes.P2P.PeerTracker.Message.MessageConf;
 
 public class Reporter implements ReporterIface {
 
 	private final int PORT = 4450;
+	private final int MAX_MSG_SIZE_BYTES = 1024;
+
+	private InetSocketAddress address;
+
 	/**
 	 * Tracker hostname, used for establishing connection
 	 */
@@ -16,7 +22,6 @@ public class Reporter implements ReporterIface {
 	 * UDP socket for communication with tracker
 	 */
 	private DatagramSocket peerTrackerSocket;
-	private InetSocketAddress address;
 
 	/***
 	 * 
@@ -26,12 +31,12 @@ public class Reporter implements ReporterIface {
 	public Reporter(String tracker) {
 		trackerHostname = tracker;
 		address = new InetSocketAddress(trackerHostname, PORT);
+
 		try {
 			peerTrackerSocket = new DatagramSocket();
 		} catch (SocketException e) {
 			e.printStackTrace();
-			System.err
-					.println("Reporter cannot create datagram socket for communication with tracker");
+			System.err.println("Reporter cannot create datagram socket for communication with tracker");
 			System.exit(-1);
 		}
 	}
@@ -42,25 +47,52 @@ public class Reporter implements ReporterIface {
 	}
 
 	@Override
-	public boolean sendMessageToTracker(DatagramSocket socket, Message request,
-			InetSocketAddress trackerAddress) {
+	public boolean sendMessageToTracker(DatagramSocket socket, Message request, InetSocketAddress trackerAddress) {
 		// TODO Auto-generated method stub
-		return false;
+		// almacena los datos que el cliente envia
+		byte[] enviarDatos = new byte[MAX_MSG_SIZE_BYTES];
+		// conversion de string a array de bytes
+		enviarDatos = request.toByteArray();
+		// crea el paquete que enviamos
+		DatagramPacket enviarPaquete = new DatagramPacket(enviarDatos, enviarDatos.length, trackerAddress);
+		// enviamos el paquete
+		try {
+			socket.send(enviarPaquete);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 	@Override
 	public Message receiveMessageFromTracker(DatagramSocket socket) {
 		// TODO Auto-generated method stub
-		return null;
+		byte[] recibirDatos = new byte[MAX_MSG_SIZE_BYTES];
+		// creamos un contenedor para el paquete recibirPaquete
+		DatagramPacket recibirPaquete = new DatagramPacket(recibirDatos, recibirDatos.length);
+		// cliente inactivo hasta recibir un paquete, guarda en recibirPaquete
+		try {
+			socket.receive(recibirPaquete);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// parseamos la respuesta al mensaje correspondiente
+		Message m = Message.parseResponse(recibirPaquete.getData());
+
+		// cerramos el socket
+		//socket.close();
+		end();
+		return m;
 	}
 
 	@Override
 	public Message conversationWithTracker(Message request) {
-		//si hay fallos habra que retransmitir
+		// TODO Auto-generated method stub
+		// si hay fallos habra que retransmitir
 		sendMessageToTracker(peerTrackerSocket, request, address);
-		receiveMessageFromTracker(peerTrackerSocket);
-		return null;
+		Message m = receiveMessageFromTracker(peerTrackerSocket);
+		return m;
 	}
-
 
 }

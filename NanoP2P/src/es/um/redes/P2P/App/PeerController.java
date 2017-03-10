@@ -5,7 +5,6 @@ import java.net.InetSocketAddress;
 import es.um.redes.P2P.PeerTracker.Client.Reporter;
 import es.um.redes.P2P.PeerTracker.Message.*;
 import es.um.redes.P2P.util.FileInfo;
-import static es.um.redes.P2P.App.PeerCommands.*; //variables estaticas
 
 public class PeerController implements PeerControllerIface {
 	/**
@@ -65,56 +64,121 @@ public class PeerController implements PeerControllerIface {
 	public void processCurrentCommand() {
 		// TODO Auto-generated method stub
 
+		// esta fuera porque siempre se ejecutara
+		Message m = createMessageFromCurrentCommand();
+
 		// analisis de casos
 		switch (currentCommand) {
-		case COM_CONFIG:
+			case PeerCommands.COM_CONFIG:
+				Message respuesta = reporter.conversationWithTracker(m);
+				processMessageFromTracker(respuesta);
+				break;
+			case PeerCommands.COM_ADDSEED:
 
-			break;
-		case COM_ADDSEED:
+				break;
+			case PeerCommands.COM_QUERY:
 
-			break;
-		case COM_QUERY:
+				break;
+			case PeerCommands.COM_DOWNLOAD:
 
-			break;
-		case COM_DOWNLOAD:
+				break;
+			case PeerCommands.COM_QUIT:
 
-			break;
-		case COM_QUIT:
+				break;
+			case PeerCommands.COM_SHOW:
 
-			break;
-		case COM_SHOW:
+				break;
+			case PeerCommands.COM_HELP:
 
-			break;
-		case COM_HELP:
+				break;
+			case PeerCommands.COM_INVALID:
 
-			break;
-		case COM_INVALID:
+				break;
 
-			break;
-		default:
-			break;
+			default:
+				break;
 		}
 
-		Message m = createMessageFromCurrentCommand();
-		reporter.conversationWithTracker(m);
 	}
 
 	@Override
 	public Message createMessageFromCurrentCommand() {
-		Message control;
-		//analisis de casos
-		//si confiicuracion
-		control = (MessageControl) Message.makeGetConfRequest();
-		
-		//si add_seed
-		control = (MessageFileInfo) Message.makeAddSeedRequest(seederPort, Peer.db.getLocalSharedFiles())
+		Message control = null;
 
+		// analisis de casos
+		switch (currentCommand) {
+			case PeerCommands.COM_CONFIG:
+				control = (MessageControl) Message.makeGetConfRequest();
+				break;
+			case PeerCommands.COM_ADDSEED:
+				// control = (MessageFileInfo)
+				// Message.makeAddSeedRequest(seederPort,
+				// Peer.db.getLocalSharedFiles());
+				break;
+			case PeerCommands.COM_QUERY:
+
+				break;
+			case PeerCommands.COM_DOWNLOAD:
+
+				break;
+			case PeerCommands.COM_QUIT:
+
+				break;
+			case PeerCommands.COM_SHOW:
+
+				break;
+			case PeerCommands.COM_HELP:
+
+				break;
+			case PeerCommands.COM_INVALID:
+
+				break;
+
+			default:
+				break;
+		}
 		return control;
 	}
 
 	@Override
 	public void processMessageFromTracker(Message response) {
 		// TODO Auto-generated method stub
+
+		// analisis de casos
+		switch (currentCommand) {
+			case PeerCommands.COM_CONFIG:
+				byte codigo = response.getOpCode();
+				System.out.println("codigo: " + codigo);
+
+				short t = ((MessageConf) response).getChunkSize();
+				System.out.println("tamaño chunks: " + t);
+
+				break;
+			case PeerCommands.COM_ADDSEED:
+
+				break;
+			case PeerCommands.COM_QUERY:
+
+				break;
+			case PeerCommands.COM_DOWNLOAD:
+
+				break;
+			case PeerCommands.COM_QUIT:
+
+				break;
+			case PeerCommands.COM_SHOW:
+
+				break;
+			case PeerCommands.COM_HELP:
+
+				break;
+			case PeerCommands.COM_INVALID:
+
+				break;
+
+			default:
+				break;
+		}
 
 	}
 
