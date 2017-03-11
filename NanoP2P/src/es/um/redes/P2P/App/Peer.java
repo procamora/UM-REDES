@@ -15,9 +15,7 @@ public class Peer {
 			return;
 		}
 		String trackerHostname = args[0];
-		System.out.println(trackerHostname);
 		String peerSharedFolder = args[1];
-		System.out.println(peerSharedFolder);
 
 		// Create database of shared files to be used by reporter and seeder
 		Peer.db = new PeerDatabase(peerSharedFolder);
@@ -34,7 +32,11 @@ public class Peer {
 		// Send list of local files to tracker 
 		commander.publishSharedFilesToTracker();
 		
-		// Begin accepting commands from user using shell 
+		System.out.println("LINEA DE COMANDOS: ");
+		// Begin accepting commands from user using shell
+		
+		//commander.setCurrentCommand(PeerCommands.COM_SHOW);
+		
 		do {
 			commander.readCommandFromShell();
 			commander.processCurrentCommand();

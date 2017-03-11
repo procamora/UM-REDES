@@ -60,9 +60,9 @@ public class Reporter implements ReporterIface {
 			socket.send(enviarPaquete);
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			return false;
+			// e.printStackTrace();
 		}
-		return false;
 	}
 
 	@Override
@@ -81,9 +81,6 @@ public class Reporter implements ReporterIface {
 		// parseamos la respuesta al mensaje correspondiente
 		Message m = Message.parseResponse(recibirPaquete.getData());
 
-		// cerramos el socket
-		//socket.close();
-		//end();
 		return m;
 	}
 
