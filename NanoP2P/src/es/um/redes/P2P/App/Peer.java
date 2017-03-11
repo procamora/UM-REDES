@@ -15,7 +15,9 @@ public class Peer {
 			return;
 		}
 		String trackerHostname = args[0];
+		System.out.println(trackerHostname);
 		String peerSharedFolder = args[1];
+		System.out.println(peerSharedFolder);
 
 		// Create database of shared files to be used by reporter and seeder
 		Peer.db = new PeerDatabase(peerSharedFolder);
@@ -24,7 +26,7 @@ public class Peer {
 		Reporter client = new Reporter(trackerHostname);
 		
 		// Create commander object that will accept and process user commands
-		PeerController commander = new PeerController(client);
+		PeerController commander = new PeerController(client, db);
 
 		// Begin conversation with tracker by getting configuration (chunk size)
 		commander.getConfigFromTracker();

@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import es.um.redes.P2P.PeerTracker.Client.Reporter;
 import es.um.redes.P2P.PeerTracker.Message.*;
 import es.um.redes.P2P.util.FileInfo;
+import es.um.redes.P2P.util.PeerDatabase;
 
 public class PeerController implements PeerControllerIface {
 	/**
@@ -14,10 +15,12 @@ public class PeerController implements PeerControllerIface {
 
 	private byte currentCommand;
 	private Reporter reporter;
+	private PeerDatabase peerDatabase;
 
-	public PeerController(Reporter client) {
+	public PeerController(Reporter client, PeerDatabase peerDatabase) {
 		shell = new PeerShell();
 		reporter = client;
+		this.peerDatabase = peerDatabase;
 	}
 
 	public byte getCurrentCommand() {
@@ -74,7 +77,9 @@ public class PeerController implements PeerControllerIface {
 				processMessageFromTracker(respuesta);
 				break;
 			case PeerCommands.COM_ADDSEED:
-
+				Message response =  reporter.conversationWithTracker(m);
+//				if (response.getOpCode() == Message.OP_ADD_SEED_ACK) 
+//					return response;
 				break;
 			case PeerCommands.COM_QUERY:
 
@@ -110,10 +115,12 @@ public class PeerController implements PeerControllerIface {
 			case PeerCommands.COM_CONFIG:
 				control = (MessageControl) Message.makeGetConfRequest();
 				break;
+				
 			case PeerCommands.COM_ADDSEED:
-				// control = (MessageFileInfo)
-				// Message.makeAddSeedRequest(seederPort,
-				// Peer.db.getLocalSharedFiles());
+				FileInfo[] lista = peerDatabase.getLocalSharedFiles();
+				control = Message.makeAddSeedRequest(6325, lista);		// El numero de puerto es inventado
+
+
 				break;
 			case PeerCommands.COM_QUERY:
 
@@ -155,7 +162,8 @@ public class PeerController implements PeerControllerIface {
 
 				break;
 			case PeerCommands.COM_ADDSEED:
-
+				
+				
 				break;
 			case PeerCommands.COM_QUERY:
 

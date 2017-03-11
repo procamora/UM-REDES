@@ -58,10 +58,11 @@ public class Reporter implements ReporterIface {
 		// enviamos el paquete
 		try {
 			socket.send(enviarPaquete);
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class Reporter implements ReporterIface {
 
 		// cerramos el socket
 		//socket.close();
-		end();
+		//end();
 		return m;
 	}
 
