@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.*;
 
 import es.um.redes.P2P.PeerTracker.Message.Message;
-import es.um.redes.P2P.PeerTracker.Message.MessageConf;
 
 public class Reporter implements ReporterIface {
 

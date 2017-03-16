@@ -5,7 +5,7 @@ import es.um.redes.P2P.util.PeerDatabase;
 
 public class Peer {
 	/**
-	 * Database of local files shared by this peer, static to force singleton 
+	 * Database of local files shared by this peer, static to force singleton
 	 */
 	public static PeerDatabase db;
 
@@ -22,26 +22,22 @@ public class Peer {
 
 		// Create client object on peer side to connect to tracker (reporter)
 		Reporter client = new Reporter(trackerHostname);
-		
+
 		// Create commander object that will accept and process user commands
 		PeerController commander = new PeerController(client, db);
 
 		// Begin conversation with tracker by getting configuration (chunk size)
 		commander.getConfigFromTracker();
-		
-		// Send list of local files to tracker 
+
+		// Send list of local files to tracker
 		commander.publishSharedFilesToTracker();
-		
-		System.out.println("LINEA DE COMANDOS: ");
+
 		// Begin accepting commands from user using shell
-		
-		//commander.setCurrentCommand(PeerCommands.COM_SHOW);
-		
 		do {
 			commander.readCommandFromShell();
 			commander.processCurrentCommand();
 		} while (commander.shouldQuit() == false);
-		
+
 		// Shutdown this peer's server threads by closing the server socket
 		client.end();
 
