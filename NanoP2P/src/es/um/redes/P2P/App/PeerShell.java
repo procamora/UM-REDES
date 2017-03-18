@@ -4,13 +4,14 @@ import java.util.Scanner;
 
 public class PeerShell implements PeerShellIface {
 
+	public static final int MAX_ARGS = 5;
 	private String comando;
 	private String[] argumentos;
 	private Scanner scanner;
 
 	public PeerShell() {
 		scanner = new Scanner(System.in);
-		argumentos = new String[5];// max 5 argumentos
+		argumentos = new String[MAX_ARGS];// max 5 argumentos
 		comando = new String();
 	}
 

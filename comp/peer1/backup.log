@@ -1,0 +1,893 @@
+building file list ... 
+ 0 files... 100 files... 200 files... 300 files... 400 files... 500 files... 600 files... 700 files... 800 files... 900 files... 1000 files... 1100 files... 1200 files... 1300 files... 1400 files... 1500 files... 1600 files... 1700 files... 1800 files... 1900 files... 2000 files... 2100 files... 2200 files... 2300 files... 2400 files... 2500 files... 2600 files... 2700 files... 2800 files... 2900 files... 3000 files... 3100 files... 3200 files... 3300 files... 3400 files...3419 files to consider
+./
+backup.log
+         32.77K  63%    0.00kB/s    0:00:00           51.80K 100%   18.15MB/s    0:00:00 (xfr#1, to-chk=3412/3419)
+
+sent 144.62K bytes  received 42 bytes  289.31K bytes/sec
+total size is 1.66G  speedup is 11,485.57
+building file list ... 
+ 0 files... 100 files... 200 files... 300 files... 400 files... 500 files... 600 files... 700 files... 800 files... 900 files... 1000 files... 1100 files... 1200 files... 1300 files... 1400 files... 1500 files... 1600 files... 1700 files... 1800 files... 1900 files... 2000 files... 2100 files... 2200 files... 2300 files... 2400 files... 2500 files... 2600 files... 2700 files... 2800 files... 2900 files... 3000 files... 3100 files... 3200 files... 3300 files... 3400 files...3419 files to consider
+./
+backup.log
+         32.77K  63%    0.00kB/s    0:00:00           51.80K 100%   18.15MB/s    0:00:00 (xfr#1, to-chk=3412/3419)
+Descargas/
+Descargas/test/
+Descargas/test/domotica-raspberry.git/
+Descargas/test/domotica-raspberry.git/hooks/
+Descargas/test/domotica-raspberry.git/info/
+Descargas/test/domotica-raspberry.git/objects/
+Descargas/test/domotica-raspberry.git/objects/pack/
+Descargas/test/iniciar-revision-geta.git/
+Descargas/test/iniciar-revision-geta.git/hooks/
+Descargas/test/iniciar-revision-geta.git/info/
+Descargas/test/iniciar-revision-geta.git/objects/
+Descargas/test/iniciar-revision-geta.git/objects/pack/
+Descargas/test/portabilidades-jazztel.git/
+Descargas/test/portabilidades-jazztel.git/hooks/
+Descargas/test/portabilidades-jazztel.git/info/
+Descargas/test/portabilidades-jazztel.git/objects/
+Descargas/test/portabilidades-jazztel.git/objects/pack/
+Descargas/test/saldos-operadoras.git/
+Descargas/test/saldos-operadoras.git/hooks/
+Descargas/test/saldos-operadoras.git/info/
+Descargas/test/saldos-operadoras.git/objects/
+Descargas/test/saldos-operadoras.git/objects/pack/
+Descargas/xv6-master/
+Descargas/xv6-master/bin/
+Descargas/xv6-master/include/
+Descargas/xv6-master/lib/
+Descargas/xv6-master/sys/
+Descargas/xv6-master/tools/
+Documentos/
+Documentos/ComisionApuntes/
+Documentos/ComisionApuntes/_1/
+Documentos/ComisionApuntes/_1/1_AMD/
+Documentos/ComisionApuntes/_1/1_AMD/AulaVirtual/
+Documentos/ComisionApuntes/_1/1_AMD/EJERCICIOS/
+Documentos/ComisionApuntes/_1/1_AMD/EJERCICIOS/Entregables/
+Documentos/ComisionApuntes/_1/1_AMD/EJERCICIOS/Entregables/Primer parcial/
+Documentos/ComisionApuntes/_1/1_AMD/EJERCICIOS/Entregables/Segundo parcial/
+Documentos/ComisionApuntes/_1/1_AMD/EJERCICIOS/Material de SAGE/
+Documentos/ComisionApuntes/_1/1_AMD/EXÁMENES/
+Documentos/ComisionApuntes/_1/1_AMD/EXÁMENES/Finales 2015-16/
+Documentos/ComisionApuntes/_1/1_AMD/EXÁMENES/Primer parcial 15-15/
+Documentos/ComisionApuntes/_1/1_AMD/EXÁMENES/Segundo parcial 15-16/
+Documentos/ComisionApuntes/_1/1_AMD/UNKNOWN/
+Documentos/ComisionApuntes/_1/1_FC/
+Documentos/ComisionApuntes/_1/1_FC/Ejercicios-Resueltos/
+Documentos/ComisionApuntes/_1/1_FC/Temario/
+Documentos/ComisionApuntes/_1/1_FC/Temario/Ficheros-Practicas/
+Documentos/ComisionApuntes/_1/1_FC/Temario/Ficheros-Practicas/Tema 2/
+Documentos/ComisionApuntes/_1/1_FC/Temario/Ficheros-Practicas/Tema 5/
+Documentos/ComisionApuntes/_1/1_FC/Temario/Ficheros-Practicas/Tema 6/
+Documentos/ComisionApuntes/_1/1_FC/Temario/_Misc/
+Documentos/ComisionApuntes/_1/1_FLI/
+Documentos/ComisionApuntes/_1/1_FLI/AulaVirtual/
+Documentos/ComisionApuntes/_1/1_FLI/AulaVirtual/2016-2017/
+Documentos/ComisionApuntes/_1/1_FLI/AulaVirtual/2016-2017/TEORÍA/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/AulaVirtual del 2015-2016/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/AulaVirtual del 2015-2016/00-Presentacion/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/AulaVirtual del 2015-2016/01-Logica/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/AulaVirtual del 2015-2016/05-Predicados/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/AulaVirtual del 2015-2016/07-Razonamientos-y-Deducciones/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/AulaVirtual del 2015-2016/08-Deduccion Natural/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/AulaVirtual del 2015-2016/Otros/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/AulaVirtual del 2015-2016/_html_/
+Documentos/ComisionApuntes/_1/1_FLI/UNKNOWN/Entregables/
+Documentos/ComisionApuntes/_1/1_GOHP/
+Documentos/ComisionApuntes/_1/1_GOHP/AulaVirtual/
+Documentos/ComisionApuntes/_1/1_GOHP/SEMINARIOS/
+Documentos/ComisionApuntes/_1/1_IP/
+Documentos/ComisionApuntes/_1/1_IP/AulaVirtual/
+Documentos/ComisionApuntes/_1/1_IP/UNKNOWN/
+Documentos/ComisionApuntes/_1/1_IP/UNKNOWN/28mayo2014/
+Documentos/ComisionApuntes/_1/1_IP/UNKNOWN/AulaVirtual 2016-2017/
+Documentos/ComisionApuntes/_1/1_IP/UNKNOWN/AulaVirtual 2016-2017/Exámenes/
+Documentos/ComisionApuntes/_1/1_IP/UNKNOWN/AulaVirtual 2016-2017/Prácticas/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Entregables/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Entregables/Resueltos/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Entregables/datos_entregable_3/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Temas/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Temas/Combinatoria y probabilidad/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Temas/Combinatoria y probabilidad/Programa/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Temas/Estadística Descriptiva/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Temas/Variable aleatoria continua/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Temas/Variable aletoria discreta/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/AulaVirtual/2015-2016/TEORÍA/Trabajos para subir nota/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/EXÁMENES/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/EXÁMENES/Examenes otros años/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/EXÁMENES/Examenes otros años/Segundo parcial/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/EXÁMENES/Examenes otros años/Segundo parcial/Finales/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/EXÁMENES/Examenes primer parcial/
+Documentos/ComisionApuntes/_1/2_ESTADÍSTICA/EXÁMENES/Exámenes segundo parcial año pasado/
+Documentos/ComisionApuntes/_1/2_ETC/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2014-2015/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2014-2015/TEORÍA/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Miscelánea/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Tema 1/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Tema 1/Placa-Intel-DG965SS/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Tema 2/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Tema 2/FicherosAutoevaluacionPracticasTema2/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Tema 2/FicherosBoletinPracticasTema2/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Tema 3/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Tema 4/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Tema 5/
+Documentos/ComisionApuntes/_1/2_ETC/AulaVirtual/2016-2017/Tema 6/
+Documentos/ComisionApuntes/_1/2_ETC/EXÁMENES/
+Documentos/ComisionApuntes/_1/2_ETC/RESUMENES/
+Documentos/ComisionApuntes/_1/2_FÍSICA/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/BLOQUE 1/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/BLOQUE 1/CONTROL ABRIL/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/BLOQUE 1/CONVOCATORIAS/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/BLOQUE 1/EJERCICIOS/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/BLOQUE 1/PRÁCTICAS/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/BLOQUE 1/TEORÍA/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/BLOQUE 2/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/BLOQUE 2/PRACTICAS/
+Documentos/ComisionApuntes/_1/2_FÍSICA/UNKNOWN/(Aula Virtual 2015-2016)/BLOQUE 2/TEORIA/
+Documentos/ComisionApuntes/_1/2_TP/
+Documentos/ComisionApuntes/_1/2_TP/AulaVirtual/
+Documentos/ComisionApuntes/_1/2_TP/UNKNOWN/
+Documentos/ComisionApuntes/_1/2_TP/UNKNOWN/AulaVirtual 2016-2017/
+Documentos/ComisionApuntes/_1/2_TP/UNKNOWN/AulaVirtual 2016-2017/PRÁCTICAS/
+Documentos/ComisionApuntes/_1/2_TP/UNKNOWN/AulaVirtual 2016-2017/PRÁCTICAS/CÓDIGO/
+Documentos/ComisionApuntes/_1/2_TP/UNKNOWN/AulaVirtual 2016-2017/PRÁCTICAS/CÓDIGO/DOCUMENTACIÓN/
+Documentos/ComisionApuntes/_2/
+Documentos/ComisionApuntes/_2/1_AEC/
+Documentos/ComisionApuntes/_2/1_AEC/EXÁMENES/
+Documentos/ComisionApuntes/_2/1_ALF/
+Documentos/ComisionApuntes/_2/1_ALF/UNKNOWN/
+Documentos/ComisionApuntes/_2/1_ALF/UNKNOWN/2016-2017/
+Documentos/ComisionApuntes/_2/1_ALF/UNKNOWN/2016-2017/Ejercicios/
+Documentos/ComisionApuntes/_2/1_ALF/UNKNOWN/2016-2017/Teoría/
+Documentos/ComisionApuntes/_2/1_ISO/
+Documentos/ComisionApuntes/_2/1_ISO/UNKNOWN/
+Documentos/ComisionApuntes/_2/1_POO/
+Documentos/ComisionApuntes/_2/1_POO/EXÁMENES/
+Documentos/ComisionApuntes/_2/2_AEDII/
+Documentos/ComisionApuntes/_2/2_AEDII/EXÁMENES/
+Documentos/ComisionApuntes/_2/2_BBDD/
+Documentos/ComisionApuntes/_2/2_BBDD/EJERCICIOS/
+Documentos/ComisionApuntes/_2/2_BBDD/EXÁMENES/
+Documentos/ComisionApuntes/_3/
+Documentos/ComisionApuntes/_3/1_AOC/
+Documentos/ComisionApuntes/_3/1_AOC/AulaVirtual/
+Documentos/ComisionApuntes/_3/1_AOC/EJERCICIOS/
+Documentos/ComisionApuntes/_3/1_AOC/EXÁMENES/
+Documentos/ComisionApuntes/_3/1_AR/
+Documentos/ComisionApuntes/_3/1_AR/AulaVirtual/
+Documentos/ComisionApuntes/_3/1_AR/AulaVirtual/2016-2017/
+Documentos/ComisionApuntes/_3/1_AR/AulaVirtual/2016-2017/PRÁCTICAS/
+Documentos/ComisionApuntes/_3/1_AR/AulaVirtual/2016-2017/TEORÍA/
+Documentos/ComisionApuntes/_3/1_AR/EJERCICIOS/
+Documentos/ComisionApuntes/_3/1_AR/EXÁMENES/
+Documentos/ComisionApuntes/_3/1_AR/RESUMENES/
+Documentos/ComisionApuntes/_3/1_ASO/
+Documentos/ComisionApuntes/_3/1_ASO/EXÁMENES/
+Documentos/ComisionApuntes/_3/1_SSII/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2013-2014/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2013-2014/Transparencias antiguas/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/GRUPO 1/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/GRUPO 1/Práctica 1/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/GRUPO 1/Práctica 1/Guión/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/GRUPO 1/Práctica 1/Guión/Casos/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/GRUPO 1/Práctica 1/Guión/EstructurayMetodos/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/GRUPO 1/Práctica 1/Libreria--GALib/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/GRUPO 1/Práctica 2/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/GRUPO 1/Práctica 2/Guión/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/PRÁCTICAS/GRUPO 1/Práctica 2/Guión/Ficheros/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/TEORÍA/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/TEORÍA/Tema 1/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/TEORÍA/Tema 2/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/TEORÍA/Tema 3/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/TEORÍA/Tema 4/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/TEORÍA/Tema 6/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/TEORÍA/Tema 7/
+Documentos/ComisionApuntes/_3/1_SSII/AulaVirtual/2016-2017/TEORÍA/Temas 5/
+Documentos/ComisionApuntes/_3/1_SSII/EJERCICIOS/
+Documentos/ComisionApuntes/_3/1_SSII/EXÁMENES/
+Documentos/ComisionApuntes/_3/1_SSII/RESUMENES/
+Documentos/ComisionApuntes/_3/1_SSII/RESUMENES/0000_Apuntes SSII Ali/
+Documentos/ComisionApuntes/_3/1_SSII/RESUMENES/0000_Más apuntes/
+Documentos/ComisionApuntes/_3/1_SSII/UNKNOW/
+Documentos/ComisionApuntes/_3/1_TDS/
+Documentos/ComisionApuntes/_3/1_TDS/AulaVirtual/
+Documentos/ComisionApuntes/_3/1_TDS/AulaVirtual/2016-2017/
+Documentos/ComisionApuntes/_3/1_TDS/AulaVirtual/2016-2017/TEORÍA/
+Documentos/ComisionApuntes/_3/1_TDS/RESUMENES/
+Documentos/ComisionApuntes/_3/2_GPDS/
+Documentos/ComisionApuntes/_3/2_GPDS/EXÁMENES/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/ACTIVIDADES EXTRA/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/ACTIVIDADES EXTRA/Actividad Extra 2/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/ACTIVIDADES EXTRA/Actividad Extra 3/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/ACTIVIDADES EXTRA/Actividad Extra 4/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/ACTIVIDADES EXTRA/Actividad Extra 5/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/PRÁCTICAS/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/PRÁCTICAS/PRÁCTICA 1/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/PRÁCTICAS/PRÁCTICA 2/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/PRÁCTICAS/PRÁCTICA 2/Material necesario/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/RESULTADOS DE APRENDIZAJE TEORÍA _LO_S_/
+Documentos/ComisionApuntes/_3/2_GPDS/UNKNOW/SIDRA/
+Documentos/ComisionApuntes/_3/2_PDS/
+Documentos/ComisionApuntes/_3/2_PDS/UNKNOW/
+Documentos/ComisionApuntes/_3/2_PDS/UNKNOW/Práctica 1/
+Documentos/ComisionApuntes/_3/2_PDS/UNKNOW/Práctica 2/
+Documentos/ComisionApuntes/_3/2_PDS/UNKNOW/Transparencias/
+Documentos/ComisionApuntes/_3/2_SSTT/
+Documentos/ComisionApuntes/_3/2_SSTT/EXÁMENES/
+Documentos/ComisionApuntes/_3/2_SSTT/UNKNOW/
+Documentos/ComisionApuntes/_3/2_SSTT/UNKNOW/Prácticas/
+Documentos/ComisionApuntes/_3/2_SSTT/UNKNOW/Teoría/
+Documentos/ComisionApuntes/_4/
+Documentos/ComisionApuntes/_4/COMPUTACIÓN/
+Documentos/ComisionApuntes/_4/COMPUTACIÓN/1_Compresión Multimedia/
+Documentos/ComisionApuntes/_4/COMPUTACIÓN/1_Compresión Multimedia/EXÁMENES/
+Documentos/ComisionApuntes/_4/COMPUTACIÓN/1_Informática Gráfica/
+Documentos/ComisionApuntes/_4/COMPUTACIÓN/1_Informática Gráfica/EXÁMENES/
+Documentos/ComisionApuntes/_4/COMPUTACIÓN/2_Modelos de Computación/
+Documentos/ComisionApuntes/_4/COMPUTACIÓN/2_Modelos de Computación/EJERCICIOS/
+Documentos/ComisionApuntes/_4/COMPUTACIÓN/2_Modelos de Computación/EXÁMENES/
+Documentos/ComisionApuntes/_4/COMPUTACIÓN/2_Modelos de Computación/RESÚMENES/
+Documentos/ComisionApuntes/_4/REDES/
+Documentos/ComisionApuntes/_4/REDES/1_ARA/
+Documentos/ComisionApuntes/_4/REDES/1_ARA/EJERCICIOS/
+Documentos/ComisionApuntes/_4/SOFTWARE/
+Documentos/ComisionApuntes/_4/SOFTWARE/1_INFORMATICA GRAFICA/
+Documentos/ComisionApuntes/_4/SOFTWARE/1_INFORMATICA GRAFICA/AulaVirtual/
+Documentos/ComisionApuntes/_4/SOFTWARE/1_INFORMATICA GRAFICA/AulaVirtual/2016-2017/
+Documentos/ComisionApuntes/_4/SOFTWARE/1_INFORMATICA GRAFICA/AulaVirtual/2016-2017/Diapositivas/
+Documentos/ComisionApuntes/_4/SOFTWARE/1_INFORMATICA GRAFICA/AulaVirtual/2016-2017/Practica1/
+Documentos/ComisionApuntes/__INFO/
+Documentos/ComisionApuntes/__INFO/_Borradores/
+Documentos/ComisionApuntes/__INFO/_Borradores/_EJEMPLO_ESTRUCTURA-JL/
+Documentos/Domotica-Arduino/
+Documentos/Fritzing/
+Documentos/Fritzing/bins/
+Documentos/Gestor-Series/
+Documentos/Gestor-Series/Icons/
+Documentos/Gestor-Series/Icons/fatcow/
+Documentos/Gestor-Series/SQL/
+Documentos/Gestor-Series/__pycache__/
+Documentos/Gestor-Series/modulos/
+Documentos/Gestor-Series/modulos/__pycache__/
+Documentos/Gestor-Series/ui/
+Documentos/Gestor-Series/ui/__pycache__/
+Documentos/Tira-de-led-Arduino/
+Documentos/Wiki-Personal/
+Documentos/Wiki-Personal/content/
+Documentos/Wiki-Personal/content/Android/
+Documentos/Wiki-Personal/content/Linux/
+Documentos/Wiki-Personal/content/Pentesting/
+Documentos/Wiki-Personal/content/Programacion/
+Documentos/Wiki-Personal/content/Software/
+Documentos/Wiki-Personal/content/Windows/
+Documentos/Wiki-Personal/content/code/
+Documentos/Wiki-Personal/content/descargas/
+Documentos/Wiki-Personal/content/draft/
+Documentos/Wiki-Personal/content/extra/
+Documentos/Wiki-Personal/content/images/
+Documentos/Wiki-Personal/content/images/2017/
+Documentos/Wiki-Personal/content/pages/
+Documentos/Wiki-Personal/output/
+Documentos/Wiki-Personal/output/2015/
+Documentos/Wiki-Personal/output/2015/08/
+Documentos/Wiki-Personal/output/2015/08/Pure-FTPd/
+Documentos/Wiki-Personal/output/2015/08/popcorn_time/
+Documentos/Wiki-Personal/output/2015/08/vim/
+Documentos/Wiki-Personal/output/2015/09/
+Documentos/Wiki-Personal/output/2015/09/Adb/
+Documentos/Wiki-Personal/output/2015/09/WPA/
+Documentos/Wiki-Personal/output/2015/09/arranque_dual_windows/
+Documentos/Wiki-Personal/output/2015/09/bomba_fork/
+Documentos/Wiki-Personal/output/2015/09/crear_administrador_windows/
+Documentos/Wiki-Personal/output/2015/09/estenagrogafia_windows/
+Documentos/Wiki-Personal/output/2015/09/meterpreter/
+Documentos/Wiki-Personal/output/2015/09/reaver/
+Documentos/Wiki-Personal/output/2015/09/ssltrip/
+Documentos/Wiki-Personal/output/2015/09/ssltrip2/
+Documentos/Wiki-Personal/output/2015/09/wep/
+Documentos/Wiki-Personal/output/2015/09/wireshark/
+Documentos/Wiki-Personal/output/2015/10/
+Documentos/Wiki-Personal/output/2015/10/ProblemasRedGnome/
+Documentos/Wiki-Personal/output/2015/10/ip/
+Documentos/Wiki-Personal/output/2015/10/localizacion_programas/
+Documentos/Wiki-Personal/output/2015/10/mencoder/
+Documentos/Wiki-Personal/output/2015/10/menu_contextual_rar/
+Documentos/Wiki-Personal/output/2015/10/montar_fichero_iso_como_CD-ROM/
+Documentos/Wiki-Personal/output/2015/10/netcat/
+Documentos/Wiki-Personal/output/2015/10/netstat/
+Documentos/Wiki-Personal/output/2015/10/permisos/
+Documentos/Wiki-Personal/output/2015/10/procesos/
+Documentos/Wiki-Personal/output/2015/10/puertos/
+Documentos/Wiki-Personal/output/2015/10/sources_list/
+Documentos/Wiki-Personal/output/2015/10/teclado_español/
+Documentos/Wiki-Personal/output/2015/11/
+Documentos/Wiki-Personal/output/2015/11/16_magnificos_comandos/
+Documentos/Wiki-Personal/output/2015/11/Ajustar_pantalla/
+Documentos/Wiki-Personal/output/2015/11/EncryptLuks/
+Documentos/Wiki-Personal/output/2015/11/ImageMagik/
+Documentos/Wiki-Personal/output/2015/11/PuertoSerie/
+Documentos/Wiki-Personal/output/2015/11/comando_apt/
+Documentos/Wiki-Personal/output/2015/11/comando_chmod/
+Documentos/Wiki-Personal/output/2015/11/comandos_basicos/
+Documentos/Wiki-Personal/output/2015/11/compartir_archivos_localmente/
+Documentos/Wiki-Personal/output/2015/11/crear_lanzadores/
+Documentos/Wiki-Personal/output/2015/11/datos_pc/
+Documentos/Wiki-Personal/output/2015/11/dd/
+Documentos/Wiki-Personal/output/2015/11/eliminar_archivo_corrupto/
+Documentos/Wiki-Personal/output/2015/11/gnome-shell/
+Documentos/Wiki-Personal/output/2015/11/grub/
+Documentos/Wiki-Personal/output/2015/11/ip_statica/
+Documentos/Wiki-Personal/output/2015/11/man_español/
+Documentos/Wiki-Personal/output/2015/11/nbtscan/
+Documentos/Wiki-Personal/output/2015/11/rc_local/
+Documentos/Wiki-Personal/output/2015/11/usos_gpg/
+Documentos/Wiki-Personal/output/2015/11/usuarios_grupos/
+Documentos/Wiki-Personal/output/2015/11/volumen/
+Documentos/Wiki-Personal/output/2015/12/
+Documentos/Wiki-Personal/output/2015/12/2015_12_03_usorsync/
+Documentos/Wiki-Personal/output/2015/12/activarteclasuprimir/
+Documentos/Wiki-Personal/output/2015/12/actualizar-variables-entorno/
+Documentos/Wiki-Personal/output/2015/12/buscar-y-remplazar/
+Documentos/Wiki-Personal/output/2015/12/codificacioneclipse/
+Documentos/Wiki-Personal/output/2015/12/comando_screen/
+Documentos/Wiki-Personal/output/2015/12/comando_split/
+Documentos/Wiki-Personal/output/2015/12/compilar_c++_sublimetext/
+Documentos/Wiki-Personal/output/2015/12/compilar_c_sublimetext/
+Documentos/Wiki-Personal/output/2015/12/compilar_java_sublimetext/
+Documentos/Wiki-Personal/output/2015/12/crearlanzadorgnomeshell/
+Documentos/Wiki-Personal/output/2015/12/crearmenucrearfichero/
+Documentos/Wiki-Personal/output/2015/12/mdcharmlinux/
+Documentos/Wiki-Personal/output/2015/12/monitor/
+Documentos/Wiki-Personal/output/2015/12/parsearfichero/
+Documentos/Wiki-Personal/output/2015/12/privatekey_linux/
+Documentos/Wiki-Personal/output/2015/12/ssh_configfile/
+Documentos/Wiki-Personal/output/2015/12/verdiferentespaquetes/
+Documentos/Wiki-Personal/output/2016/
+Documentos/Wiki-Personal/output/2016/01/
+Documentos/Wiki-Personal/output/2016/01/2016_01_09_cambiar-monitor-guake/
+Documentos/Wiki-Personal/output/2016/01/2016_01_09_usar-vlc-como-root/
+Documentos/Wiki-Personal/output/2016/01/descargar-video-youtube-con-python/
+Documentos/Wiki-Personal/output/2016/01/instalar-chroma-en-nexus-4/
+Documentos/Wiki-Personal/output/2016/01/instalar-phoenix-os/
+Documentos/Wiki-Personal/output/2016/01/instalar-remix-os-en-nexus-9/
+Documentos/Wiki-Personal/output/2016/01/instalar-spotify-kali/
+Documentos/Wiki-Personal/output/2016/01/instalar-twrp-en-android/
+Documentos/Wiki-Personal/output/2016/02/
+Documentos/Wiki-Personal/output/2016/02/cascos-bluetooth-en-kali/
+Documentos/Wiki-Personal/output/2016/02/tips-git/
+Documentos/Wiki-Personal/output/2016/03/
+Documentos/Wiki-Personal/output/2016/03/autorun-script-linux-systemd/
+Documentos/Wiki-Personal/output/2016/05/
+Documentos/Wiki-Personal/output/2016/05/concatenar-pdf/
+Documentos/Wiki-Personal/output/2016/09/
+Documentos/Wiki-Personal/output/2016/09/uso-telegram-en-arduino-wemos/
+Documentos/Wiki-Personal/output/2017/
+Documentos/Wiki-Personal/output/2017/01/
+Documentos/Wiki-Personal/output/2017/01/markdown-to-pdf/
+Documentos/Wiki-Personal/output/about/
+Documentos/Wiki-Personal/output/archives/
+Documentos/Wiki-Personal/output/categories/
+Documentos/Wiki-Personal/output/category/
+Documentos/Wiki-Personal/output/category/android/
+Documentos/Wiki-Personal/output/category/android/feed/
+Documentos/Wiki-Personal/output/category/code/
+Documentos/Wiki-Personal/output/category/code/feed/
+Documentos/Wiki-Personal/output/category/draft/
+Documentos/Wiki-Personal/output/category/draft/feed/
+Documentos/Wiki-Personal/output/category/linux/
+Documentos/Wiki-Personal/output/category/linux/feed/
+Documentos/Wiki-Personal/output/category/pentesting/
+Documentos/Wiki-Personal/output/category/pentesting/feed/
+Documentos/Wiki-Personal/output/category/programacion/
+Documentos/Wiki-Personal/output/category/programacion/feed/
+Documentos/Wiki-Personal/output/category/software/
+Documentos/Wiki-Personal/output/category/software/feed/
+Documentos/Wiki-Personal/output/category/windows/
+Documentos/Wiki-Personal/output/category/windows/feed/
+Documentos/Wiki-Personal/output/code/
+Documentos/Wiki-Personal/output/descargas/
+Documentos/Wiki-Personal/output/drafts/
+Documentos/Wiki-Personal/output/extra/
+Documentos/Wiki-Personal/output/feed/
+Documentos/Wiki-Personal/output/feed/atom/
+Documentos/Wiki-Personal/output/feeds/
+Documentos/Wiki-Personal/output/images/
+Documentos/Wiki-Personal/output/images/2017/
+Documentos/Wiki-Personal/output/tag/
+Documentos/Wiki-Personal/output/tag/adb/
+Documentos/Wiki-Personal/output/tag/adb/feed/
+Documentos/Wiki-Personal/output/tag/adb/feed/atom/
+Documentos/Wiki-Personal/output/tag/aircrack/
+Documentos/Wiki-Personal/output/tag/aircrack/feed/
+Documentos/Wiki-Personal/output/tag/aircrack/feed/atom/
+Documentos/Wiki-Personal/output/tag/android/
+Documentos/Wiki-Personal/output/tag/android/feed/
+Documentos/Wiki-Personal/output/tag/android/feed/atom/
+Documentos/Wiki-Personal/output/tag/apt/
+Documentos/Wiki-Personal/output/tag/apt/feed/
+Documentos/Wiki-Personal/output/tag/apt/feed/atom/
+Documentos/Wiki-Personal/output/tag/arduino/
+Documentos/Wiki-Personal/output/tag/arduino/feed/
+Documentos/Wiki-Personal/output/tag/arduino/feed/atom/
+Documentos/Wiki-Personal/output/tag/atom/
+Documentos/Wiki-Personal/output/tag/atom/feed/
+Documentos/Wiki-Personal/output/tag/atom/feed/atom/
+Documentos/Wiki-Personal/output/tag/bash/
+Documentos/Wiki-Personal/output/tag/bash/feed/
+Documentos/Wiki-Personal/output/tag/bash/feed/atom/
+Documentos/Wiki-Personal/output/tag/c/
+Documentos/Wiki-Personal/output/tag/c/feed/
+Documentos/Wiki-Personal/output/tag/c/feed/atom/
+Documentos/Wiki-Personal/output/tag/chmod/
+Documentos/Wiki-Personal/output/tag/chmod/feed/
+Documentos/Wiki-Personal/output/tag/chmod/feed/atom/
+Documentos/Wiki-Personal/output/tag/chroma/
+Documentos/Wiki-Personal/output/tag/chroma/feed/
+Documentos/Wiki-Personal/output/tag/chroma/feed/atom/
+Documentos/Wiki-Personal/output/tag/cloudconvert/
+Documentos/Wiki-Personal/output/tag/cloudconvert/feed/
+Documentos/Wiki-Personal/output/tag/cloudconvert/feed/atom/
+Documentos/Wiki-Personal/output/tag/code/
+Documentos/Wiki-Personal/output/tag/code/feed/
+Documentos/Wiki-Personal/output/tag/code/feed/atom/
+Documentos/Wiki-Personal/output/tag/comandos/
+Documentos/Wiki-Personal/output/tag/comandos/feed/
+Documentos/Wiki-Personal/output/tag/comandos/feed/atom/
+Documentos/Wiki-Personal/output/tag/consola/
+Documentos/Wiki-Personal/output/tag/consola/feed/
+Documentos/Wiki-Personal/output/tag/consola/feed/atom/
+Documentos/Wiki-Personal/output/tag/dd/
+Documentos/Wiki-Personal/output/tag/dd/feed/
+Documentos/Wiki-Personal/output/tag/dd/feed/atom/
+Documentos/Wiki-Personal/output/tag/drivers/
+Documentos/Wiki-Personal/output/tag/drivers/feed/
+Documentos/Wiki-Personal/output/tag/drivers/feed/atom/
+Documentos/Wiki-Personal/output/tag/egrep/
+Documentos/Wiki-Personal/output/tag/egrep/feed/
+Documentos/Wiki-Personal/output/tag/egrep/feed/atom/
+Documentos/Wiki-Personal/output/tag/esp8266/
+Documentos/Wiki-Personal/output/tag/esp8266/feed/
+Documentos/Wiki-Personal/output/tag/esp8266/feed/atom/
+Documentos/Wiki-Personal/output/tag/estenagrogafia/
+Documentos/Wiki-Personal/output/tag/estenagrogafia/feed/
+Documentos/Wiki-Personal/output/tag/estenagrogafia/feed/atom/
+Documentos/Wiki-Personal/output/tag/fastboot/
+Documentos/Wiki-Personal/output/tag/fastboot/feed/
+Documentos/Wiki-Personal/output/tag/fastboot/feed/atom/
+Documentos/Wiki-Personal/output/tag/find/
+Documentos/Wiki-Personal/output/tag/find/feed/
+Documentos/Wiki-Personal/output/tag/find/feed/atom/
+Documentos/Wiki-Personal/output/tag/ftp/
+Documentos/Wiki-Personal/output/tag/ftp/feed/
+Documentos/Wiki-Personal/output/tag/ftp/feed/atom/
+Documentos/Wiki-Personal/output/tag/ghostscript/
+Documentos/Wiki-Personal/output/tag/ghostscript/feed/
+Documentos/Wiki-Personal/output/tag/ghostscript/feed/atom/
+Documentos/Wiki-Personal/output/tag/gimli/
+Documentos/Wiki-Personal/output/tag/gimli/feed/
+Documentos/Wiki-Personal/output/tag/gimli/feed/atom/
+Documentos/Wiki-Personal/output/tag/git/
+Documentos/Wiki-Personal/output/tag/git/feed/
+Documentos/Wiki-Personal/output/tag/git/feed/atom/
+Documentos/Wiki-Personal/output/tag/github/
+Documentos/Wiki-Personal/output/tag/github/feed/
+Documentos/Wiki-Personal/output/tag/github/feed/atom/
+Documentos/Wiki-Personal/output/tag/gnome-shell/
+Documentos/Wiki-Personal/output/tag/gnome-shell/feed/
+Documentos/Wiki-Personal/output/tag/gnome-shell/feed/atom/
+Documentos/Wiki-Personal/output/tag/gpg/
+Documentos/Wiki-Personal/output/tag/gpg/feed/
+Documentos/Wiki-Personal/output/tag/gpg/feed/atom/
+Documentos/Wiki-Personal/output/tag/gpio/
+Documentos/Wiki-Personal/output/tag/gpio/feed/
+Documentos/Wiki-Personal/output/tag/gpio/feed/atom/
+Documentos/Wiki-Personal/output/tag/grub/
+Documentos/Wiki-Personal/output/tag/grub/feed/
+Documentos/Wiki-Personal/output/tag/grub/feed/atom/
+Documentos/Wiki-Personal/output/tag/gs/
+Documentos/Wiki-Personal/output/tag/gs/feed/
+Documentos/Wiki-Personal/output/tag/gs/feed/atom/
+Documentos/Wiki-Personal/output/tag/guake/
+Documentos/Wiki-Personal/output/tag/guake/feed/
+Documentos/Wiki-Personal/output/tag/guake/feed/atom/
+Documentos/Wiki-Personal/output/tag/imagemagick/
+Documentos/Wiki-Personal/output/tag/imagemagick/feed/
+Documentos/Wiki-Personal/output/tag/imagemagick/feed/atom/
+Documentos/Wiki-Personal/output/tag/imagemagik/
+Documentos/Wiki-Personal/output/tag/imagemagik/feed/
+Documentos/Wiki-Personal/output/tag/imagemagik/feed/atom/
+Documentos/Wiki-Personal/output/tag/java/
+Documentos/Wiki-Personal/output/tag/java/feed/
+Documentos/Wiki-Personal/output/tag/java/feed/atom/
+Documentos/Wiki-Personal/output/tag/kali/
+Documentos/Wiki-Personal/output/tag/kali/feed/
+Documentos/Wiki-Personal/output/tag/kali/feed/atom/
+Documentos/Wiki-Personal/output/tag/kalilinux/
+Documentos/Wiki-Personal/output/tag/kalilinux/feed/
+Documentos/Wiki-Personal/output/tag/kalilinux/feed/atom/
+Documentos/Wiki-Personal/output/tag/linux/
+Documentos/Wiki-Personal/output/tag/linux/feed/
+Documentos/Wiki-Personal/output/tag/linux/feed/atom/
+Documentos/Wiki-Personal/output/tag/luks/
+Documentos/Wiki-Personal/output/tag/luks/feed/
+Documentos/Wiki-Personal/output/tag/luks/feed/atom/
+Documentos/Wiki-Personal/output/tag/markdown/
+Documentos/Wiki-Personal/output/tag/markdown/feed/
+Documentos/Wiki-Personal/output/tag/markdown/feed/atom/
+Documentos/Wiki-Personal/output/tag/markdownpad/
+Documentos/Wiki-Personal/output/tag/markdownpad/feed/
+Documentos/Wiki-Personal/output/tag/markdownpad/feed/atom/
+Documentos/Wiki-Personal/output/tag/markdowntopdf/
+Documentos/Wiki-Personal/output/tag/markdowntopdf/feed/
+Documentos/Wiki-Personal/output/tag/markdowntopdf/feed/atom/
+Documentos/Wiki-Personal/output/tag/mdcharm/
+Documentos/Wiki-Personal/output/tag/mdcharm/feed/
+Documentos/Wiki-Personal/output/tag/mdcharm/feed/atom/
+Documentos/Wiki-Personal/output/tag/mencoder/
+Documentos/Wiki-Personal/output/tag/mencoder/feed/
+Documentos/Wiki-Personal/output/tag/mencoder/feed/atom/
+Documentos/Wiki-Personal/output/tag/meterpreter/
+Documentos/Wiki-Personal/output/tag/meterpreter/feed/
+Documentos/Wiki-Personal/output/tag/meterpreter/feed/atom/
+Documentos/Wiki-Personal/output/tag/meterssh/
+Documentos/Wiki-Personal/output/tag/meterssh/feed/
+Documentos/Wiki-Personal/output/tag/meterssh/feed/atom/
+Documentos/Wiki-Personal/output/tag/mount/
+Documentos/Wiki-Personal/output/tag/mount/feed/
+Documentos/Wiki-Personal/output/tag/mount/feed/atom/
+Documentos/Wiki-Personal/output/tag/nbtscan/
+Documentos/Wiki-Personal/output/tag/nbtscan/feed/
+Documentos/Wiki-Personal/output/tag/nbtscan/feed/atom/
+Documentos/Wiki-Personal/output/tag/netcat/
+Documentos/Wiki-Personal/output/tag/netcat/feed/
+Documentos/Wiki-Personal/output/tag/netcat/feed/atom/
+Documentos/Wiki-Personal/output/tag/network/
+Documentos/Wiki-Personal/output/tag/network/feed/
+Documentos/Wiki-Personal/output/tag/network/feed/atom/
+Documentos/Wiki-Personal/output/tag/nexus/
+Documentos/Wiki-Personal/output/tag/nexus/feed/
+Documentos/Wiki-Personal/output/tag/nexus/feed/atom/
+Documentos/Wiki-Personal/output/tag/nexus4/
+Documentos/Wiki-Personal/output/tag/nexus4/feed/
+Documentos/Wiki-Personal/output/tag/nexus4/feed/atom/
+Documentos/Wiki-Personal/output/tag/nexus9/
+Documentos/Wiki-Personal/output/tag/nexus9/feed/
+Documentos/Wiki-Personal/output/tag/nexus9/feed/atom/
+Documentos/Wiki-Personal/output/tag/ntfs/
+Documentos/Wiki-Personal/output/tag/ntfs/feed/
+Documentos/Wiki-Personal/output/tag/ntfs/feed/atom/
+Documentos/Wiki-Personal/output/tag/nvidia/
+Documentos/Wiki-Personal/output/tag/nvidia/feed/
+Documentos/Wiki-Personal/output/tag/nvidia/feed/atom/
+Documentos/Wiki-Personal/output/tag/pandoc/
+Documentos/Wiki-Personal/output/tag/pandoc/feed/
+Documentos/Wiki-Personal/output/tag/pandoc/feed/atom/
+Documentos/Wiki-Personal/output/tag/parser/
+Documentos/Wiki-Personal/output/tag/parser/feed/
+Documentos/Wiki-Personal/output/tag/parser/feed/atom/
+Documentos/Wiki-Personal/output/tag/path/
+Documentos/Wiki-Personal/output/tag/path/feed/
+Documentos/Wiki-Personal/output/tag/path/feed/atom/
+Documentos/Wiki-Personal/output/tag/pdf/
+Documentos/Wiki-Personal/output/tag/pdf/feed/
+Documentos/Wiki-Personal/output/tag/pdf/feed/atom/
+Documentos/Wiki-Personal/output/tag/pdfjam/
+Documentos/Wiki-Personal/output/tag/pdfjam/feed/
+Documentos/Wiki-Personal/output/tag/pdfjam/feed/atom/
+Documentos/Wiki-Personal/output/tag/pdfunite/
+Documentos/Wiki-Personal/output/tag/pdfunite/feed/
+Documentos/Wiki-Personal/output/tag/pdfunite/feed/atom/
+Documentos/Wiki-Personal/output/tag/pelican/
+Documentos/Wiki-Personal/output/tag/pelican/feed/
+Documentos/Wiki-Personal/output/tag/pelican/feed/atom/
+Documentos/Wiki-Personal/output/tag/perl/
+Documentos/Wiki-Personal/output/tag/perl/feed/
+Documentos/Wiki-Personal/output/tag/perl/feed/atom/
+Documentos/Wiki-Personal/output/tag/permisos/
+Documentos/Wiki-Personal/output/tag/permisos/feed/
+Documentos/Wiki-Personal/output/tag/permisos/feed/atom/
+Documentos/Wiki-Personal/output/tag/phoenix/
+Documentos/Wiki-Personal/output/tag/phoenix/feed/
+Documentos/Wiki-Personal/output/tag/phoenix/feed/atom/
+Documentos/Wiki-Personal/output/tag/phoenixos/
+Documentos/Wiki-Personal/output/tag/phoenixos/feed/
+Documentos/Wiki-Personal/output/tag/phoenixos/feed/atom/
+Documentos/Wiki-Personal/output/tag/popcorn/
+Documentos/Wiki-Personal/output/tag/popcorn/feed/
+Documentos/Wiki-Personal/output/tag/popcorn/feed/atom/
+Documentos/Wiki-Personal/output/tag/privatekey/
+Documentos/Wiki-Personal/output/tag/privatekey/feed/
+Documentos/Wiki-Personal/output/tag/privatekey/feed/atom/
+Documentos/Wiki-Personal/output/tag/procesos/
+Documentos/Wiki-Personal/output/tag/procesos/feed/
+Documentos/Wiki-Personal/output/tag/procesos/feed/atom/
+Documentos/Wiki-Personal/output/tag/programacion/
+Documentos/Wiki-Personal/output/tag/programacion/feed/
+Documentos/Wiki-Personal/output/tag/programacion/feed/atom/
+Documentos/Wiki-Personal/output/tag/pureftpd/
+Documentos/Wiki-Personal/output/tag/pureftpd/feed/
+Documentos/Wiki-Personal/output/tag/pureftpd/feed/atom/
+Documentos/Wiki-Personal/output/tag/pypdf2/
+Documentos/Wiki-Personal/output/tag/pypdf2/feed/
+Documentos/Wiki-Personal/output/tag/pypdf2/feed/atom/
+Documentos/Wiki-Personal/output/tag/python-programacion/
+Documentos/Wiki-Personal/output/tag/python-programacion/feed/
+Documentos/Wiki-Personal/output/tag/python-programacion/feed/atom/
+Documentos/Wiki-Personal/output/tag/python/
+Documentos/Wiki-Personal/output/tag/python/feed/
+Documentos/Wiki-Personal/output/tag/python/feed/atom/
+Documentos/Wiki-Personal/output/tag/ramas/
+Documentos/Wiki-Personal/output/tag/ramas/feed/
+Documentos/Wiki-Personal/output/tag/ramas/feed/atom/
+Documentos/Wiki-Personal/output/tag/rar/
+Documentos/Wiki-Personal/output/tag/rar/feed/
+Documentos/Wiki-Personal/output/tag/rar/feed/atom/
+Documentos/Wiki-Personal/output/tag/raspberry/
+Documentos/Wiki-Personal/output/tag/raspberry/feed/
+Documentos/Wiki-Personal/output/tag/raspberry/feed/atom/
+Documentos/Wiki-Personal/output/tag/reaver/
+Documentos/Wiki-Personal/output/tag/reaver/feed/
+Documentos/Wiki-Personal/output/tag/reaver/feed/atom/
+Documentos/Wiki-Personal/output/tag/regex/
+Documentos/Wiki-Personal/output/tag/regex/feed/
+Documentos/Wiki-Personal/output/tag/regex/feed/atom/
+Documentos/Wiki-Personal/output/tag/remix/
+Documentos/Wiki-Personal/output/tag/remix/feed/
+Documentos/Wiki-Personal/output/tag/remix/feed/atom/
+Documentos/Wiki-Personal/output/tag/remixos/
+Documentos/Wiki-Personal/output/tag/remixos/feed/
+Documentos/Wiki-Personal/output/tag/remixos/feed/atom/
+Documentos/Wiki-Personal/output/tag/reopsitorio/
+Documentos/Wiki-Personal/output/tag/reopsitorio/feed/
+Documentos/Wiki-Personal/output/tag/reopsitorio/feed/atom/
+Documentos/Wiki-Personal/output/tag/repository/
+Documentos/Wiki-Personal/output/tag/repository/feed/
+Documentos/Wiki-Personal/output/tag/repository/feed/atom/
+Documentos/Wiki-Personal/output/tag/rsync/
+Documentos/Wiki-Personal/output/tag/rsync/feed/
+Documentos/Wiki-Personal/output/tag/rsync/feed/atom/
+Documentos/Wiki-Personal/output/tag/screen/
+Documentos/Wiki-Personal/output/tag/screen/feed/
+Documentos/Wiki-Personal/output/tag/screen/feed/atom/
+Documentos/Wiki-Personal/output/tag/sed/
+Documentos/Wiki-Personal/output/tag/sed/feed/
+Documentos/Wiki-Personal/output/tag/sed/feed/atom/
+Documentos/Wiki-Personal/output/tag/smallpdf/
+Documentos/Wiki-Personal/output/tag/smallpdf/feed/
+Documentos/Wiki-Personal/output/tag/smallpdf/feed/atom/
+Documentos/Wiki-Personal/output/tag/sniffer/
+Documentos/Wiki-Personal/output/tag/sniffer/feed/
+Documentos/Wiki-Personal/output/tag/sniffer/feed/atom/
+Documentos/Wiki-Personal/output/tag/software/
+Documentos/Wiki-Personal/output/tag/software/feed/
+Documentos/Wiki-Personal/output/tag/software/feed/atom/
+Documentos/Wiki-Personal/output/tag/split/
+Documentos/Wiki-Personal/output/tag/split/feed/
+Documentos/Wiki-Personal/output/tag/split/feed/atom/
+Documentos/Wiki-Personal/output/tag/spotify/
+Documentos/Wiki-Personal/output/tag/spotify/feed/
+Documentos/Wiki-Personal/output/tag/spotify/feed/atom/
+Documentos/Wiki-Personal/output/tag/ssh/
+Documentos/Wiki-Personal/output/tag/ssh/feed/
+Documentos/Wiki-Personal/output/tag/ssh/feed/atom/
+Documentos/Wiki-Personal/output/tag/sslstrip/
+Documentos/Wiki-Personal/output/tag/sslstrip/feed/
+Documentos/Wiki-Personal/output/tag/sslstrip/feed/atom/
+Documentos/Wiki-Personal/output/tag/sublimetext/
+Documentos/Wiki-Personal/output/tag/sublimetext/feed/
+Documentos/Wiki-Personal/output/tag/sublimetext/feed/atom/
+Documentos/Wiki-Personal/output/tag/submodulo/
+Documentos/Wiki-Personal/output/tag/submodulo/feed/
+Documentos/Wiki-Personal/output/tag/submodulo/feed/atom/
+Documentos/Wiki-Personal/output/tag/systemd/
+Documentos/Wiki-Personal/output/tag/systemd/feed/
+Documentos/Wiki-Personal/output/tag/systemd/feed/atom/
+Documentos/Wiki-Personal/output/tag/teclado/
+Documentos/Wiki-Personal/output/tag/teclado/feed/
+Documentos/Wiki-Personal/output/tag/teclado/feed/atom/
+Documentos/Wiki-Personal/output/tag/telegram/
+Documentos/Wiki-Personal/output/tag/telegram/feed/
+Documentos/Wiki-Personal/output/tag/telegram/feed/atom/
+Documentos/Wiki-Personal/output/tag/telegrambot/
+Documentos/Wiki-Personal/output/tag/telegrambot/feed/
+Documentos/Wiki-Personal/output/tag/telegrambot/feed/atom/
+Documentos/Wiki-Personal/output/tag/twrp/
+Documentos/Wiki-Personal/output/tag/twrp/feed/
+Documentos/Wiki-Personal/output/tag/twrp/feed/atom/
+Documentos/Wiki-Personal/output/tag/vim/
+Documentos/Wiki-Personal/output/tag/vim/feed/
+Documentos/Wiki-Personal/output/tag/vim/feed/atom/
+Documentos/Wiki-Personal/output/tag/virtualbox/
+Documentos/Wiki-Personal/output/tag/virtualbox/feed/
+Documentos/Wiki-Personal/output/tag/virtualbox/feed/atom/
+Documentos/Wiki-Personal/output/tag/vlc/
+Documentos/Wiki-Personal/output/tag/vlc/feed/
+Documentos/Wiki-Personal/output/tag/vlc/feed/atom/
+Documentos/Wiki-Personal/output/tag/wemos/
+Documentos/Wiki-Personal/output/tag/wemos/feed/
+Documentos/Wiki-Personal/output/tag/wemos/feed/atom/
+Documentos/Wiki-Personal/output/tag/wep/
+Documentos/Wiki-Personal/output/tag/wep/feed/
+Documentos/Wiki-Personal/output/tag/wep/feed/atom/
+Documentos/Wiki-Personal/output/tag/wifi/
+Documentos/Wiki-Personal/output/tag/wifi/feed/
+Documentos/Wiki-Personal/output/tag/wifi/feed/atom/
+Documentos/Wiki-Personal/output/tag/windows/
+Documentos/Wiki-Personal/output/tag/windows/feed/
+Documentos/Wiki-Personal/output/tag/windows/feed/atom/
+Documentos/Wiki-Personal/output/tag/wireshark/
+Documentos/Wiki-Personal/output/tag/wireshark/feed/
+Documentos/Wiki-Personal/output/tag/wireshark/feed/atom/
+Documentos/Wiki-Personal/output/tag/wpa/
+Documentos/Wiki-Personal/output/tag/wpa/feed/
+Documentos/Wiki-Personal/output/tag/wpa/feed/atom/
+Documentos/Wiki-Personal/output/tag/youtube/
+Documentos/Wiki-Personal/output/tag/youtube/feed/
+Documentos/Wiki-Personal/output/tag/youtube/feed/atom/
+Documentos/Wiki-Personal/output/tags/
+Documentos/Wiki-Personal/output/theme/
+Documentos/Wiki-Personal/output/theme/css/
+Documentos/Wiki-Personal/output/theme/img/
+Documentos/Wiki-Personal/output/theme/js/
+Documentos/Wiki-Personal/pelican-plugins/
+Documentos/Wiki-Personal/pelican-plugins/always_modified/
+Documentos/Wiki-Personal/pelican-plugins/asciidoc_reader/
+Documentos/Wiki-Personal/pelican-plugins/asciidoc_reader/test_data/
+Documentos/Wiki-Personal/pelican-plugins/assets/
+Documentos/Wiki-Personal/pelican-plugins/assets/test_data/
+Documentos/Wiki-Personal/pelican-plugins/assets/test_data/static/
+Documentos/Wiki-Personal/pelican-plugins/assets/test_data/static/css/
+Documentos/Wiki-Personal/pelican-plugins/assets/test_data/templates/
+Documentos/Wiki-Personal/pelican-plugins/autopages/
+Documentos/Wiki-Personal/pelican-plugins/better_codeblock_line_numbering/
+Documentos/Wiki-Personal/pelican-plugins/better_figures_and_images/
+Documentos/Wiki-Personal/pelican-plugins/better_figures_and_images/test_data/
+Documentos/Wiki-Personal/pelican-plugins/better_tables/
+Documentos/Wiki-Personal/pelican-plugins/category_meta/
+Documentos/Wiki-Personal/pelican-plugins/clean_summary/
+Documentos/Wiki-Personal/pelican-plugins/code_include/
+Documentos/Wiki-Personal/pelican-plugins/collate_content/
+Documentos/Wiki-Personal/pelican-plugins/creole_reader/
+Documentos/Wiki-Personal/pelican-plugins/custom_article_urls/
+Documentos/Wiki-Personal/pelican-plugins/dateish/
+Documentos/Wiki-Personal/pelican-plugins/disqus_static/
+Documentos/Wiki-Personal/pelican-plugins/events/
+Documentos/Wiki-Personal/pelican-plugins/extract_toc/
+Documentos/Wiki-Personal/pelican-plugins/feed_summary/
+Documentos/Wiki-Personal/pelican-plugins/filetime_from_git/
+Documentos/Wiki-Personal/pelican-plugins/filetime_from_hg/
+Documentos/Wiki-Personal/pelican-plugins/footer_insert/
+Documentos/Wiki-Personal/pelican-plugins/gallery/
+Documentos/Wiki-Personal/pelican-plugins/gist_directive/
+Documentos/Wiki-Personal/pelican-plugins/github_activity/
+Documentos/Wiki-Personal/pelican-plugins/global_license/
+Documentos/Wiki-Personal/pelican-plugins/glossary/
+Documentos/Wiki-Personal/pelican-plugins/goodreads_activity/
+Documentos/Wiki-Personal/pelican-plugins/googleplus_comments/
+Documentos/Wiki-Personal/pelican-plugins/gravatar/
+Documentos/Wiki-Personal/pelican-plugins/gzip_cache/
+Documentos/Wiki-Personal/pelican-plugins/headerid/
+Documentos/Wiki-Personal/pelican-plugins/html_entity/
+Documentos/Wiki-Personal/pelican-plugins/html_rst_directive/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/content/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/content/images/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/content/pages/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/localized_theme/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/localized_theme/static/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/localized_theme/templates/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/localized_theme/translations/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/localized_theme/translations/de/
+Documentos/Wiki-Personal/pelican-plugins/i18n_subsites/test_data/localized_theme/translations/de/LC_MESSAGES/
+Documentos/Wiki-Personal/pelican-plugins/ical/
+Documentos/Wiki-Personal/pelican-plugins/interlinks/
+Documentos/Wiki-Personal/pelican-plugins/interlinks/test_data/
+Documentos/Wiki-Personal/pelican-plugins/jinja2content/
+Documentos/Wiki-Personal/pelican-plugins/libravatar/
+Documentos/Wiki-Personal/pelican-plugins/libravatar/test_data/
+Documentos/Wiki-Personal/pelican-plugins/libravatar/test_data/theme/
+Documentos/Wiki-Personal/pelican-plugins/libravatar/test_data/theme/templates/
+Documentos/Wiki-Personal/pelican-plugins/linker/
+Documentos/Wiki-Personal/pelican-plugins/liquid_tags/
+Documentos/Wiki-Personal/pelican-plugins/liquid_tags/test_data/
+Documentos/Wiki-Personal/pelican-plugins/liquid_tags/test_data/content/
+Documentos/Wiki-Personal/pelican-plugins/liquid_tags/test_data/content/notebooks/
+Documentos/Wiki-Personal/pelican-plugins/md_inline_extension/
+Documentos/Wiki-Personal/pelican-plugins/members/
+Documentos/Wiki-Personal/pelican-plugins/multi_part/
+Documentos/Wiki-Personal/pelican-plugins/neighbors/
+Documentos/Wiki-Personal/pelican-plugins/optimize_images/
+Documentos/Wiki-Personal/pelican-plugins/org_reader/
+Documentos/Wiki-Personal/pelican-plugins/pdf/
+Documentos/Wiki-Personal/pelican-plugins/pelican_comment_system/
+Documentos/Wiki-Personal/pelican-plugins/pelican_comment_system/doc/
+Documentos/Wiki-Personal/pelican-plugins/pelican_comment_system/identicon/
+Documentos/Wiki-Personal/pelican-plugins/pelican_comment_system/import/
+Documentos/Wiki-Personal/pelican-plugins/pelican_comment_system/theme/
+Documentos/Wiki-Personal/pelican-plugins/pelican_comment_system/theme/static/
+Documentos/Wiki-Personal/pelican-plugins/pelican_comment_system/theme/static/js/
+Documentos/Wiki-Personal/pelican-plugins/pelican_comment_system/theme/templates/
+Documentos/Wiki-Personal/pelican-plugins/pelican_comment_system/theme/templates/pcs/
+Documentos/Wiki-Personal/pelican-plugins/permalinks/
+Documentos/Wiki-Personal/pelican-plugins/photos/
+Documentos/Wiki-Personal/pelican-plugins/photos/test_data/
+Documentos/Wiki-Personal/pelican-plugins/photos/test_data/agallery/
+Documentos/Wiki-Personal/pelican-plugins/plantuml/
+Documentos/Wiki-Personal/pelican-plugins/post_stats/
+Documentos/Wiki-Personal/pelican-plugins/random_article/
+Documentos/Wiki-Personal/pelican-plugins/read_more_link/
+Documentos/Wiki-Personal/pelican-plugins/related_posts/
+Documentos/Wiki-Personal/pelican-plugins/render_math/
+Documentos/Wiki-Personal/pelican-plugins/representative_image/
+Documentos/Wiki-Personal/pelican-plugins/rmd_reader/
+Documentos/Wiki-Personal/pelican-plugins/section_number/
+Documentos/Wiki-Personal/pelican-plugins/series/
+Documentos/Wiki-Personal/pelican-plugins/share_post/
+Documentos/Wiki-Personal/pelican-plugins/show_source/
+Documentos/Wiki-Personal/pelican-plugins/simple_footnotes/
+Documentos/Wiki-Personal/pelican-plugins/sitemap/
+Documentos/Wiki-Personal/pelican-plugins/slim/
+Documentos/Wiki-Personal/pelican-plugins/static_comments/
+Documentos/Wiki-Personal/pelican-plugins/sub_parts/
+Documentos/Wiki-Personal/pelican-plugins/sub_parts/test_data/
+Documentos/Wiki-Personal/pelican-plugins/subcategory/
+Documentos/Wiki-Personal/pelican-plugins/summary/
+Documentos/Wiki-Personal/pelican-plugins/tag_cloud/
+Documentos/Wiki-Personal/pelican-plugins/tag_cloud/test_data/
+Documentos/Wiki-Personal/pelican-plugins/test_data/
+Documentos/Wiki-Personal/pelican-plugins/test_data/content/
+Documentos/Wiki-Personal/pelican-plugins/test_data/content/cat1/
+Documentos/Wiki-Personal/pelican-plugins/test_data/content/extra/
+Documentos/Wiki-Personal/pelican-plugins/test_data/content/pages/
+Documentos/Wiki-Personal/pelican-plugins/test_data/content/pictures/
+Documentos/Wiki-Personal/pelican-plugins/test_data/themes/
+Documentos/Wiki-Personal/pelican-plugins/test_data/themes/notmyidea/
+Documentos/Wiki-Personal/pelican-plugins/test_data/themes/notmyidea/static/
+Documentos/Wiki-Personal/pelican-plugins/test_data/themes/notmyidea/static/css/
+Documentos/Wiki-Personal/pelican-plugins/test_data/themes/notmyidea/static/images/
+Documentos/Wiki-Personal/pelican-plugins/test_data/themes/notmyidea/static/images/icons/
+Documentos/Wiki-Personal/pelican-plugins/test_data/themes/notmyidea/templates/
+Documentos/Wiki-Personal/pelican-plugins/test_data/themes/simple/
+Documentos/Wiki-Personal/pelican-plugins/test_data/themes/simple/templates/
+Documentos/Wiki-Personal/pelican-plugins/textile_reader/
+Documentos/Wiki-Personal/pelican-plugins/thumbnailer/
+Documentos/Wiki-Personal/pelican-plugins/thumbnailer/test_data/
+Documentos/Wiki-Personal/pelican-plugins/thumbnailer/test_data/subdir/
+Documentos/Wiki-Personal/pelican-plugins/tipue_search/
+Documentos/Wiki-Personal/pelican-plugins/touch/
+Documentos/Wiki-Personal/pelican-plugins/twitter_bootstrap_rst_directives/
+Documentos/Wiki-Personal/pelican-plugins/txt2tags_reader/
+Documentos/Wiki-Personal/pelican-plugins/video_privacy_enhancer/
+Documentos/Wiki-Personal/pelican-plugins/w3c_validate/
+Documentos/Wiki-Personal/pelican-plugins/yuicompressor/
+Documentos/Wiki-Personal/theme/
+Documentos/Wiki-Personal/theme/plumage/
+Documentos/Wiki-Personal/theme/plumage/static/
+Documentos/Wiki-Personal/theme/plumage/static/css/
+Documentos/Wiki-Personal/theme/plumage/static/img/
+Documentos/Wiki-Personal/theme/plumage/static/js/
+Documentos/Wiki-Personal/theme/plumage/templates/
+Documentos/crypt/
+Imágenes/
+Música/
+Plantillas/
+Vídeos/
+
+sent 154.31K bytes  received 9.74K bytes  109.37K bytes/sec
+total size is 1.66G  speedup is 10,127.38

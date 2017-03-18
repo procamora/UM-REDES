@@ -2,7 +2,7 @@ package es.um.redes.P2P.App;
 
 import java.net.InetSocketAddress;
 import java.util.Random;
-import java.util.TreeSet;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.TreeMap;
 
 import es.um.redes.P2P.PeerTracker.Client.Reporter;
@@ -11,8 +11,8 @@ import es.um.redes.P2P.util.FileInfo;
 import es.um.redes.P2P.util.PeerDatabase;
 
 public class PeerController implements PeerControllerIface {
-	private static final int RANGO_INICIAL = 10000;
-	private static final int RANGO_FINAL = 30000;
+	private static final int MIN_PORT = 10000;
+	private static final int MAX_PORT = 30000;
 	/**
 	 * The shell associated to this controller.
 	 */
@@ -23,13 +23,14 @@ public class PeerController implements PeerControllerIface {
 	private Reporter reporter;
 	private PeerDatabase peerDatabase;
 	// private HashSet<FileInfo> listaFicheros;
+
 	/**
 	 * Puede que en vez de un TreeSet<FileInfo> sea mejor hacer una clase
 	 * auxiliar que contenga lo siguiente:
 	 * - FileInfo
 	 * - Set de seed ordenado por menor clientes en uso
 	 */
-	private TreeMap<String, TreeSet<FileInfo>> mapaFicheros;
+	private TreeMap<String, FileInfoPeer> mapaFicheros;
 
 	private short chunkSize;
 
@@ -40,12 +41,13 @@ public class PeerController implements PeerControllerIface {
 
 	public PeerController(Reporter client, PeerDatabase peerDatabase) {
 		Random ran = new Random();
-		seederPort = ran.nextInt(RANGO_FINAL) + RANGO_INICIAL;
-
+		// seederPort = ran.nextInt(MAX_PORT) + MIN_PORT;
+		seederPort = ThreadLocalRandom.current().nextInt(MIN_PORT, MAX_PORT + 1);
+		currentArguments = new String[PeerShell.MAX_ARGS];
 		shell = new PeerShell();
 		reporter = client;
 		this.peerDatabase = peerDatabase;
-		this.mapaFicheros = new TreeMap<String, TreeSet<FileInfo>>(new ComparadorFiles());
+		this.mapaFicheros = new TreeMap<String, FileInfoPeer>();
 	}
 
 	public byte getCurrentCommand() {
@@ -84,8 +86,10 @@ public class PeerController implements PeerControllerIface {
 	@Override
 	public void setCurrentCommandArguments(String[] args) {
 		// TODO Auto-generated method stub
-		currentArguments = args;
-
+		// currentArguments = args;
+		for (int i = 0; i < args.length; i++) {
+			currentArguments[i] = args[i];
+		}
 	}
 
 	@Override
@@ -109,8 +113,11 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case PeerCommands.COM_QUERY:
-				response = reporter.conversationWithTracker(m);
-				processMessageFromTracker(response);
+				// m es null si no hemos puesto parametros correctos
+				if (m != null) {
+					response = reporter.conversationWithTracker(m);
+					processMessageFromTracker(response);
+				}
 				break;
 
 			case PeerCommands.COM_DOWNLOAD:
@@ -153,6 +160,36 @@ public class PeerController implements PeerControllerIface {
 
 	}
 
+	private String[] tratarArgumentosQuery() {
+		byte filterType = 0;
+
+		if ((currentArguments[0] == null) || (currentArguments[1] == null)) {
+			System.err.println("wrong arguments for query");
+			return null;
+		}
+
+		switch (currentArguments[0]) {
+			case "-n":
+				filterType = MessageQuery.FILTERTYPE_NAME;
+				break;
+
+			case "-lt":
+				filterType = MessageQuery.FILTERTYPE_MAXSIZE;
+				break;
+
+			case "-ge":
+				filterType = MessageQuery.FILTERTYPE_MINSIZE;
+				break;
+			default:
+				System.err.println("wrong arguments for query");
+				break;
+		}
+
+		String stringFilterType = Byte.toString(filterType);
+		String[] array = { stringFilterType, currentArguments[1] };
+		return array;
+	}
+
 	@Override
 	public Message createMessageFromCurrentCommand() {
 		Message control = null;
@@ -172,9 +209,15 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case PeerCommands.COM_QUERY:
-				byte filterType = MessageQuery.FILTERTYPE_ALL;
-				String filter = "08_xv6_lazy_page_allocation.pdf";
-				control = (MessageQuery) Message.makeQueryFilesRequest(filterType, filter);
+				byte filterType = 0;
+				String filter = "";
+				String[] array = tratarArgumentosQuery();
+				if (array != null) {
+					filterType = Byte.valueOf(array[0]);
+					filter = array[1];
+					control = (MessageQuery) Message.makeQueryFilesRequest(filterType, filter);
+				}
+
 				break;
 
 			case PeerCommands.COM_DOWNLOAD:
@@ -220,6 +263,10 @@ public class PeerController implements PeerControllerIface {
 			case Message.OP_FILE_LIST:
 				System.out.println("correcto OP_FILE_LIST");
 				FileInfo[] filelist = ((MessageFileInfo) response).getFileList();
+				
+				for (int i = 0; i < filelist.length; i++)
+					System.out.println(filelist[i]);
+				
 				recordQueryResult(filelist);
 				break;
 
@@ -249,10 +296,10 @@ public class PeerController implements PeerControllerIface {
 	 * solicitud de consulta, excluyendo los archivos que ya están compartidos
 	 * por este par. El resultado de cada consulta se utiliza para seleccionar
 	 * el archivo que se va a descargar.
-	 * 
+	 *
 	 * @param fileList
 	 *            Lista completa de archivos devueltos por el rastreador
-	 * 
+	 *
 	 */
 	@Override
 	public void recordQueryResult(FileInfo[] fileList) {
@@ -260,12 +307,13 @@ public class PeerController implements PeerControllerIface {
 
 		for (int i = 0; i < fileList.length; i++) {
 			if (!mapaFicheros.containsKey(fileList[i].fileHash)) {
-				TreeSet<FileInfo> conjuntoFileInfo = new TreeSet<>(new ComparadorFiles2());
-				conjuntoFileInfo.add(fileList[i]);
-				mapaFicheros.put(fileList[i].fileHash, conjuntoFileInfo);
+				FileInfoPeer fileInfoPeer = new FileInfoPeer(fileList[i]);
+				// fileInfoPeer.anadirPeer(fileList[i].)
+				// conjuntoFileInfo.add(fileList[i]);
+				mapaFicheros.put(fileList[i].fileHash, fileInfoPeer);
 			} else {
-				TreeSet<FileInfo> conjuntoFileInfo = mapaFicheros.get(fileList[i].fileHash);
-				conjuntoFileInfo.add(fileList[i]); // modificado aliasing
+				FileInfoPeer fileInfoPeer = mapaFicheros.get(fileList[i].fileHash);
+				// fileInfoPeer.anadirPeer(fileList[i]); // modificado aliasing
 			}
 		}
 	}
@@ -273,7 +321,7 @@ public class PeerController implements PeerControllerIface {
 	/**
 	 * Imprime la lista de archivos obtenidos de la última consulta (previamente
 	 * guardada por recordQueryResult) que están disponibles para su descarga
-	 * 
+	 *
 	 */
 	@Override
 	public void printQueryResult() {
@@ -289,7 +337,7 @@ public class PeerController implements PeerControllerIface {
 	 * archivos cuyo hash contenga la subcadena dada. Se utiliza para buscar en
 	 * el archivo para descargar entre los archivos devueltos por la última
 	 * consulta.
-	 * 
+	 *
 	 * @param hashSubstr
 	 *            String dada por el usuario al comando 'download'.
 	 * @return Una lista de los archivos cuyo hash contiene la subcadena.
@@ -301,8 +349,8 @@ public class PeerController implements PeerControllerIface {
 		int contador = 0;
 		for (String hashes : mapaFicheros.keySet()) {
 			if (hashes.contains(hashSubstr)) {
-				TreeSet<FileInfo> conjuntoFileInfo = mapaFicheros.get(hashes);
-				listaFicherosValidos[contador] = conjuntoFileInfo.first();
+				FileInfoPeer fileInfoPeer = mapaFicheros.get(hashes);
+				listaFicherosValidos[contador] = fileInfoPeer.getFileInfo();
 				contador++;
 			}
 		}
@@ -312,14 +360,14 @@ public class PeerController implements PeerControllerIface {
 	/**
 	 * Descargue el archivo de la lista de semillas proporcionada, creando un
 	 * objeto descargador para este archivo de destino identificado por su hash.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param inetSocketAddresses
 	 *            La lista de pares que comparten actualmente el archivo.
-	 * 
+	 *
 	 * @param targetFileHash
 	 *            El archivo de destino para descargar
-	 * 
+	 *
 	 */
 	@Override
 	public void downloadFileFromSeeds(InetSocketAddress[] seedList, String targetFileHash) {
