@@ -2,15 +2,16 @@ package es.um.redes.P2P.App;
 
 import es.um.redes.P2P.util.FileInfo;
 
+import java.net.InetSocketAddress;
 import java.util.HashSet;
 
 
 public class FileInfoPeer {
 	private FileInfo fileInfo;
-	private HashSet<String> peerSet;
+	private HashSet<InetSocketAddress> peerSet;
 
 	public FileInfoPeer(FileInfo fileInfo) {
-		peerSet = new HashSet<String>();
+		peerSet = new HashSet<InetSocketAddress>();
 		this.fileInfo = fileInfo;
 	}
 
@@ -18,12 +19,14 @@ public class FileInfoPeer {
 		return fileInfo;
 	}
 
-	public HashSet<String> getPeerSet() {
+	public HashSet<InetSocketAddress> getPeerSet() {
 		return peerSet;
 	}
 
-	public boolean anadirPeer(String peer) {
-		return peerSet.add(peer);
+	public void addPeer(InetSocketAddress[] peer) {
+		for(int i =0; i< peer.length; i++)
+			if(peer[i] != null)
+				peerSet.add(peer[i]);
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package es.um.redes.P2P.pruebas;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class shell {
 
 	public static void main(String[] args) {
@@ -18,25 +21,25 @@ public class shell {
 			}
 		}
 
-		/*System.out.println(argumentos);
+		/*
+		 * System.out.println(argumentos);
+		 * 
+		 * System.out.println("inicio comando");
+		 * System.out.println("comando: " + comando);
+		 * for (int i = 0; i < argumentos.length; i++)
+		 * if (argumentos[i] != null)
+		 * System.out.printf("argumento %d: %s\n", i, argumentos[i]);
+		 * System.out.println("fin comando");
+		 */
 
-		System.out.println("inicio comando");
-		System.out.println("comando: " + comando);
-		for (int i = 0; i < argumentos.length; i++)
-			if (argumentos[i] != null)
-				System.out.printf("argumento %d: %s\n", i, argumentos[i]);
-		System.out.println("fin comando");*/
-		
-	
-
-		System.out.println(argumentos[0]);
-		switch (argumentos[0]) {
-			case ("-ne"):
-				System.out.println("ne");
-				break;
-
-			default:
-				break;
+		for (int i = 0; i < 10; i++) {
+			Random r = new Random();
+			System.out.print(r.ints(10, (20 + 1)).findFirst().getAsInt() + " ");
+		}
+		System.out.println();
+		for (int i = 0; i < 10; i++) {
+			Random r = new Random();
+			System.out.print(ThreadLocalRandom.current().nextInt(10, 20 + 1) + " ");
 		}
 	}
 

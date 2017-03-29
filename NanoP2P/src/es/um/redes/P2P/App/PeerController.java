@@ -40,7 +40,7 @@ public class PeerController implements PeerControllerIface {
 	private int seederPort;
 
 	public PeerController(Reporter client, PeerDatabase peerDatabase) {
-		Random ran = new Random();
+		// Random ran = new Random();
 		// seederPort = ran.nextInt(MAX_PORT) + MIN_PORT;
 		seederPort = ThreadLocalRandom.current().nextInt(MIN_PORT, MAX_PORT + 1);
 		currentArguments = new String[PeerShell.MAX_ARGS];
@@ -121,7 +121,8 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case PeerCommands.COM_DOWNLOAD:
-				System.out.println("descarga (en proceso)");
+				response = reporter.conversationWithTracker(m);
+				processMessageFromTracker(response);
 				break;
 
 			case PeerCommands.COM_QUIT:
@@ -221,7 +222,8 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case PeerCommands.COM_DOWNLOAD:
-				System.out.println("por implementar");
+				if (currentArguments[0] != null)
+					control = (MessageSeedInfo) Message.makeGetSeedsRequest(currentArguments[0]);
 
 				break;
 
@@ -229,7 +231,7 @@ public class PeerController implements PeerControllerIface {
 				// mandamos una lista vacia para darnos de baja como seed
 				// DA UN FALLO NullPointerException, NO SE COMO MANDAR LISTA
 				// VACIA
-				FileInfo[] listaVacia = new FileInfo[5];
+				FileInfo[] listaVacia = null;
 				control = (MessageFileInfo) Message.makeRemoveSeedRequest(seederPort, listaVacia);
 				break;
 
@@ -263,15 +265,23 @@ public class PeerController implements PeerControllerIface {
 			case Message.OP_FILE_LIST:
 				System.out.println("correcto OP_FILE_LIST");
 				FileInfo[] filelist = ((MessageFileInfo) response).getFileList();
-				
+
 				for (int i = 0; i < filelist.length; i++)
 					System.out.println(filelist[i]);
-				
+
 				recordQueryResult(filelist);
 				break;
 
 			case Message.OP_SEED_LIST:
 				System.out.println("correcto OP_SEED_LIST");
+				System.out.println(response);
+				InetSocketAddress[] seedList = ((MessageSeedInfo) response).getSeedList();
+				String hash = ((MessageSeedInfo) response).getFileHash();
+
+				if (mapaFicheros.containsKey(hash)) {
+					FileInfoPeer fileInfoPeer = mapaFicheros.get(hash);
+					fileInfoPeer.addPeer(seedList); // modificado aliasing
+				}
 				break;
 
 			case Message.OP_REMOVE_SEED_ACK:
@@ -308,12 +318,7 @@ public class PeerController implements PeerControllerIface {
 		for (int i = 0; i < fileList.length; i++) {
 			if (!mapaFicheros.containsKey(fileList[i].fileHash)) {
 				FileInfoPeer fileInfoPeer = new FileInfoPeer(fileList[i]);
-				// fileInfoPeer.anadirPeer(fileList[i].)
-				// conjuntoFileInfo.add(fileList[i]);
 				mapaFicheros.put(fileList[i].fileHash, fileInfoPeer);
-			} else {
-				FileInfoPeer fileInfoPeer = mapaFicheros.get(fileList[i].fileHash);
-				// fileInfoPeer.anadirPeer(fileList[i]); // modificado aliasing
 			}
 		}
 	}
