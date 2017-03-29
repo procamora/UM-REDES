@@ -204,6 +204,7 @@ public class PeerController implements PeerControllerIface {
 			case PeerCommands.COM_ADDSEED:
 				System.out.println("random port: " + seederPort);
 				FileInfo[] lista = peerDatabase.getLocalSharedFiles();
+				// FIXME seederPort CAMBIAR
 				control = (MessageFileInfo) Message.makeAddSeedRequest(seederPort, lista);
 
 				recordQueryResult(lista); // guardamos nuestros ficheros
@@ -218,21 +219,22 @@ public class PeerController implements PeerControllerIface {
 					filter = array[1];
 					control = (MessageQuery) Message.makeQueryFilesRequest(filterType, filter);
 				}
-
 				break;
 
 			case PeerCommands.COM_DOWNLOAD:
-				if (currentArguments[0] != null)
-					control = (MessageSeedInfo) Message.makeGetSeedsRequest(currentArguments[0]);
-
+				// FIXME Si hay mutiples hash, informamos al usuario de ello sin
+				// descargarnos ningun, le dedcimos los nombres y hash de cada
+				// uno para que elija el mas correcto
+				FileInfo[] opcionesHash = null;
+				if (currentArguments[0] != null) {
+					opcionesHash = lookupQueryResult(currentArguments[0]);
+					if (opcionesHash[0] != null)
+						control = (MessageSeedInfo) Message.makeGetSeedsRequest(opcionesHash[0].fileHash);
+				}
 				break;
 
 			case PeerCommands.COM_QUIT:
-				// mandamos una lista vacia para darnos de baja como seed
-				// DA UN FALLO NullPointerException, NO SE COMO MANDAR LISTA
-				// VACIA
-				FileInfo[] listaVacia = null;
-				control = (MessageFileInfo) Message.makeRemoveSeedRequest(seederPort, listaVacia);
+				control = (MessageFileInfo) Message.makeRemoveSeedRequest(seederPort, new FileInfo[0]);
 				break;
 
 			default:
@@ -377,7 +379,7 @@ public class PeerController implements PeerControllerIface {
 	@Override
 	public void downloadFileFromSeeds(InetSocketAddress[] seedList, String targetFileHash) {
 		// TODO Auto-generated method stub
-
+		// dowwnloadinterface.downloadfile
 	}
 
 }
