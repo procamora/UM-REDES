@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-
-//import es.um.redes.P2P.PeerPeer.Message.PeerMessage;
+import es.um.redes.P2P.PeerPeer.Message.PeerMessage;
 
 /**
  * @author rtitos
@@ -18,14 +17,14 @@ import java.net.Socket;
  * to the constructor.
  */
 public class DownloaderThread  extends Thread {
-	//private Downloader downloader; 
+	private Downloader downloader; 
 	private Socket downloadSocket;
 	protected DataOutputStream dos;  //FIXME USAR ES UNA MEJORA DE STREAM
 	protected DataInputStream dis;
 	private int numChunksDownloaded;
 
-	//public DownloaderThread(Downloader dl, InetSocketAddress seed) {
-	//}
+	public DownloaderThread(Downloader dl, InetSocketAddress seed) {
+	}
 
 	//It receives a message containing a chunk and it is stored in the file
 	private void receiveAndWriteChunk() {
