@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.Socket;
 
-import es.um.redes.P2P.PeerPeer.Message.PeerMessage;
+import es.um.redes.P2P.PeerPeer.Client.Downloader;
+//import es.um.redes.P2P.PeerPeer.Message.PeerMessage;
 import es.um.redes.P2P.util.PeerDatabase;
 
 public class SeederThread extends Thread {

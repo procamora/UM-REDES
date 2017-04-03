@@ -98,7 +98,7 @@ public interface PeerControllerIface {
 	 * Sets COM_ADDSEED as current command and process it, in order
 	 * to send all shared files to the tracker.
 	 */
-	public void publishSharedFilesToTracker();
+	public void publishSharedFilesToTracker(int seederPort);
 
 	/**
 	 * Sets COM_CONFIG as current command and process it, in order

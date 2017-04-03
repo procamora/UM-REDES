@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import es.um.redes.P2P.PeerPeer.Message.PeerMessage;
+//import es.um.redes.P2P.PeerPeer.Message.PeerMessage;
 
 /**
  * @author rtitos
