@@ -3,6 +3,7 @@ package es.um.redes.P2P.PeerPeer.Server;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import es.um.redes.P2P.PeerPeer.Client.Downloader;
 import es.um.redes.P2P.util.PeerDatabase;
@@ -16,6 +17,7 @@ public class Seeder implements Runnable {
 	public static final int SEEDER_LAST_PORT = 10100;
 	public Downloader currentDownloader;
 	private ServerSocket serverSocket;
+	private short chunkSize;
 
 	/**
 	 * Base de datos de ficheros locales compartidos por este peer.
@@ -24,6 +26,7 @@ public class Seeder implements Runnable {
 
 	public Seeder(short chunkSize) {
 		// TODO
+		this.chunkSize = chunkSize;
 		try {
 			serverSocket = new ServerSocket();
 		} catch (IOException e) {
@@ -45,7 +48,8 @@ public class Seeder implements Runnable {
 			} catch (IOException e) {
 				if (n == SEEDER_LAST_PORT) {
 					System.err.println("Estan todos los puertos ocupados");
-					System.exit(-1); // si no conseguimos un puerto paramos el programa
+					// si no conseguimos un puerto paramos el programa
+					System.exit(-1); 
 				}
 				n++;
 			}
@@ -60,9 +64,17 @@ public class Seeder implements Runnable {
 		// TODO
 		// while(true) hasta que pulsemos quit
 		// estamos todo el rato aceptando conexiones
+		Socket clientSocket = null;
+		try {
+			 clientSocket = serverSocket.accept();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// En algún momento se llamará a
-		//new SeederThread(socket, database, currentDownloader, chunkSize).start();
+		System.out.println(clientSocket.getPort());
+		new SeederThread(clientSocket, database, currentDownloader, chunkSize).start();
 
 	}
 
@@ -80,6 +92,6 @@ public class Seeder implements Runnable {
 
 	public int getSeederPort() {
 		// TODO
-		return 0;
+		return serverSocket.getLocalPort();
 	}
 }

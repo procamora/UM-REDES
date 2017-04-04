@@ -2,6 +2,7 @@ package es.um.redes.P2P.App;
 
 import java.net.InetSocketAddress;
 
+import es.um.redes.P2P.PeerPeer.Server.Seeder;
 import es.um.redes.P2P.PeerTracker.Message.Message;
 import es.um.redes.P2P.util.FileInfo;
 
@@ -98,7 +99,7 @@ public interface PeerControllerIface {
 	 * Sets COM_ADDSEED as current command and process it, in order
 	 * to send all shared files to the tracker.
 	 */
-	public void publishSharedFilesToTracker(int seederPort);
+	public void publishSharedFilesToTracker(Seeder seeder);
 
 	/**
 	 * Sets COM_CONFIG as current command and process it, in order

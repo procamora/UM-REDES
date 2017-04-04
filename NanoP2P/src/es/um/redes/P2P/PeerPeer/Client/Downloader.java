@@ -1,22 +1,24 @@
 package es.um.redes.P2P.PeerPeer.Client;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 
 import es.um.redes.P2P.util.FileInfo;
 
 public class Downloader implements DownloaderIface {
-	
+
 	private FileInfo targetFile;
 	private InetSocketAddress[] seeds;
 	private int totalChunks;
-	
+
 	private short chunkSize;
 
-	public Downloader(short chunkSize) {
+	public Downloader(short chunkSize, FileInfo targetFile) {
 		this.chunkSize = chunkSize;
+		this.targetFile = targetFile;
 	}
-	
-	
+
 	// IMPORTANTE
 	// En esta interfaz no están definidos los métodos necesarios para gestionar
 	// la lista de trozos
@@ -48,6 +50,13 @@ public class Downloader implements DownloaderIface {
 	@Override
 	public boolean downloadFile(InetSocketAddress[] seedList) {
 		// TODO Auto-generated method stub
+
+		//Socket[] socket = new Socket[seedList.length];
+		for (int i = 0; i < seedList.length; i++) {
+			if (seedList[i] != null)
+				new DownloaderThread(this, seedList[i]);
+		}
+
 		return false;
 	}
 

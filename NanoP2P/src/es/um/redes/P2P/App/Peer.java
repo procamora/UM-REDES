@@ -36,7 +36,7 @@ public class Peer {
 		Seeder seeder = new Seeder(commander.getChunkSize());
 		
 		// Send list of local files to tracker
-		commander.publishSharedFilesToTracker(seeder.getAvailablePort());
+		commander.publishSharedFilesToTracker(seeder);
 
 		// Begin accepting commands from user using shell
 		do {

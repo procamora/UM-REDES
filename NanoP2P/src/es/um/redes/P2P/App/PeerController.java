@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.TreeMap;
 
 import es.um.redes.P2P.PeerPeer.Client.Downloader;
+import es.um.redes.P2P.PeerPeer.Server.Seeder;
 import es.um.redes.P2P.PeerTracker.Client.Reporter;
 import es.um.redes.P2P.PeerTracker.Message.*;
 import es.um.redes.P2P.util.FileInfo;
@@ -20,8 +21,8 @@ public class PeerController implements PeerControllerIface {
 	private byte currentCommand;
 	private String[] currentArguments;
 	private Reporter reporter;
+	private Seeder seeder;
 	private PeerDatabase peerDatabase;
-	// private HashSet<FileInfo> listaFicheros;
 
 	/**
 	 * Puede que en vez de un TreeSet<FileInfo> sea mejor hacer una clase
@@ -32,13 +33,7 @@ public class PeerController implements PeerControllerIface {
 
 	private short chunkSize;
 
-	/**
-	 * puerto del seed generado aleatoriamente en el rango [10000-30000]
-	 */
-	private int seederPort;
-
 	public PeerController(Reporter client, PeerDatabase peerDatabase) {
-		// seederPort = 0;
 		currentArguments = new String[PeerShell.MAX_ARGS];
 		shell = new PeerShell();
 		reporter = client;
@@ -64,8 +59,9 @@ public class PeerController implements PeerControllerIface {
 		setCurrentCommandArguments(shell.getCommandArguments());
 	}
 
-	public void publishSharedFilesToTracker(int seederPort) {
-		this.seederPort = seederPort;
+	public void publishSharedFilesToTracker(Seeder seeder) {
+		this.seeder = seeder;
+		seeder.getAvailablePort(); // obtenemos el puerto por el que escuchara
 		setCurrentCommand(PeerCommands.COM_ADDSEED);
 		processCurrentCommand();
 	}
@@ -103,62 +99,63 @@ public class PeerController implements PeerControllerIface {
 
 		// analisis de casos, PODEMOS BORARLO?
 		switch (currentCommand) {
-		case PeerCommands.COM_CONFIG:
-			response = reporter.conversationWithTracker(m);
-			processMessageFromTracker(response);
-			break;
-
-		case PeerCommands.COM_ADDSEED:
-			response = reporter.conversationWithTracker(m);
-			processMessageFromTracker(response);
-			break;
-
-		case PeerCommands.COM_QUERY:
-			// m es null si no hemos puesto parametros correctos
-			if (m != null) {
+			case PeerCommands.COM_CONFIG:
 				response = reporter.conversationWithTracker(m);
 				processMessageFromTracker(response);
-			}
-			break;
+				break;
 
-		case PeerCommands.COM_DOWNLOAD:
-			if (m != null) {
+			case PeerCommands.COM_ADDSEED:
 				response = reporter.conversationWithTracker(m);
 				processMessageFromTracker(response);
-			}
-			break;
+				break;
 
-		case PeerCommands.COM_QUIT:
-			System.out.println("procesando salida...");
-			break;
+			case PeerCommands.COM_QUERY:
+				// m es null si no hemos puesto parametros correctos
+				if (m != null) {
+					response = reporter.conversationWithTracker(m);
+					processMessageFromTracker(response);
+				}
+				break;
 
-		case PeerCommands.COM_SHOW:
-			// imprimimos la lista de ficheros que conocemos
-			printQueryResult();
-			break;
+			case PeerCommands.COM_DOWNLOAD:
+				if (m != null) {
+					response = reporter.conversationWithTracker(m);
+					processMessageFromTracker(response);
+				}
+				break;
 
-		case PeerCommands.COM_HELP:
-			String ayuda = "La lista de comandos disponibles es:\n"
-					+ "query [params] (consulta al tracker la lista de ficheros compartidos disponibles)\n"
-					+ "\t-n  <substring> : Sirve para filtrar los resultados por subcadena en el nombre.\n"
-					+ "\t-lt <bytes>: Sirve para filtrar los resultados a ficheros cuyo tamaño sea inferior"
-					+ "a la cantidad expresada en <bytes>. Se pueden utilizar sufijos como KB, MB y GB para"
-					+ "indicar, respectivamente, kilobytes, megabytes y gigabytes.\n"
-					+ "\t-ge <bytes>: Sirve para obtener ficheros cuyo tamaño sea igual o "
-					+ "superior a <bytes>. De nuevo se pueden emplear sufijos.\n"
-					+ "download <hash> (descarga el fichero de otros peers)\n"
-					+ "show (muestra la lista de )           \n" + "help (muestra la lista de comandos disponibles)\n"
-					+ "quit (cierra la conexión con el tracker y termina el programa)";
-			System.out.println(ayuda);
-			break;
+			case PeerCommands.COM_QUIT:
+				System.out.println("procesando salida...");
+				break;
 
-		case PeerCommands.COM_INVALID:
-			System.err.println("COM_INVALID");
-			break;
+			case PeerCommands.COM_SHOW:
+				// imprimimos la lista de ficheros que conocemos
+				printQueryResult();
+				break;
 
-		default:
-			System.err.println("comando desconocido");
-			break;
+			case PeerCommands.COM_HELP:
+				String ayuda = "La lista de comandos disponibles es:\n"
+						+ "query [params] (consulta al tracker la lista de ficheros compartidos disponibles)\n"
+						+ "\t-n  <substring> : Sirve para filtrar los resultados por subcadena en el nombre.\n"
+						+ "\t-lt <bytes>: Sirve para filtrar los resultados a ficheros cuyo tamaño sea inferior"
+						+ "a la cantidad expresada en <bytes>. Se pueden utilizar sufijos como KB, MB y GB para"
+						+ "indicar, respectivamente, kilobytes, megabytes y gigabytes.\n"
+						+ "\t-ge <bytes>: Sirve para obtener ficheros cuyo tamaño sea igual o "
+						+ "superior a <bytes>. De nuevo se pueden emplear sufijos.\n"
+						+ "download <hash> (descarga el fichero de otros peers)\n"
+						+ "show (muestra la lista de )           \n"
+						+ "help (muestra la lista de comandos disponibles)\n"
+						+ "quit (cierra la conexión con el tracker y termina el programa)";
+				System.out.println(ayuda);
+				break;
+
+			case PeerCommands.COM_INVALID:
+				System.err.println("COM_INVALID");
+				break;
+
+			default:
+				System.err.println("comando desconocido");
+				break;
 		}
 
 	}
@@ -172,20 +169,20 @@ public class PeerController implements PeerControllerIface {
 		}
 
 		switch (currentArguments[0]) {
-		case "-n":
-			filterType = MessageQuery.FILTERTYPE_NAME;
-			break;
+			case "-n":
+				filterType = MessageQuery.FILTERTYPE_NAME;
+				break;
 
-		case "-lt":
-			filterType = MessageQuery.FILTERTYPE_MAXSIZE;
-			break;
+			case "-lt":
+				filterType = MessageQuery.FILTERTYPE_MAXSIZE;
+				break;
 
-		case "-ge":
-			filterType = MessageQuery.FILTERTYPE_MINSIZE;
-			break;
-		default:
-			System.err.println("wrong arguments for query");
-			break;
+			case "-ge":
+				filterType = MessageQuery.FILTERTYPE_MINSIZE;
+				break;
+			default:
+				System.err.println("wrong arguments for query");
+				break;
 		}
 
 		String stringFilterType = Byte.toString(filterType);
@@ -199,62 +196,62 @@ public class PeerController implements PeerControllerIface {
 
 		// analisis de casos
 		switch (currentCommand) {
-		case PeerCommands.COM_CONFIG:
-			control = (MessageControl) Message.makeGetConfRequest();
-			break;
+			case PeerCommands.COM_CONFIG:
+				control = (MessageControl) Message.makeGetConfRequest();
+				break;
 
-		case PeerCommands.COM_ADDSEED:
-			System.out.println("random port: " + seederPort);
-			FileInfo[] lista = peerDatabase.getLocalSharedFiles();
-			// FIXME seederPort CAMBIAR
-			control = (MessageFileInfo) Message.makeAddSeedRequest(seederPort, lista);
+			case PeerCommands.COM_ADDSEED:
+				System.out.println("random port: " + seeder.getSeederPort());
+				FileInfo[] lista = peerDatabase.getLocalSharedFiles();
+				// FIXME seederPort CAMBIAR
+				control = (MessageFileInfo) Message.makeAddSeedRequest(seeder.getSeederPort(), lista);
 
-			recordQueryResult(lista); // guardamos nuestros ficheros
-			break;
+				recordQueryResult(lista); // guardamos nuestros ficheros
+				break;
 
-		case PeerCommands.COM_QUERY:
-			byte filterType = 0;
-			String filter = "";
-			String[] array = tratarArgumentosQuery();
-			if (array != null) {
-				filterType = Byte.valueOf(array[0]);
-				filter = array[1];
-				control = (MessageQuery) Message.makeQueryFilesRequest(filterType, filter);
-			}
-			break;
-
-		case PeerCommands.COM_DOWNLOAD:
-			// FIXME Si hay mutiples hash, informamos al usuario de ello sin
-			// descargarnos ningun, le dedcimos los nombres y hash de cada
-			// uno para que elija el mas correcto
-			if (currentArguments[0] != null) {
-				FileInfo[] opcionesHash = lookupQueryResult(currentArguments[0]);
-
-				int contador = 0;
-				for (int i = 0; i < opcionesHash.length; i++) {
-					if (opcionesHash[i] != null)
-						contador++;
+			case PeerCommands.COM_QUERY:
+				byte filterType = 0;
+				String filter = "";
+				String[] array = tratarArgumentosQuery();
+				if (array != null) {
+					filterType = Byte.valueOf(array[0]);
+					filter = array[1];
+					control = (MessageQuery) Message.makeQueryFilesRequest(filterType, filter);
 				}
+				break;
 
-				if (opcionesHash[0] != null && contador == 1)
-					control = (MessageSeedInfo) Message.makeGetSeedsRequest(opcionesHash[0].fileHash);
-				else {
-					System.out.println(
-							"El hash introducido no es suficientemente exacto, estos son los ficheros que coinciden:");
-					for (int i = 0; i < opcionesHash.length; i++)
-						System.out.println(opcionesHash[i]);
+			case PeerCommands.COM_DOWNLOAD:
+				// FIXME Si hay mutiples hash, informamos al usuario de ello sin
+				// descargarnos ningun, le dedcimos los nombres y hash de cada
+				// uno para que elija el mas correcto
+				if (currentArguments[0] != null) {
+					FileInfo[] opcionesHash = lookupQueryResult(currentArguments[0]);
+
+					int contador = 0;
+					for (int i = 0; i < opcionesHash.length; i++) {
+						if (opcionesHash[i] != null)
+							contador++;
+					}
+
+					if (opcionesHash[0] != null && contador == 1)
+						control = (MessageSeedInfo) Message.makeGetSeedsRequest(opcionesHash[0].fileHash);
+					else {
+						System.out.println(
+								"El hash introducido no es suficientemente exacto, estos son los ficheros que coinciden:");
+						for (int i = 0; i < opcionesHash.length; i++)
+							System.out.println(opcionesHash[i]);
+					}
 				}
-			}
-			break;
+				break;
 
-		case PeerCommands.COM_QUIT:
-			control = (MessageFileInfo) Message.makeRemoveSeedRequest(seederPort, new FileInfo[0]);
-			break;
+			case PeerCommands.COM_QUIT:
+				control = (MessageFileInfo) Message.makeRemoveSeedRequest(seeder.getSeederPort(), new FileInfo[0]);
+				break;
 
-		default:
-			// si el comando actual no requiere uso de mensaje
-			// no hacemos nada y return null
-			break;
+			default:
+				// si el comando actual no requiere uso de mensaje
+				// no hacemos nada y return null
+				break;
 		}
 
 		return control;
@@ -266,50 +263,50 @@ public class PeerController implements PeerControllerIface {
 
 		// analisis de casos
 		switch (response.getOpCode()) {
-		case Message.OP_SEND_CONF:
-			chunkSize = ((MessageConf) response).getChunkSize();
-			System.out.println("tamaño chunks: " + chunkSize);
-			break;
+			case Message.OP_SEND_CONF:
+				chunkSize = ((MessageConf) response).getChunkSize();
+				System.out.println("tamaño chunks: " + chunkSize);
+				break;
 
-		case Message.OP_ADD_SEED_ACK:
-			// si solo enviamos un paquete
-			System.out.println("correcto OP_ADD_SEED_ACK");
-			// si enviamos muchos contrar el numero de paquetes que enviamos
-			// y contar el numero de ack
-			break;
+			case Message.OP_ADD_SEED_ACK:
+				// si solo enviamos un paquete
+				System.out.println("correcto OP_ADD_SEED_ACK");
+				// si enviamos muchos contrar el numero de paquetes que enviamos
+				// y contar el numero de ack
+				break;
 
-		case Message.OP_FILE_LIST:
-			System.out.println("correcto OP_FILE_LIST");
-			FileInfo[] filelist = ((MessageFileInfo) response).getFileList();
+			case Message.OP_FILE_LIST:
+				System.out.println("correcto OP_FILE_LIST");
+				FileInfo[] filelist = ((MessageFileInfo) response).getFileList();
 
-			for (int i = 0; i < filelist.length; i++)
-				System.out.println(filelist[i]);
+				for (int i = 0; i < filelist.length; i++)
+					System.out.println(filelist[i]);
 
-			recordQueryResult(filelist);
-			break;
+				recordQueryResult(filelist);
+				break;
 
-		case Message.OP_SEED_LIST:
-			System.out.println("correcto OP_SEED_LIST");
-			System.out.println(response);
-			InetSocketAddress[] seedList = ((MessageSeedInfo) response).getSeedList();
-			String targetFileHash = ((MessageSeedInfo) response).getFileHash();
-			downloadFileFromSeeds(seedList, targetFileHash);
-			break;
+			case Message.OP_SEED_LIST:
+				System.out.println("correcto OP_SEED_LIST");
+				System.out.println(response);
+				InetSocketAddress[] seedList = ((MessageSeedInfo) response).getSeedList();
+				String targetFileHash = ((MessageSeedInfo) response).getFileHash();
+				downloadFileFromSeeds(seedList, targetFileHash);
+				break;
 
-		case Message.OP_REMOVE_SEED_ACK:
-			System.out.println("correcto OP_REMOVE_SEED_ACK");
-			// comprobar que has sido dado de baja
-			// opcion 1, mandar un get_seed y comprobar que no estas
-			break;
+			case Message.OP_REMOVE_SEED_ACK:
+				System.out.println("correcto OP_REMOVE_SEED_ACK");
+				// comprobar que has sido dado de baja
+				// opcion 1, mandar un get_seed y comprobar que no estas
+				break;
 
-		case Message.INVALID_OPCODE:
-			System.err.println("INVALID_OPCODE");
-			processCurrentCommand(); // suponemos
-			break;
+			case Message.INVALID_OPCODE:
+				System.err.println("INVALID_OPCODE");
+				processCurrentCommand(); // suponemos
+				break;
 
-		default:
-			System.err.println("MAL!!");
-			break;
+			default:
+				System.err.println("MAL!!");
+				break;
 		}
 	}
 
@@ -405,7 +402,7 @@ public class PeerController implements PeerControllerIface {
 			FileInfoPeer fileInfoPeer = mapaFicheros.get(targetFileHash);
 			fileInfoPeer.addPeer(seedList); // modificado aliasing
 		}
-		Downloader descarga = new Downloader(chunkSize);
+		Downloader descarga = new Downloader(chunkSize, mapaFicheros.get(targetFileHash).getFileInfo());
 		descarga.downloadFile(seedList);
 	}
 
