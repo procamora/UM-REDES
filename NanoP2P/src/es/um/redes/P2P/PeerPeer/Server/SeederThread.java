@@ -34,13 +34,32 @@ public class SeederThread extends Thread {
 
 	// Método principal que coordina la recepción y envío de mensajes
 	public void run() {
-		String str = "a";
+		DataOutputStream dos;
+		DataInputStream dis;
+		String s = null;
+		System.out.println("recibe seeder");
+		byte[] buffer = new byte[40];
+		try {
+			InputStream is = socket.getInputStream();
+			dis = new DataInputStream(is);
+			dis.read(buffer);
+			s = new String(buffer, 0, 40);
+			System.out.println(s);
+			System.out.println(buffer.toString());
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("send seeder");
+		String str = s.toUpperCase();
 		try {
 			socket.getOutputStream().write(str.getBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
 
+	}
 }

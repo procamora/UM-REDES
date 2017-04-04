@@ -25,6 +25,13 @@ public class DownloaderThread  extends Thread {
 	private int numChunksDownloaded;
 
 	public DownloaderThread(Downloader dl, InetSocketAddress seed) {
+		downloader = dl;
+		try {
+			downloadSocket = new Socket(seed.getAddress(), seed.getPort());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	//It receives a message containing a chunk and it is stored in the file
@@ -44,13 +51,26 @@ public class DownloaderThread  extends Thread {
     public void run() {
     	//pide lista trozos o un trozo
     	//
-    	byte[] buffer = new byte[3];
-		InputStream is;
+    	System.out.println("send download");
+    	String str = downloader.getTargetFile().fileHash;
 		try {
-			is = downloadSocket.getInputStream();
-			int n = is.read(buffer);
-			String s = new String(buffer, 0, n);
+			downloadSocket.getOutputStream().write(str.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		System.out.println("lectura download");
+    	byte[] buffer = new byte[40];
+		try {
+			InputStream is = downloadSocket.getInputStream();
+			dis = new DataInputStream(is);
+			dis.read(buffer);
+			String s = new String(buffer, 0, 40);
 			System.out.println(s);
+			System.out.println(buffer.toString());
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

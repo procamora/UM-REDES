@@ -54,7 +54,7 @@ public class Downloader implements DownloaderIface {
 		//Socket[] socket = new Socket[seedList.length];
 		for (int i = 0; i < seedList.length; i++) {
 			if (seedList[i] != null)
-				new DownloaderThread(this, seedList[i]);
+				new DownloaderThread(this, seedList[i]).start();
 		}
 
 		return false;
