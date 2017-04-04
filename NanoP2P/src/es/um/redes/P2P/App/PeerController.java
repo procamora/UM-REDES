@@ -11,8 +11,6 @@ import es.um.redes.P2P.util.FileInfo;
 import es.um.redes.P2P.util.PeerDatabase;
 
 public class PeerController implements PeerControllerIface {
-	// private static final int MIN_PORT = 10000;
-	// private static final int MAX_PORT = 30000;
 	/**
 	 * The shell associated to this controller.
 	 */
@@ -62,6 +60,7 @@ public class PeerController implements PeerControllerIface {
 	public void publishSharedFilesToTracker(Seeder seeder) {
 		this.seeder = seeder;
 		seeder.getAvailablePort(); // obtenemos el puerto por el que escuchara
+		seeder.start();
 		setCurrentCommand(PeerCommands.COM_ADDSEED);
 		processCurrentCommand();
 	}

@@ -49,7 +49,7 @@ public class Seeder implements Runnable {
 				if (n == SEEDER_LAST_PORT) {
 					System.err.println("Estan todos los puertos ocupados");
 					// si no conseguimos un puerto paramos el programa
-					System.exit(-1); 
+					System.exit(-1);
 				}
 				n++;
 			}
@@ -62,19 +62,20 @@ public class Seeder implements Runnable {
 	 */
 	public void run() {
 		// TODO
-		// while(true) hasta que pulsemos quit
-		// estamos todo el rato aceptando conexiones
-		Socket clientSocket = null;
-		try {
-			 clientSocket = serverSocket.accept();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		while (true) {// hasta que pulsemos quit
+			// estamos todo el rato aceptando conexiones
+			Socket clientSocket = null;
+			try {
+				clientSocket = serverSocket.accept();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-		// En algún momento se llamará a
-		System.out.println(clientSocket.getPort());
-		new SeederThread(clientSocket, database, currentDownloader, chunkSize).start();
+			// En algún momento se llamará a
+			System.out.println(clientSocket.getPort());
+			new SeederThread(clientSocket, database, currentDownloader, chunkSize).start();
+		}
 
 	}
 

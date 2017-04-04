@@ -20,6 +20,8 @@ public class SeederThread extends Thread {
 	private byte[] chunkDataBuf;
 
 	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader, short chunkSize) {
+		this.socket = socket;
+		this.downloader = downloader;
 		// TODO
 	}
 
@@ -34,18 +36,15 @@ public class SeederThread extends Thread {
 
 	// Método principal que coordina la recepción y envío de mensajes
 	public void run() {
-		DataOutputStream dos;
-		DataInputStream dis;
 		String s = null;
 		System.out.println("recibe seeder");
 		byte[] buffer = new byte[40];
 		try {
 			InputStream is = socket.getInputStream();
-			dis = new DataInputStream(is);
+			DataInputStream dis = new DataInputStream(is);
 			dis.read(buffer);
 			s = new String(buffer, 0, 40);
 			System.out.println(s);
-			System.out.println(buffer.toString());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -53,7 +52,7 @@ public class SeederThread extends Thread {
 		}
 
 		System.out.println("send seeder");
-		String str = s.toUpperCase();
+		String str = s.toLowerCase();
 		try {
 			socket.getOutputStream().write(str.getBytes());
 		} catch (IOException e) {

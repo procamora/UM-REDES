@@ -68,9 +68,7 @@ public class DownloaderThread  extends Thread {
 			dis = new DataInputStream(is);
 			dis.read(buffer);
 			String s = new String(buffer, 0, 40);
-			System.out.println(s);
-			System.out.println(buffer.toString());
-			
+			System.out.println(s);			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
