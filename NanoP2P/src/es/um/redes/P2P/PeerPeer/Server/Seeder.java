@@ -16,7 +16,8 @@ import es.um.redes.P2P.util.PeerDatabase;
 public class Seeder implements Runnable {
 	public static final int SEEDER_FIRST_PORT = 10000;
 	public static final int SEEDER_LAST_PORT = 10100;
-	public Downloader currentDownloader;
+	//son ficheros que nos estamos descargando, no estan en local aun
+	private Downloader currentDownloader; 
 	private ServerSocket serverSocket;
 	private short chunkSize;
 	private boolean estado = true;
@@ -102,6 +103,7 @@ public class Seeder implements Runnable {
 		new Thread(this).start();
 	}
 
+	//es el fichero que nos estamos decargando
 	public void setCurrentDownloader(Downloader downloader) {
 		// TODO
 	}

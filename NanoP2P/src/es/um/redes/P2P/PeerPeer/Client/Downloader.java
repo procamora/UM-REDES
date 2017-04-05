@@ -50,14 +50,11 @@ public class Downloader implements DownloaderIface {
 	@Override
 	public boolean downloadFile(InetSocketAddress[] seedList) {
 		// TODO Auto-generated method stub
-
-		//Socket[] socket = new Socket[seedList.length];
 		for (int i = 0; i < seedList.length; i++) {
 			if (seedList[i] != null)
 				new DownloaderThread(this, seedList[i]).start();
 		}
-
-		return false;
+		return isDownloadComplete();
 	}
 
 	// Devuelve el número de chunks que han sido descargados de cada uno de los

@@ -50,7 +50,10 @@ public class DownloaderThread  extends Thread {
     //Main code to request chunk lists and chunks
     public void run() {
     	//pide lista trozos o un trozo
-    	//
+    	//es un bucle, mientras que no te bajes el fichero
+    	//si es un fichero se comprueba si nos ehemos bajado los byes del fichero
+    	//si hay varios thread hay que coordinar con variable compartida, que sera la instancia this
+    	//MASTER, servir trozos que te estas bajando, opcional
     	System.out.println("send download");
     	String str = downloader.getTargetFile().fileHash;
 		try {
