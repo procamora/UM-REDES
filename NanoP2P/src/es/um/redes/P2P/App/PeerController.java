@@ -248,6 +248,7 @@ public class PeerController implements PeerControllerIface {
 
 			case PeerCommands.COM_QUIT:
 				control = (MessageFileInfo) Message.makeRemoveSeedRequest(seeder.getSeederPort(), new FileInfo[0]);
+				seeder.quit();
 				break;
 
 			default:

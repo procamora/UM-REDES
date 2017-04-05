@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 import es.um.redes.P2P.PeerPeer.Client.Downloader;
 import es.um.redes.P2P.util.PeerDatabase;
@@ -18,6 +19,7 @@ public class Seeder implements Runnable {
 	public Downloader currentDownloader;
 	private ServerSocket serverSocket;
 	private short chunkSize;
+	private boolean estado = true;
 
 	/**
 	 * Base de datos de ficheros locales compartidos por este peer.
@@ -62,21 +64,34 @@ public class Seeder implements Runnable {
 	 */
 	public void run() {
 		// TODO
-		while (true) {// hasta que pulsemos quit
+		while (estado) {// hasta que pulsemos quit
 			// estamos todo el rato aceptando conexiones
 			Socket clientSocket = null;
 			try {
 				clientSocket = serverSocket.accept();
+				// En algún momento se llamará a
+				System.out.println(clientSocket.getPort());
+				new SeederThread(clientSocket, database, currentDownloader, chunkSize).start();
+			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			// En algún momento se llamará a
-			System.out.println(clientSocket.getPort());
-			new SeederThread(clientSocket, database, currentDownloader, chunkSize).start();
 		}
 
+	}
+
+	public void quit() {
+		estado = false;
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
