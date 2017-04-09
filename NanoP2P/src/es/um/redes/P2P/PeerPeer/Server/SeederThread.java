@@ -36,6 +36,9 @@ public class SeederThread extends Thread {
 
 	// Método principal que coordina la recepción y envío de mensajes
 	public void run() {
+		//while true hasta que el cliente tenga todos los trozos del ficheros
+		//sabemos que se ha acabado de enviar el fichero cuando el otro cierra el socket y al hacer el read
+		//nos da una excepcion correcta que tenemos que capturar
 		String s = null;
 		System.out.println("recibe seeder");
 		byte[] buffer = new byte[40];
