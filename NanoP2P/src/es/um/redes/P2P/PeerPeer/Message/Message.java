@@ -1,7 +1,6 @@
 
 package es.um.redes.P2P.PeerPeer.Message;
 
-import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,21 +8,15 @@ import java.util.Set;
 import java.util.Vector;
 
 import es.um.redes.P2P.util.FileDigest;
-import es.um.redes.P2P.util.FileInfo;
 
 /**
- * Abstract class that models peer-tracker messages without a specific format
+ * Abstract class that models peer-peer messages without a specific format
  *
- * @author rtitos
+ * @author procamora
  *
  */
 
 public abstract class Message {
-	/**
-	 * Maximum size of the buffer used to received packets
-	 */
-	public static final int MAX_UDP_PACKET_LENGTH = 1450;
-
 	/**
 	 * Size of "opcode" field: byte (1 bytes)
 	 */
@@ -38,9 +31,9 @@ public abstract class Message {
 	 */
 	protected static final int FIELD_FILEHASH_BYTES = FileDigest.getFileDigestSize();
 	/**
-	 * Size of "port" field: short (2 bytes)
+	 * Size of "chunksize" field: short (2 bytes)
 	 */
-	protected static final int FIELD_PORT_BYTES = Short.SIZE / 8;
+	protected static final int FIELD_CHUNKSIZE_BYTES = Short.SIZE / 8;
 	/**
 	 * Size of "trans_id" field: 1 byte
 	 */
@@ -137,16 +130,16 @@ public abstract class Message {
 	public final String getOpCodeString() {
 		sanityCheck();
 		switch (opCode) {
-		case OP_GET_CHUNK:
-			return "GET_CHUNK";
-		case OP_GET_CHUNK_ACK:
-			return "GET_CHUNK_ACK";
-		case OP_CHUNK:
-			return "CHUNK";
-		case OP_CHUNK_ACK:
-			return "CHUNK_ACK";
-		default:
-			return "INVALID_TYPE";
+			case OP_GET_CHUNK:
+				return "GET_CHUNK";
+			case OP_GET_CHUNK_ACK:
+				return "GET_CHUNK_ACK";
+			case OP_CHUNK:
+				return "CHUNK";
+			case OP_CHUNK_ACK:
+				return "CHUNK_ACK";
+			default:
+				return "INVALID_TYPE";
 		}
 	}
 
@@ -169,28 +162,26 @@ public abstract class Message {
 		this.transId = fetchAndIncrementTransId();
 	}
 
-	public static Message makeGetChunk(String hash, int numChunks) {
+	public static Message makeGetChunkRequest(String hash, short numChunks) {
 		byte requestOpcode = OP_GET_CHUNK;
 		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
+		return new MessageCQuery(requestOpcode, tid, hash, numChunks);
 	}
 
-	public static Message makeGetChunkResponse(int seederPort, FileInfo[] fileList) {
-		byte requestOpcode = OP_GET_CHUNK_ACK;
+	public static Message makeGetChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQueryResponse(requestOpcode, tid, seederPort, fileList);
+		return new MessageCQueryACK(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
-	public static Message makeChunk(int seederPort, FileInfo[] fileList) {
+	public static Message makeChunkRequest(String hash, short numChunks) {
 		byte requestOpcode = OP_CHUNK;
 		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQuery(requestOpcode, tid, seederPort, fileList);
+		return new MessageCQuery(requestOpcode, tid, hash, numChunks);
 	}
 
-	public static Message makeChunkResponse(int seederPort, FileInfo[] fileList) {
-		byte requestOpcode = OP_CHUNK_ACK;
+	public static Message makeChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQueryResponse(requestOpcode, tid, seederPort, fileList);
+		return new MessageCQueryACK(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
 	/**
@@ -205,13 +196,16 @@ public abstract class Message {
 			throw new IllegalArgumentException("Failed to parse request: byte[] argument has length " + buf.length);
 		}
 		byte reqOpcode = buf[0];
-		byte transId = buf[1];
+		// byte transId = buf[1];
 		switch (reqOpcode) {
-		case OP_GET_CHUNK:
-		case OP_CHUNK:
-			return new MessageChunkQuery(buf);
-		default:
-			throw new IllegalArgumentException("Invalid request opcode: " + reqOpcode);
+			case OP_GET_CHUNK:
+			case OP_CHUNK:
+				return new MessageCQuery(buf);
+			case OP_GET_CHUNK_ACK:
+			case OP_CHUNK_ACK:
+				return new MessageCQueryACK(buf);
+			default:
+				throw new IllegalArgumentException("Invalid request opcode: " + reqOpcode);
 		}
 	}
 
@@ -227,13 +221,15 @@ public abstract class Message {
 			throw new IllegalArgumentException("Failed to parse response: buffer has length " + buf.length);
 		}
 		byte respOpcode = buf[0];
-
 		switch (respOpcode) {
-		case OP_GET_CHUNK_ACK:
-		case OP_CHUNK_ACK:
-			return new MessageChunkQueryResponse(reqOpcode, transId);
-		default:
-			throw new IllegalArgumentException("Failed to parse message: Invalid response opcode " + respOpcode);
+			case OP_GET_CHUNK:
+			case OP_CHUNK:
+				return new MessageCQuery(buf);
+			case OP_GET_CHUNK_ACK:
+			case OP_CHUNK_ACK:
+				return new MessageCQueryACK(buf);
+			default:
+				throw new IllegalArgumentException("Failed to parse message: Invalid response opcode " + respOpcode);
 		}
 	}
 
