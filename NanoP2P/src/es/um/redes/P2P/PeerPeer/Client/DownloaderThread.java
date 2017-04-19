@@ -43,6 +43,7 @@ public class DownloaderThread extends Thread {
 
 	// It receives a message containing a chunk and it is stored in the file
 	private void receiveAndProcessChunkList() {
+		
 	}
 
 	// Number of chunks already downloaded by this thread
@@ -103,10 +104,10 @@ public class DownloaderThread extends Thread {
 		System.out.println(msgRecibido);
 		switch (msgRecibido.getOpCode()) {
 			case Message.OP_GET_CHUNK_ACK:
-				System.out.println("num chunk: " + ((MessageCQueryACK) msgRecibido).getNumChunk());
+				System.out.println("num chunk: " + ((MessageChunkQueryResponse) msgRecibido).getNumChunk());
 				break;
 			case Message.OP_CHUNK_ACK:
-				System.out.println("datos: " + ((MessageCQueryACK) msgRecibido).getDatosString());
+				System.out.println("datos: " + ((MessageChunkQueryResponse) msgRecibido).toString());
 				break;
 			default:
 				break;

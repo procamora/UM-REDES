@@ -223,11 +223,13 @@ public abstract class Message {
 		byte respOpcode = buf[0];
 		switch (respOpcode) {
 			case OP_GET_CHUNK:
+				
 			case OP_CHUNK:
-				return new MessageCQuery(buf);
+				return new MessageChunkQuery(buf);
 			case OP_GET_CHUNK_ACK:
+				
 			case OP_CHUNK_ACK:
-				return new MessageCQueryACK(buf);
+				return new MessageChunkQueryACK(buf);
 			default:
 				throw new IllegalArgumentException("Failed to parse message: Invalid response opcode " + respOpcode);
 		}

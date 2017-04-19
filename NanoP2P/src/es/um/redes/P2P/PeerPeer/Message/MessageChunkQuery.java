@@ -18,11 +18,11 @@ import es.um.redes.P2P.PeerTracker.Message.Message;
  +------+-------+------------+
 
  */
-public class MessageChunkQuery {
+public class MessageChunkQuery extends es.um.redes.P2P.PeerPeer.Message.Message {
 	
 	public static final byte FILTERTYPE_INVALID = 0;	
 	public static final int FILTERTYPE_LENGHT = 1;
-	public static final byte FILTERTYPE_GET_CHUNK = 1;	  //  Tipo 1: Indica que es un GET_CHUNK
+	public static final byte OP_GET_CHUNK = 1;	  //  Tipo 1: Indica que es un GET_CHUNK
 	public static final byte FILTERTYPE_CHUNK = 3;		  // Tipo 3: indica que que el formato de mensaje es un CHUNK
 	private static final int FIELD_HASH_LENGHT = 20;  			  // Tamano de hash de queryChunk
 	private static final int FIELD_NUM_CHUNK_BYTES_LENGHT = 5;   // Numero de bytes del numero de chunks
@@ -32,22 +32,22 @@ public class MessageChunkQuery {
 
 	private byte queryChunkType;			// el tipo de mensaje 
 	private String hash;					// el Hash del mensaje
-	private int numChunks;					// Numero de Chunks 
+	private short numChunks;					// Numero de Chunks 
 
-	public MessageChunkQuery(byte type,  String hash, int num_Chunk) {
+	public MessageChunkQuery(byte type,  String hash, short num_Chunk) {
 		this.queryChunkType = type;
 		this.hash = hash;
 		this.numChunks = num_Chunk;
 	}
 
-/*	public MessageChunkQuery(byte[] buf) {
+	public MessageChunkQuery(byte[] buf) {
 		if (fromByteArray(buf) == false) {
 			throw new RuntimeException("Failed to parse message: format is not Query.");
 		}
 		else {
 			assert(true);
 		}
-	}*/
+	}
 
 	public byte getType(){
 		return queryChunkType;
@@ -57,7 +57,7 @@ public class MessageChunkQuery {
 		return hash;
 	}
 	
-	public int getNumChunks() {
+	public short getNumChunks() {
 		return numChunks;
 	}
 	
@@ -65,7 +65,7 @@ public class MessageChunkQuery {
 	private static boolean isNumericalChunkQueryType(byte type) {
 		switch (type) {
 			case FILTERTYPE_CHUNK:
-			case FILTERTYPE_GET_CHUNK:
+			case OP_GET_CHUNK:
 			case FILTERTYPE_INVALID:
 				return true;
 			default:
@@ -108,6 +108,31 @@ public class MessageChunkQuery {
 		strBuf.append(" NumChunks:  "+this.numChunks + "\n");
 		return strBuf.toString();
 	}
+
+@Override
+protected boolean fromByteArray(byte[] buf) {
+	// TODO Auto-generated method stub
+	return false;
+}
+
+@Override
+public int getTotalFragments() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+
+@Override
+public boolean fragmented() {
+	// TODO Auto-generated method stub
+	return false;
+}
+
+@Override
+public void reassemble(Vector<es.um.redes.P2P.PeerPeer.Message.Message> fragments) {
+	// TODO Auto-generated method stub
+	
+}
 
 	
 

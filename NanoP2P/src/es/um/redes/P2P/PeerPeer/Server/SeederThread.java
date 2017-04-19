@@ -80,21 +80,23 @@ public class SeederThread extends Thread {
 		switch (response.getOpCode()) {
 			case Message.OP_GET_CHUNK:
 				System.out.println("OP_GET_CHUNK");
-				String hash = ((MessageCQuery) response).getFileHash();
+				String hash = ((MessageChunkQuery) response).getHash();
 				System.out.println(hash);
-				short numChunk = ((MessageCQuery) response).getNumChunk();
+				short numChunk = ((MessageChunkQuery) response).getNumChunks();
 				System.out.println(numChunk);
 				respuesta = Message.makeGetChunkResponseRequest(numChunk, new byte[0], chunkSize);
 				break;
 
 			case Message.OP_CHUNK:
 				System.out.println("OP_CHUNK");
-				String hash2 = ((MessageCQuery) response).getFileHash();
+				String hash2 = ((MessageChunkQuery) response).getHash();
 				System.out.println(hash2);
-				short numChunk2 = ((MessageCQuery) response).getNumChunk();
+				short numChunk2 = ((MessageChunkQuery) response).getNumChunks();
 				System.out.println(numChunk2);
 				respuesta = Message.makeChunkResponseRequest(numChunk2, "DATOS++".getBytes(), chunkSize);
 				break;
+				
+				
 			default:
 				break;
 		}
