@@ -15,7 +15,6 @@ public class PeerController implements PeerControllerIface {
 	 * The shell associated to this controller.
 	 */
 	private PeerShellIface shell;
-
 	private byte currentCommand;
 	private String[] currentArguments;
 	private Reporter reporter;

@@ -54,13 +54,13 @@ public class DownloaderThread extends Thread {
 	public Message receiveMessageFromPeer() {
 		System.out.println("recibe seeder");
 		Message msg = null;
-		byte[] buffer = new byte[1024];
+		//byte[] buffer = new byte[1024];
 		try {
 			InputStream is = downloadSocket.getInputStream();
 			dis = new DataInputStream(is);
-			dis.read(buffer);
+			//dis.read(buffer);
 
-			msg = Message.parseResponse(buffer);
+			msg = Message.parseResponse(dis);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

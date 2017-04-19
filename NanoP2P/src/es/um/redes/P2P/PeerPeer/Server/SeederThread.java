@@ -43,13 +43,13 @@ public class SeederThread extends Thread {
 	public Message receiveMessageFromPeer() {
 		System.out.println("recibe seeder");
 		Message msg = null;
-		byte[] buffer = new byte[MAX_MSG_SIZE_BYTES];
+		//byte[] buffer = new byte[MAX_MSG_SIZE_BYTES];
 		try {
 			InputStream is = socket.getInputStream();
 			dis = new DataInputStream(is);
-			dis.read(buffer);
+			//dis.read(buffer);
 
-			msg = Message.parseResponse(buffer);
+			msg = Message.parseResponse(dis);
 			// System.out.println(msg);
 
 		} catch (IOException e) {

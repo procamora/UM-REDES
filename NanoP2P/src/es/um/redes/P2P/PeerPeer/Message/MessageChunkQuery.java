@@ -3,9 +3,13 @@ package es.um.redes.P2P.PeerPeer.Message;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
-import es.um.redes.P2P.PeerTracker.Message.Message;
+import es.um.redes.P2P.util.FileDigest;
 
 /**
  * @author rtitos
@@ -20,28 +24,21 @@ import es.um.redes.P2P.PeerTracker.Message.Message;
  */
 public class MessageChunkQuery extends es.um.redes.P2P.PeerPeer.Message.Message {
 	
-	public static final byte FILTERTYPE_INVALID = 0;	
-	public static final int FILTERTYPE_LENGHT = 1;
-	public static final byte OP_GET_CHUNK = 1;	  //  Tipo 1: Indica que es un GET_CHUNK
-	public static final byte FILTERTYPE_CHUNK = 3;		  // Tipo 3: indica que que el formato de mensaje es un CHUNK
-	private static final int FIELD_HASH_LENGHT = 20;  			  // Tamano de hash de queryChunk
-	private static final int FIELD_NUM_CHUNK_BYTES_LENGHT = 5;   // Numero de bytes del numero de chunks
-	private static final int FIELD_NUMERICAL_FILTER_BYTES = Long.SIZE / 8;
 
 	
-
-	private byte queryChunkType;			// el tipo de mensaje 
+	private static final Byte[] _confOpCodes = {OP_GET_CHUNK, OP_CHUNK};
 	private String hash;					// el Hash del mensaje
-	private short numChunks;					// Numero de Chunks 
-
-	public MessageChunkQuery(byte type,  String hash, short num_Chunk) {
-		this.queryChunkType = type;
+	private short numChunks;				// Numero de Chunks 
+	
+	public MessageChunkQuery(byte type, byte transId,  String hash, short num_Chunk) {
+		setTransId(transId);
+		setOpCode(type);
 		this.hash = hash;
 		this.numChunks = num_Chunk;
 	}
 
-	public MessageChunkQuery(byte[] buf) {
-		if (fromByteArray(buf) == false) {
+	public MessageChunkQuery(DataInputStream dis, byte respOpcode) {
+		if (fromInputStream(dis, respOpcode) == false) {
 			throw new RuntimeException("Failed to parse message: format is not Query.");
 		}
 		else {
@@ -49,10 +46,6 @@ public class MessageChunkQuery extends es.um.redes.P2P.PeerPeer.Message.Message 
 		}
 	}
 
-	public byte getType(){
-		return queryChunkType;
-	}
-	
 	public String getHash() {
 		return hash;
 	}
@@ -61,28 +54,20 @@ public class MessageChunkQuery extends es.um.redes.P2P.PeerPeer.Message.Message 
 		return numChunks;
 	}
 	
-	
-	private static boolean isNumericalChunkQueryType(byte type) {
-		switch (type) {
-			case FILTERTYPE_CHUNK:
-			case OP_GET_CHUNK:
-			case FILTERTYPE_INVALID:
-				return true;
-			default:
-				return false;
-		}		
-	}
+
+
 
 	/**
 	 * Creates a byte array ready for sending a datagram packet, from a valid message of Query format 
 	 */
 	public byte[] toByteArray()
 	{
-		int byteBufferLength = FIELD_NUMERICAL_FILTER_BYTES + FIELD_HASH_LENGHT 
-				 + FIELD_NUM_CHUNK_BYTES_LENGHT; // The actual filter of this message
+		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES +  FIELD_FILEHASH_BYTES 
+				 + FIELD_CHUNKSIZE_BYTES ; // The actual filter of this message
 		
 		ByteBuffer buf = ByteBuffer.allocate(byteBufferLength);
-		buf.put(queryChunkType);
+		buf.put(getOpCode());
+		buf.put(getTransId());
 		buf.put(hash.getBytes());
 		buf.putInt(numChunks);
 		return buf.array();
@@ -90,25 +75,45 @@ public class MessageChunkQuery extends es.um.redes.P2P.PeerPeer.Message.Message 
 
 	
 	
-/*	public static MessageChunkQuery fromInputStream(DataInputStream dis) throws IOException{
-			
-		byte auxType = dis.readByte();
-		int auxNumChunks = dis.readInt();
-		String auxHash = dis.readLine();
-		return new MessageChunkQuery(auxType, auxHash, auxNumChunks);
+	public boolean fromInputStream(DataInputStream dis, byte respOpcode) {
+		
+		try {
+		setOpCode(respOpcode);
+		setTransId(dis.readByte());
+		byte[] b = new byte[FIELD_FILEHASH_BYTES];
+		dis.read(b, 0, b.length);
+		this.hash = new String(FileDigest.getChecksumHexString(b));
+		this.numChunks = dis.readShort();
+		valid = true;
+		} catch(IOException e){
+			e.printStackTrace();
+			assert (valid == false);
+		}
+		return valid;
 	}
-*/
+
 	
 	@Override
 	public String toString() {
 		assert(true);
 		StringBuffer strBuf = new StringBuffer();
-		strBuf.append(" Type: "+this.queryChunkType + "\n");
-		strBuf.append(" Hash:  "+this.hash + "\n");
-		strBuf.append(" NumChunks:  "+this.numChunks + "\n");
+		strBuf.append(" Type: "+this.getOpCode());
+		strBuf.append(" TransId :" + this.getTransId());
+		strBuf.append(" Hash:  "+this.hash );
+		strBuf.append(" NumChunks:  "+this.numChunks);
 		return strBuf.toString();
 	}
 
+	private static final Set<Byte> conf_opCodes = Collections.unmodifiableSet(new HashSet<Byte>(Arrays.asList(_confOpCodes)));
+
+		  // Protected to allow overriding in subclasses
+	protected void _check_opcode(byte opcode){
+		if (!conf_opCodes.contains(opcode))
+		throw new RuntimeException("Opcode " + opcode + " no es del tipo Chunk.");
+	}		 
+	
+	
+	
 @Override
 protected boolean fromByteArray(byte[] buf) {
 	// TODO Auto-generated method stub

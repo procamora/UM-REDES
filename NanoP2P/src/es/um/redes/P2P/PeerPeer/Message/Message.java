@@ -1,6 +1,8 @@
 
 package es.um.redes.P2P.PeerPeer.Message;
 
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -165,23 +167,23 @@ public abstract class Message {
 	public static Message makeGetChunkRequest(String hash, short numChunks) {
 		byte requestOpcode = OP_GET_CHUNK;
 		byte tid = fetchAndIncrementTransId();
-		return new MessageCQuery(requestOpcode, tid, hash, numChunks);
+		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
 	}
 
 	public static Message makeGetChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
-		return new MessageCQueryACK(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
+		return new MessageChunkQueryResponse(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
 	public static Message makeChunkRequest(String hash, short numChunks) {
 		byte requestOpcode = OP_CHUNK;
 		byte tid = fetchAndIncrementTransId();
-		return new MessageCQuery(requestOpcode, tid, hash, numChunks);
+		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
 	}
 
 	public static Message makeChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
-		return new MessageCQueryACK(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
+		return new MessageChunkQueryResponse(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
 	/**
@@ -191,19 +193,20 @@ public abstract class Message {
 	 *            The byte array of the received packet
 	 * @return A message of the appropriate format representing this request
 	 */
-	public static Message parseRequest(byte[] buf) {
-		if (buf.length < FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES) {
-			throw new IllegalArgumentException("Failed to parse request: byte[] argument has length " + buf.length);
+	public static Message parseRequest(DataInputStream dis) {
+		byte reqOpcode;
+		try {
+			reqOpcode = dis.readByte();
+		} catch (IOException e) {
+			throw new IllegalArgumentException("Failed to parse response: buffer has length " + dis);
 		}
-		byte reqOpcode = buf[0];
-		// byte transId = buf[1];
 		switch (reqOpcode) {
 			case OP_GET_CHUNK:
 			case OP_CHUNK:
-				return new MessageCQuery(buf);
+				return new MessageChunkQuery(dis, reqOpcode);
 			case OP_GET_CHUNK_ACK:
 			case OP_CHUNK_ACK:
-				return new MessageCQueryACK(buf);
+				return new MessageChunkQueryResponse(dis, reqOpcode);
 			default:
 				throw new IllegalArgumentException("Invalid request opcode: " + reqOpcode);
 		}
@@ -216,20 +219,27 @@ public abstract class Message {
 	 *            The byte array of the packet received from the tracker
 	 * @return A message of the appropriate format representing this response
 	 */
-	public static Message parseResponse(byte[] buf) {
-		if (buf.length < FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES) {
+	public static Message parseResponse(DataInputStream dis) {
+		
+		
+		/*if (buf.length < FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES) {
 			throw new IllegalArgumentException("Failed to parse response: buffer has length " + buf.length);
+		}*/
+		byte respOpcode;
+		try {
+			respOpcode = dis.readByte();
+		} catch (IOException e) {
+			throw new IllegalArgumentException("Failed to parse response: buffer has length " + dis);
 		}
-		byte respOpcode = buf[0];
 		switch (respOpcode) {
 			case OP_GET_CHUNK:
 				
 			case OP_CHUNK:
-				return new MessageChunkQuery(buf);
+				return new MessageChunkQuery(dis, respOpcode);
 			case OP_GET_CHUNK_ACK:
 				
 			case OP_CHUNK_ACK:
-				return new MessageChunkQueryACK(buf);
+				return new MessageChunkQueryResponse(dis, respOpcode);
 			default:
 				throw new IllegalArgumentException("Failed to parse message: Invalid response opcode " + respOpcode);
 		}

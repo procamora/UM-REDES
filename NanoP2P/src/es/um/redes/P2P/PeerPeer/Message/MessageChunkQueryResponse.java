@@ -1,51 +1,42 @@
 package es.um.redes.P2P.PeerPeer.Message;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
-import es.um.redes.P2P.App.Tracker;
+
 
 public class MessageChunkQueryResponse extends Message{
 
-	public static byte FILTER_TYPE_GET_CHUNK_RESPONSE = 2;
-	public static byte FILTER_TYPE_CHUNK_RESPONSE = 4;
-	
 
-	public static int NUM_CHUNK_LENGTH = 5;
-	public static byte TYPE_LENGHT = 1;
-	public static byte CHUNK_LENGHT = 4;
-	
-	public static final int sizeOfMessage = (TYPE_LENGHT + NUM_CHUNK_LENGTH + CHUNK_LENGHT);
-	
-	private byte type;			// tipo
+	private static final Byte[] _conf_opCodes = {OP_GET_CHUNK_ACK, OP_CHUNK_ACK};
+		
 	private short numChunk;		// numero chunk
-	private int chunk;			// tamaño chunk
+	private byte[] datos;
+	private short chunkSize;			// tamaño chunk
 	
 	
-	public MessageChunkQueryResponse(byte type, short numChunk) {
-		this.chunk = Tracker.DEFAULT_P2P_CHUNK_SIZE;
+	public MessageChunkQueryResponse(byte type, byte tid, short numChunk, byte[] datos,  short chunkSize) {
+		this.chunkSize = chunkSize;
 		this.numChunk = numChunk;
-		this.type = type;
+		setOpCode(type);
+		setTransId(tid);
+		this.datos = datos;
+		valid = true;
 	}
 	
-	public MessageChunkQueryResponse(byte[] buf) {
-		if (fromByteArray(buf) == false) {
+	public MessageChunkQueryResponse(DataInputStream dis, byte respOpcode) {
+		if (fromDataInputStream(dis, respOpcode) == false) {
 			throw new RuntimeException("Failed to parse message: format is not Query.");
 		}
 		else {
 			assert(true);
 		}
-	}
-
-
-	public byte getType() {
-		return type;
-	}
-
-
-	public void setType(byte type) {
-		this.type = type;
 	}
 
 
@@ -60,26 +51,62 @@ public class MessageChunkQueryResponse extends Message{
 
 
 	public int getChunk() {
-		return chunk;
+		return chunkSize;
 	}
 
 
-	public void setChunk(int chunk) {
-		this.chunk = chunk;
+//	private void setChunk(short chunk) {
+//		this.chunkSize = chunk;
+//	}
+	
+	public byte[] getDatos() {
+		return datos;
+	}
+	
+//	private void setDatos(byte[] datos) {
+//		this.datos = datos;
+//	}
+	
+	public String getDatosString() {
+		String s = new String(datos);
+		return s;
 	}
 	
 	
 	public byte[] toByteArray() {
+		int sizeOfMessage = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES + FIELD_CHUNKSIZE_BYTES + datos.length;
 		ByteBuffer buf = ByteBuffer.allocate(sizeOfMessage);
-		buf.put(type);
-		buf.putInt(numChunk);
-		buf.putInt(chunk);
+		
+		buf.put((byte) getOpCode());
+		buf.put((byte) getTransId());
+		buf.putShort((short) getNumChunk());
+		buf.put((byte[]) this.datos);
 		return buf.array();
 	}
 	
-	public static MessageChunkQueryResponse fromDataInputStream(DataInputStream dis) {
-		return null;
+	
+	public boolean fromDataInputStream(DataInputStream dis, byte respOpcode) {
+		
+		try {
+		setOpCode(respOpcode);
+		setTransId(dis.readByte());
+		
+		this.numChunk = dis.readShort();
+		
+		byte[] dat = new byte[chunkSize];
+		dis.read(dat);
+		datos = dat;
+		
+		
+		
+		valid = true;
+		} catch(IOException e){
+			e.printStackTrace();
+			assert (valid == false);
+		}
+		return valid;
 	}
+
 
 
 	@Override
@@ -90,9 +117,27 @@ public class MessageChunkQueryResponse extends Message{
 
 
 	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+
+		public String toString() {
+		    assert (valid);
+		    StringBuffer strBuf = new StringBuffer();
+		    strBuf.append(" Type:" + this.getOpCodeString());
+		    strBuf.append(" TransId:" + this.getTransId());
+		    strBuf.append(" NumChunk:" + this.getNumChunk());
+		    strBuf.append(" Datos:" + this.getDatos());
+		    return strBuf.toString();
+		  }
+
+		  /**
+		   * For checking opcode validity.
+		   */
+		  private static final Set<Byte> conf_opcodes = Collections
+				  .unmodifiableSet(new HashSet<Byte>(Arrays.asList(_conf_opCodes)));
+
+		  protected void _check_opcode(byte opcode) {
+		    if (!conf_opcodes.contains(opcode))
+		      throw new RuntimeException("Opcode " + opcode + " no es de tipo ChunkACK.");
+		  
 	}
 
 
