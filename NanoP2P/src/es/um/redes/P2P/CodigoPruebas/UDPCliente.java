@@ -1,4 +1,4 @@
-package es.um.redes.P2P.pruebas;
+package es.um.redes.P2P.CodigoPruebas;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
