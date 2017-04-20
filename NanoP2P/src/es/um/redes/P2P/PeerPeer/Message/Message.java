@@ -73,7 +73,7 @@ public abstract class Message {
 	/*
 	 * Abstract methods whose implementation depends on the message format.
 	 */
-	protected abstract boolean fromByteArray(byte[] buf);
+	protected abstract boolean fromDataInputStream(DataInputStream dis, byte respOpcode);
 
 	public abstract byte[] toByteArray();
 
@@ -167,23 +167,23 @@ public abstract class Message {
 	public static Message makeGetChunkRequest(String hash, short numChunks) {
 		byte requestOpcode = OP_GET_CHUNK;
 		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
+		return new MessageCQuery(requestOpcode, tid, hash, numChunks);
 	}
 
 	public static Message makeGetChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQueryResponse(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
+		return new MessageCQueryACK(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
 	public static Message makeChunkRequest(String hash, short numChunks) {
 		byte requestOpcode = OP_CHUNK;
 		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
+		return new MessageCQuery(requestOpcode, tid, hash, numChunks);
 	}
 
 	public static Message makeChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQueryResponse(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
+		return new MessageCQueryACK(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
 	/**
@@ -203,10 +203,10 @@ public abstract class Message {
 		switch (reqOpcode) {
 			case OP_GET_CHUNK:
 			case OP_CHUNK:
-				return new MessageChunkQuery(dis, reqOpcode);
+				return new MessageCQuery(dis, reqOpcode);
 			case OP_GET_CHUNK_ACK:
 			case OP_CHUNK_ACK:
-				return new MessageChunkQueryResponse(dis, reqOpcode);
+				return new MessageCQueryACK(dis, reqOpcode);
 			default:
 				throw new IllegalArgumentException("Invalid request opcode: " + reqOpcode);
 		}
@@ -220,11 +220,6 @@ public abstract class Message {
 	 * @return A message of the appropriate format representing this response
 	 */
 	public static Message parseResponse(DataInputStream dis) {
-		
-		
-		/*if (buf.length < FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES) {
-			throw new IllegalArgumentException("Failed to parse response: buffer has length " + buf.length);
-		}*/
 		byte respOpcode;
 		try {
 			respOpcode = dis.readByte();
@@ -233,13 +228,11 @@ public abstract class Message {
 		}
 		switch (respOpcode) {
 			case OP_GET_CHUNK:
-				
 			case OP_CHUNK:
-				return new MessageChunkQuery(dis, respOpcode);
+				return new MessageCQuery(dis, respOpcode);
 			case OP_GET_CHUNK_ACK:
-				
 			case OP_CHUNK_ACK:
-				return new MessageChunkQueryResponse(dis, respOpcode);
+				return new MessageCQueryACK(dis, respOpcode);
 			default:
 				throw new IllegalArgumentException("Failed to parse message: Invalid response opcode " + respOpcode);
 		}
@@ -266,4 +259,5 @@ public abstract class Message {
 		if (!valid_opcodes.contains(opcode))
 			throw new RuntimeException("Opcode " + opcode + " no es válido.");
 	}
+
 }

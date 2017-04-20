@@ -12,10 +12,9 @@ import java.net.Socket;
 import es.um.redes.P2P.PeerPeer.Client.Downloader;
 import es.um.redes.P2P.PeerPeer.Message.*;
 import es.um.redes.P2P.util.PeerDatabase;
+import es.um.redes.P2P.util.Ficheros;
 
 public class SeederThread extends Thread {
-	private final int MAX_MSG_SIZE_BYTES = 1024;
-
 	private Socket socket = null;
 	private Downloader downloader;
 	/* Global buffer for performance reasons */
@@ -23,10 +22,12 @@ public class SeederThread extends Thread {
 	protected DataOutputStream dos;
 	protected DataInputStream dis;
 	private short chunkSize;
+	private PeerDatabase database;
 
 	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader, short chunkSize) {
 		// TODO
 		this.socket = socket;
+		this.database = database;
 		this.downloader = downloader;
 		this.chunkSize = chunkSize;
 	}
@@ -43,11 +44,11 @@ public class SeederThread extends Thread {
 	public Message receiveMessageFromPeer() {
 		System.out.println("recibe seeder");
 		Message msg = null;
-		//byte[] buffer = new byte[MAX_MSG_SIZE_BYTES];
+		// byte[] buffer = new byte[MAX_MSG_SIZE_BYTES];
 		try {
 			InputStream is = socket.getInputStream();
 			dis = new DataInputStream(is);
-			//dis.read(buffer);
+			// dis.read(buffer);
 
 			msg = Message.parseResponse(dis);
 			// System.out.println(msg);
@@ -77,29 +78,38 @@ public class SeederThread extends Thread {
 
 	public Message processMessageFromPeer(Message response) {
 		Message respuesta = null;
-		switch (response.getOpCode()) {
+		if (response.getOpCode() != Message.OP_GET_CHUNK && response.getOpCode() != Message.OP_CHUNK)
+			return respuesta;
+		
+		// tenemos la seguridad de que no hay problemas con el casting
+		MessageCQuery mensaje = (MessageCQuery) response;
+		switch (mensaje.getOpCode()) {
 			case Message.OP_GET_CHUNK:
 				System.out.println("OP_GET_CHUNK");
-				String hash = ((MessageChunkQuery) response).getHash();
-				System.out.println(hash);
-				short numChunk = ((MessageChunkQuery) response).getNumChunks();
-				System.out.println(numChunk);
-				respuesta = Message.makeGetChunkResponseRequest(numChunk, new byte[0], chunkSize);
+				System.out.println(mensaje.getFileHash());
+				System.out.println(mensaje.getNumChunk());
+				byte[] listaTrozos = MessageCQueryACK.concatenateByteArrays((short) 1, (short) 451, (short) 66);
+				respuesta = Message.makeGetChunkResponseRequest((short) 3, listaTrozos, chunkSize);
 				break;
 
 			case Message.OP_CHUNK:
 				System.out.println("OP_CHUNK");
-				String hash2 = ((MessageChunkQuery) response).getHash();
-				System.out.println(hash2);
-				short numChunk2 = ((MessageChunkQuery) response).getNumChunks();
-				System.out.println(numChunk2);
-				respuesta = Message.makeChunkResponseRequest(numChunk2, "DATOS++".getBytes(), chunkSize);
-				break;
+				System.out.println(mensaje.getFileHash());
+				System.out.println(mensaje.getNumChunk());
+				String rutaFichero = database.lookupFilePath(mensaje.getFileHash());
+				System.out.println(rutaFichero);
+				if (rutaFichero == null)
+					throw new IllegalStateException("No se ha encontrado el fichero: " + mensaje.getFileHash());
 				
+				byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) chunkSize, 0);
+				System.out.println("tamaño datos enviados " + datosEnviar.length);
+				respuesta = Message.makeChunkResponseRequest(mensaje.getNumChunk(), datosEnviar, chunkSize);
+				break;
 				
 			default:
 				break;
 		}
+		
 		System.out.println(response);
 		return respuesta;
 
