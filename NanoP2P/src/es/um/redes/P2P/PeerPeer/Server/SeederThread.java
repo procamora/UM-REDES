@@ -21,15 +21,13 @@ public class SeederThread extends Thread {
 	private byte[] chunkDataBuf;
 	protected DataOutputStream dos;
 	protected DataInputStream dis;
-	private short chunkSize;
 	private PeerDatabase database;
 
-	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader, short chunkSize) {
+	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader) {
 		// TODO
 		this.socket = socket;
 		this.database = database;
 		this.downloader = downloader;
-		this.chunkSize = chunkSize;
 	}
 
 	// Devuelve la lista de trozos que tiene del fichero solicitado
@@ -89,7 +87,7 @@ public class SeederThread extends Thread {
 				System.out.println(mensaje.getFileHash());
 				System.out.println(mensaje.getNumChunk());
 				byte[] listaTrozos = MessageCQueryACK.concatenateByteArrays((short) 1, (short) 451, (short) 66);
-				respuesta = Message.makeGetChunkResponseRequest((short) 3, listaTrozos, chunkSize);
+				respuesta = Message.makeGetChunkResponseRequest((short) 3, listaTrozos, downloader.getChunkSize());
 				break;
 
 			case Message.OP_CHUNK:
@@ -101,9 +99,9 @@ public class SeederThread extends Thread {
 				if (rutaFichero == null)
 					throw new IllegalStateException("No se ha encontrado el fichero: " + mensaje.getFileHash());
 				
-				byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) chunkSize, 0);
+				byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) downloader.getChunkSize(), 0);
 				System.out.println("tamaño datos enviados " + datosEnviar.length);
-				respuesta = Message.makeChunkResponseRequest(mensaje.getNumChunk(), datosEnviar, chunkSize);
+				respuesta = Message.makeChunkResponseRequest(mensaje.getNumChunk(), datosEnviar, downloader.getChunkSize());
 				break;
 				
 			default:

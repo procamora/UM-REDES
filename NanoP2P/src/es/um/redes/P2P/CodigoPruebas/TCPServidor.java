@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import es.um.redes.P2P.PeerPeer.Client.Downloader;
 import es.um.redes.P2P.PeerPeer.Server.SeederThread;
 import es.um.redes.P2P.util.PeerDatabase;
 
@@ -26,10 +27,8 @@ public class TCPServidor {
 				clientSocket = serverSocket.accept();
 				// En algún momento se llamará a
 				System.out.println(clientSocket.getPort());
-				new SeederThread(clientSocket,
-						new PeerDatabase(
-								"/mnt/WD_BLACK/pablojoserocamora@gmail.com/Universidad/REDES/UM-REDES/comp/peer2/"),
-						null, (short) 4096).start();
+				new SeederThread(clientSocket, new PeerDatabase("/home/procamora/REDES/UM-REDES/comp/peer2/"),
+						new Downloader((short) 4096, null)).start();
 			} catch (SocketException e) {
 				// TODO Auto-generated catch block
 				// e.printStackTrace();
