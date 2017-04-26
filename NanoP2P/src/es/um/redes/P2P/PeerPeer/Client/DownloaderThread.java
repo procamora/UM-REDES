@@ -102,7 +102,7 @@ public class DownloaderThread extends Thread {
 		if (msgRecibido.getOpCode() != Message.OP_GET_CHUNK_ACK && msgRecibido.getOpCode() != Message.OP_CHUNK_ACK)
 			return;
 
-		MessageCQueryACK response = (MessageCQueryACK) msgRecibido;
+		MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
 		switch (msgRecibido.getOpCode()) {
 			case Message.OP_GET_CHUNK_ACK:
 				System.out.println("num chunk: " + response.getNumChunk());

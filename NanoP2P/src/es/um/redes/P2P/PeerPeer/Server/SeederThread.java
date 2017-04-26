@@ -80,13 +80,13 @@ public class SeederThread extends Thread {
 			return respuesta;
 		
 		// tenemos la seguridad de que no hay problemas con el casting
-		MessageCQuery mensaje = (MessageCQuery) response;
+		MessageChunkQuery mensaje = (MessageChunkQuery) response;
 		switch (mensaje.getOpCode()) {
 			case Message.OP_GET_CHUNK:
 				System.out.println("OP_GET_CHUNK");
 				System.out.println(mensaje.getFileHash());
 				System.out.println(mensaje.getNumChunk());
-				byte[] listaTrozos = MessageCQueryACK.concatenateByteArrays((short) 1, (short) 451, (short) 66);
+				byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays((short) 1, (short) 451, (short) 66);
 				respuesta = Message.makeGetChunkResponseRequest((short) 3, listaTrozos, downloader.getChunkSize());
 				break;
 

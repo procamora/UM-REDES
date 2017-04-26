@@ -19,23 +19,23 @@ public class PeerShell implements PeerShellIface {
 	public byte getCommand() {
 		// TODO Auto-generated method stub
 		switch (comando) {
-		case "query":
-			return PeerCommands.COM_QUERY;
+			case "query":
+				return PeerCommands.COM_QUERY;
 
-		case "download":
-			return PeerCommands.COM_DOWNLOAD;
+			case "download":
+				return PeerCommands.COM_DOWNLOAD;
 
-		case "quit":
-			return PeerCommands.COM_QUIT;
+			case "quit":
+				return PeerCommands.COM_QUIT;
 
-		case "show":
-			return PeerCommands.COM_SHOW;
+			case "show":
+				return PeerCommands.COM_SHOW;
 
-		case "help":
-			return PeerCommands.COM_HELP;
+			case "help":
+				return PeerCommands.COM_HELP;
 
-		default:
-			return PeerCommands.COM_INVALID;
+			default:
+				return PeerCommands.COM_INVALID;
 		}
 	}
 
@@ -52,6 +52,11 @@ public class PeerShell implements PeerShellIface {
 		String linea = scanner.nextLine();
 		String[] parsea = linea.split(" ");
 
+		if (parsea.length == 1 && parsea[0].equalsIgnoreCase(""))
+			return;
+		
+		//FIXME ENTER NO ES COMAND INVALID
+
 		for (int i = 0; i < parsea.length; i++) {
 			if (i == 0) // comando
 				comando = parsea[i];
@@ -61,7 +66,7 @@ public class PeerShell implements PeerShellIface {
 			}
 		}
 
-		//imprimeComando();
+		// imprimeComando();
 	}
 
 	private void imprimeComando() {

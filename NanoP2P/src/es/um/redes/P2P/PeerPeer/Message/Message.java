@@ -167,23 +167,23 @@ public abstract class Message {
 	public static Message makeGetChunkRequest(String hash, short numChunks) {
 		byte requestOpcode = OP_GET_CHUNK;
 		byte tid = fetchAndIncrementTransId();
-		return new MessageCQuery(requestOpcode, tid, hash, numChunks);
+		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
 	}
 
 	public static Message makeGetChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
-		return new MessageCQueryACK(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
+		return new MessageChunkQueryResponse(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
 	public static Message makeChunkRequest(String hash, short numChunks) {
 		byte requestOpcode = OP_CHUNK;
 		byte tid = fetchAndIncrementTransId();
-		return new MessageCQuery(requestOpcode, tid, hash, numChunks);
+		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
 	}
 
 	public static Message makeChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
-		return new MessageCQueryACK(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
+		return new MessageChunkQueryResponse(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
 	/**
@@ -203,10 +203,10 @@ public abstract class Message {
 		switch (reqOpcode) {
 			case OP_GET_CHUNK:
 			case OP_CHUNK:
-				return new MessageCQuery(dis, reqOpcode);
+				return new MessageChunkQuery(dis, reqOpcode);
 			case OP_GET_CHUNK_ACK:
 			case OP_CHUNK_ACK:
-				return new MessageCQueryACK(dis, reqOpcode);
+				return new MessageChunkQueryResponse(dis, reqOpcode);
 			default:
 				throw new IllegalArgumentException("Invalid request opcode: " + reqOpcode);
 		}
@@ -229,10 +229,10 @@ public abstract class Message {
 		switch (respOpcode) {
 			case OP_GET_CHUNK:
 			case OP_CHUNK:
-				return new MessageCQuery(dis, respOpcode);
+				return new MessageChunkQuery(dis, respOpcode);
 			case OP_GET_CHUNK_ACK:
 			case OP_CHUNK_ACK:
-				return new MessageCQueryACK(dis, respOpcode);
+				return new MessageChunkQueryResponse(dis, respOpcode);
 			default:
 				throw new IllegalArgumentException("Failed to parse message: Invalid response opcode " + respOpcode);
 		}

@@ -11,134 +11,162 @@ import java.util.Vector;
 
 import es.um.redes.P2P.util.FileDigest;
 
-/**
- * @author rtitos
- * 
- * Peer-tracker protocol message, format "QueryChunk" 
- * 
-    1b	  20 B		5B
- +--------------+------------+
- |Type  | Hash  |  Num_Chunk |
- +------+-------+------------+
-
- */
-public class MessageChunkQuery extends es.um.redes.P2P.PeerPeer.Message.Message {
-	
-
-	
-	private static final Byte[] _confOpCodes = {OP_GET_CHUNK, OP_CHUNK};
-	private String hash;					// el Hash del mensaje
-	private short numChunks;				// Numero de Chunks 
-	
-	public MessageChunkQuery(byte type, byte transId,  String hash, short num_Chunk) {
-		setTransId(transId);
-		setOpCode(type);
-		this.hash = hash;
-		this.numChunks = num_Chunk;
-	}
-
-	public MessageChunkQuery(DataInputStream dis, byte respOpcode) {
-		if (fromInputStream(dis, respOpcode) == false) {
-			throw new RuntimeException("Failed to parse message: format is not Query.");
-		}
-		else {
-			assert(true);
-		}
-	}
-
-	public String getHash() {
-		return hash;
-	}
-	
-	public short getNumChunks() {
-		return numChunks;
-	}
-	
-
-
+public class MessageChunkQuery extends Message {
 
 	/**
-	 * Creates a byte array ready for sending a datagram packet, from a valid message of Query format 
+	 * @author procamora
+	 * 
+	 *         Peer-tracker protocol data message, format "Conf"
+		    1b	  20 B		5B
+		 +--------------+------------+
+		 |Type  | Hash  |  Num_Chunk |
+		 +------+-------+------------+
 	 */
-	public byte[] toByteArray()
-	{
-		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES +  FIELD_FILEHASH_BYTES 
-				 + FIELD_CHUNKSIZE_BYTES ; // The actual filter of this message
-		
+
+	/**
+	 * Size of "chunksize" field: short (2 bytes)
+	 */
+	// private static final int FIELD_CHUNKSIZE_BYTES = Short.SIZE / 8;
+
+	/**
+	 * Message opcodes that use the Chunk format
+	 */
+	private static final Byte[] _conf_opcodes = { OP_GET_CHUNK, OP_CHUNK };
+
+	/**
+	 * The chunk size.
+	 */
+	// private short chunkSize;
+	private String fileHash;
+	private short numChunk;
+
+	/**
+	 * Constructor used by tracker
+	 * 
+	 * @param opCode
+	 *            Message type
+	 * @param tid
+	 * @param fileHash
+	 *            The chunk size
+	 * @param numChunk
+	 */
+	public MessageChunkQuery(byte opCode, byte tid, String fileHash, short numChunk) {
+		setOpCode(opCode);
+		setTransId(tid);
+		this.fileHash = fileHash;
+		this.numChunk = numChunk;
+		valid = true;
+	}
+
+	/**
+	 * Constructor used by client when creating message response after receiving
+	 * 
+	 * @param buf
+	 */
+	public MessageChunkQuery(DataInputStream dis, byte respOpcode) {
+		if (fromDataInputStream(dis, respOpcode) == false) {
+			throw new RuntimeException("Failed to parse message: format is not Chunk.");
+		} else {
+			// assert(valid);
+			valid = true;
+		}
+	}
+
+	/**
+	 * Creates a byte array ready for sending a datagram packet, from a valid
+	 * message of Chunk format
+	 */
+	public byte[] toByteArray() {
+		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES + FIELD_FILEHASH_BYTES + FIELD_CHUNKSIZE_BYTES;
+
 		ByteBuffer buf = ByteBuffer.allocate(byteBufferLength);
-		buf.put(getOpCode());
-		buf.put(getTransId());
-		buf.put(hash.getBytes());
-		buf.putInt(numChunks);
+
+		// Opcode
+		buf.put((byte) this.getOpCode());
+
+		// Trans id
+		buf.put((byte) this.getTransId());
+
+		// File hash
+		buf.put(FileDigest.getDigestFromHexString(this.getFileHash()));
+
+		// Num Chunk
+		buf.putShort((short) this.getNumChunk());
+
 		return buf.array();
 	}
 
-	
-	
-	public boolean fromInputStream(DataInputStream dis, byte respOpcode) {
-		
+	/**
+	 * Creates a valid message of Conf format, from the byte array of the
+	 * received packet
+	 */
+	@Override
+	protected boolean fromDataInputStream(DataInputStream dis, byte respOpcode) {
+
 		try {
-		setOpCode(respOpcode);
-		setTransId(dis.readByte());
-		byte[] b = new byte[FIELD_FILEHASH_BYTES];
-		dis.read(b, 0, b.length);
-		this.hash = new String(FileDigest.getChecksumHexString(b));
-		this.numChunks = dis.readShort();
-		valid = true;
-		} catch(IOException e){
+			// Opcode
+			setOpCode(respOpcode);
+
+			// Trans id
+			setTransId(dis.readByte());
+
+			// File hash
+			byte[] b = new byte[FIELD_FILEHASH_BYTES];
+			dis.read(b, 0, b.length);
+			this.fileHash = new String(FileDigest.getChecksumHexString(b));
+
+			// Num Chunk
+			this.numChunk = dis.readShort();
+
+			valid = true;
+			
+		} catch (IOException e) {
 			e.printStackTrace();
 			assert (valid == false);
 		}
 		return valid;
 	}
 
-	
-	@Override
+	public short getNumChunk() {
+		return numChunk;
+	}
+
+	public String getFileHash() {
+		return fileHash;
+	}
+
 	public String toString() {
-		assert(true);
+		assert (valid);
 		StringBuffer strBuf = new StringBuffer();
-		strBuf.append(" Type: "+this.getOpCode());
-		strBuf.append(" TransId :" + this.getTransId());
-		strBuf.append(" Hash:  "+this.hash );
-		strBuf.append(" NumChunks:  "+this.numChunks);
+		strBuf.append("Type:" + this.getOpCodeString());
+		strBuf.append(" TransId:" + this.getTransId());
+		strBuf.append(" Hash:" + this.getFileHash());
+		strBuf.append(" NumChunk:" + this.getNumChunk());
 		return strBuf.toString();
 	}
 
-	private static final Set<Byte> conf_opCodes = Collections.unmodifiableSet(new HashSet<Byte>(Arrays.asList(_confOpCodes)));
+	/**
+	 * For checking opcode validity.
+	 */
+	private static final Set<Byte> conf_opcodes = Collections
+			.unmodifiableSet(new HashSet<Byte>(Arrays.asList(_conf_opcodes)));
 
-		  // Protected to allow overriding in subclasses
-	protected void _check_opcode(byte opcode){
-		if (!conf_opCodes.contains(opcode))
-		throw new RuntimeException("Opcode " + opcode + " no es del tipo Chunk.");
-	}		 
-	
-	
-	
-@Override
-protected boolean fromByteArray(byte[] buf) {
-	// TODO Auto-generated method stub
-	return false;
-}
+	protected void _check_opcode(byte opcode) {
+		if (!conf_opcodes.contains(opcode))
+			throw new RuntimeException("Opcode " + opcode + " no es de tipo Chunk.");
+	}
 
-@Override
-public int getTotalFragments() {
-	// TODO Auto-generated method stub
-	return 0;
-}
+	@Override
+	public int getTotalFragments() {
+		return 1;
+	}
 
+	@Override
+	public void reassemble(Vector<Message> fragments) {
+	}
 
-@Override
-public boolean fragmented() {
-	// TODO Auto-generated method stub
-	return false;
-}
-
-@Override
-public void reassemble(Vector<es.um.redes.P2P.PeerPeer.Message.Message> fragments) {
-	// TODO Auto-generated method stub
-	
-}
-
-	
-
+	@Override
+	public boolean fragmented() {
+		return false;
+	}
 }
