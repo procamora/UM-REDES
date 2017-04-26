@@ -74,10 +74,8 @@ public class Seeder implements Runnable {
 				System.out.println(clientSocket.getPort());
 				new SeederThread(clientSocket, database, currentDownloader).start();
 			} catch (SocketException e) {
-				// TODO Auto-generated catch block
 				//e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

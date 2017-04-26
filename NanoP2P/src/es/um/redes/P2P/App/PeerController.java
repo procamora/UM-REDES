@@ -98,15 +98,7 @@ public class PeerController implements PeerControllerIface {
 		// analisis de casos, PODEMOS BORARLO?
 		switch (currentCommand) {
 			case PeerCommands.COM_CONFIG:
-				response = reporter.conversationWithTracker(m);
-				processMessageFromTracker(response);
-				break;
-
 			case PeerCommands.COM_ADDSEED:
-				response = reporter.conversationWithTracker(m);
-				processMessageFromTracker(response);
-				break;
-
 			case PeerCommands.COM_QUERY:
 				// m es null si no hemos puesto parametros correctos
 				if (m != null) {
@@ -147,6 +139,9 @@ public class PeerController implements PeerControllerIface {
 				System.out.println(ayuda);
 				break;
 
+			case PeerCommands.COM_ENTER:
+				// no se hace nada
+				break;
 			case PeerCommands.COM_INVALID:
 				System.err.println("COM_INVALID");
 				break;

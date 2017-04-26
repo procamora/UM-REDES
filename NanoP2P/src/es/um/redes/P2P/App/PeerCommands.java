@@ -14,6 +14,7 @@ public class PeerCommands {
 	public static final byte COM_QUIT = 5;
 	public static final byte COM_SHOW = 6;
 	public static final byte COM_HELP = 7;
+	public static final byte COM_ENTER = 8;
 
 	/**
 	 * The list of valid commands that can be entered

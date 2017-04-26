@@ -34,6 +34,9 @@ public class PeerShell implements PeerShellIface {
 			case "help":
 				return PeerCommands.COM_HELP;
 
+			case "":
+				return PeerCommands.COM_ENTER;
+
 			default:
 				return PeerCommands.COM_INVALID;
 		}
@@ -51,11 +54,6 @@ public class PeerShell implements PeerShellIface {
 		System.out.print("[procamora@p2p]# ");
 		String linea = scanner.nextLine();
 		String[] parsea = linea.split(" ");
-
-		if (parsea.length == 1 && parsea[0].equalsIgnoreCase(""))
-			return;
-		
-		//FIXME ENTER NO ES COMAND INVALID
 
 		for (int i = 0; i < parsea.length; i++) {
 			if (i == 0) // comando
