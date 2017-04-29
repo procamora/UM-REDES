@@ -37,10 +37,8 @@ public class Ficheros {
 			e.printStackTrace();
 		}
 
-		// este array tiene exactamente el tamaño de lo leido, no tiene
-		// caracteres null
+		// tiene el tamaño de los byte leidos
 		byte[] buffer = Arrays.copyOfRange(chunk, 0, leidos);
-		System.out.println("slice " + buffer.length);
 
 		return buffer;
 	}
@@ -63,7 +61,6 @@ public class Ficheros {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("tamaño length escribir " + datos.length);
 
 		try {
 			RandomAccessFile rfo = new RandomAccessFile(file, "rw");
@@ -73,17 +70,6 @@ public class Ficheros {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void main(String[] args) {
-		String f = "pkt.png";
-		byte[] array = lectura("/mnt/WD_BLACK/pablojoserocamora@gmail.com/Universidad/REDES/UM-REDES/comp/peer2/" + f,
-				4096, 0);
-		String s = new String(array);
-		System.out.println("tam " + s.length());
-
-		escritura("/tmp/s", array, 0);
-
 	}
 
 }

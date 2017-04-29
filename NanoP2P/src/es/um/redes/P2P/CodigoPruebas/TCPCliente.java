@@ -25,7 +25,6 @@ public class TCPCliente {
 			Downloader d = new Downloader((short) 4096, targetFile);
 			new DownloaderThread(d, so).start();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

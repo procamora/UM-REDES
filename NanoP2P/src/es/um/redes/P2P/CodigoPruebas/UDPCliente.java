@@ -51,7 +51,6 @@ public class UDPCliente {
 			c.send(socketCliente, "hola mundo");
 			c.response(socketCliente);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}

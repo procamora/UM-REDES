@@ -89,8 +89,6 @@ public class PeerController implements PeerControllerIface {
 
 	@Override
 	public void processCurrentCommand() {
-		// TODO Auto-generated method stub
-
 		// esta fuera porque siempre se ejecutara
 		Message m = createMessageFromCurrentCommand();
 		Message response = null;
@@ -100,22 +98,13 @@ public class PeerController implements PeerControllerIface {
 			case PeerCommands.COM_CONFIG:
 			case PeerCommands.COM_ADDSEED:
 			case PeerCommands.COM_QUERY:
+			case PeerCommands.COM_DOWNLOAD:
+			case PeerCommands.COM_QUIT:
 				// m es null si no hemos puesto parametros correctos
 				if (m != null) {
 					response = reporter.conversationWithTracker(m);
 					processMessageFromTracker(response);
 				}
-				break;
-
-			case PeerCommands.COM_DOWNLOAD:
-				if (m != null) {
-					response = reporter.conversationWithTracker(m);
-					processMessageFromTracker(response);
-				}
-				break;
-
-			case PeerCommands.COM_QUIT:
-				System.out.println("procesando salida...");
 				break;
 
 			case PeerCommands.COM_SHOW:
@@ -150,7 +139,6 @@ public class PeerController implements PeerControllerIface {
 				System.err.println("comando desconocido");
 				break;
 		}
-
 	}
 
 	private String[] tratarArgumentosQuery() {
@@ -194,9 +182,7 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case PeerCommands.COM_ADDSEED:
-				System.out.println("random port: " + seeder.getSeederPort());
 				FileInfo[] lista = peerDatabase.getLocalSharedFiles();
-				// FIXME seederPort CAMBIAR
 				control = (MessageFileInfo) Message.makeAddSeedRequest(seeder.getSeederPort(), lista);
 
 				recordQueryResult(lista); // guardamos nuestros ficheros
@@ -214,9 +200,6 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case PeerCommands.COM_DOWNLOAD:
-				// FIXME Si hay mutiples hash, informamos al usuario de ello sin
-				// descargarnos ningun, le dedcimos los nombres y hash de cada
-				// uno para que elija el mas correcto
 				if (currentArguments[0] != null) {
 					FileInfo[] opcionesHash = lookupQueryResult(currentArguments[0]);
 
@@ -246,53 +229,40 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			default:
-				// si el comando actual no requiere uso de mensaje
-				// no hacemos nada y return null
+				// si el comando actual no requiere uso de mensaje no hacemos
+				// nada y return null
 				break;
 		}
-
 		return control;
-
 	}
 
 	@Override
 	public void processMessageFromTracker(Message response) {
-		// TODO Auto-generated method stub
-
 		// analisis de casos
 		switch (response.getOpCode()) {
 			case Message.OP_SEND_CONF:
 				chunkSize = ((MessageConf) response).getChunkSize();
-				System.out.println("tamaño chunks: " + chunkSize);
 				break;
 
 			case Message.OP_ADD_SEED_ACK:
-				// si solo enviamos un paquete
-				System.out.println("correcto OP_ADD_SEED_ACK");
-				// si enviamos muchos contrar el numero de paquetes que enviamos
+				// si solo enviamos un paquete y llegamos aqui correcto
+
+				// si enviamos muchos contar el numero de paquetes que enviamos
 				// y contar el numero de ack
 				break;
 
 			case Message.OP_FILE_LIST:
-				System.out.println("correcto OP_FILE_LIST");
-				FileInfo[] filelist = ((MessageFileInfo) response).getFileList();
-
-				for (int i = 0; i < filelist.length; i++)
-					System.out.println(filelist[i]);
-
-				recordQueryResult(filelist);
+				FileInfo[] fileList = ((MessageFileInfo) response).getFileList();
+				recordQueryResult(fileList);
 				break;
 
 			case Message.OP_SEED_LIST:
-				System.out.println("correcto OP_SEED_LIST");
-				System.out.println(response);
 				InetSocketAddress[] seedList = ((MessageSeedInfo) response).getSeedList();
 				String targetFileHash = ((MessageSeedInfo) response).getFileHash();
 				downloadFileFromSeeds(seedList, targetFileHash);
 				break;
 
 			case Message.OP_REMOVE_SEED_ACK:
-				System.out.println("correcto OP_REMOVE_SEED_ACK");
 				// comprobar que has sido dado de baja
 				// opcion 1, mandar un get_seed y comprobar que no estas
 				break;
@@ -329,10 +299,9 @@ public class PeerController implements PeerControllerIface {
 	 */
 	@Override
 	public void recordQueryResult(FileInfo[] fileList) {
-		// TODO Auto-generated method stub
 		for (int i = 0; i < fileList.length; i++) {
 			if (!isLocal(fileList[i].fileHash)) {
-				// if (!mapaFicheros.containsKey(fileList[i].fileHash)) {
+				System.out.println(fileList[i]);
 				FileInfoPeer fileInfoPeer = new FileInfoPeer(fileList[i]);
 				mapaFicheros.put(fileList[i].fileHash, fileInfoPeer);
 			}
@@ -346,10 +315,8 @@ public class PeerController implements PeerControllerIface {
 	 */
 	@Override
 	public void printQueryResult() {
-		// TODO Auto-generated method stub
 		for (String hashes : mapaFicheros.keySet()) {
 			FileInfoPeer actual = mapaFicheros.get(hashes);
-			// if (!isLocal(actual.getFileInfo().fileHash))
 			System.out.println(actual);
 
 		}
@@ -367,7 +334,6 @@ public class PeerController implements PeerControllerIface {
 	 */
 	@Override
 	public FileInfo[] lookupQueryResult(String hashSubstr) {
-		// TODO Auto-generated method stub
 		FileInfo[] listaFicherosValidos = new FileInfo[mapaFicheros.keySet().size()];
 		int contador = 0;
 		for (String hashes : mapaFicheros.keySet()) {
@@ -394,7 +360,6 @@ public class PeerController implements PeerControllerIface {
 	 */
 	@Override
 	public void downloadFileFromSeeds(InetSocketAddress[] seedList, String targetFileHash) {
-		// TODO Auto-generated method stub
 		// para actualizar nuesto mapa
 		if (mapaFicheros.containsKey(targetFileHash)) {
 			FileInfoPeer fileInfoPeer = mapaFicheros.get(targetFileHash);

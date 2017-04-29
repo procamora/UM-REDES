@@ -136,8 +136,6 @@ public class MessageChunkQueryResponse extends Message {
 	private void setDatos(byte[] aux, int tam) {
 		datos = new byte[tam];
 		datos = Arrays.copyOf(aux, tam);
-		System.out.println("datos " + datos.length);
-		System.out.println("aux " + aux.length);
 	}
 
 	public short getNumChunk() {
@@ -157,6 +155,8 @@ public class MessageChunkQueryResponse extends Message {
 	public short[] getDatosChunk() {
 
 		short[] s = desconcatenaArratBytesDatos();
+
+		// imprimo la lista de chunk de la que dispone el peer
 		for (int i = 0; i < s.length; i++)
 			System.out.println(s[i]);
 		return s;
@@ -220,7 +220,6 @@ public class MessageChunkQueryResponse extends Message {
 	 */
 	public static byte[] concatenateByteArrays(short... arraysChunks) {
 
-		System.out.println(arraysChunks.length);
 		ByteBuffer buf = ByteBuffer.allocate(arraysChunks.length * FIELD_CHUNKSIZE_BYTES);
 		for (short cs : arraysChunks)
 			buf.putShort((short) cs);

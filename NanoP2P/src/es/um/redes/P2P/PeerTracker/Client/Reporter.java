@@ -47,7 +47,6 @@ public class Reporter implements ReporterIface {
 
 	@Override
 	public boolean sendMessageToTracker(DatagramSocket socket, Message request, InetSocketAddress trackerAddress) {
-		// TODO Auto-generated method stub
 		// almacena los datos que el cliente envia
 		byte[] enviarDatos = new byte[MAX_MSG_SIZE_BYTES];
 		// conversion de string a array de bytes
@@ -66,7 +65,6 @@ public class Reporter implements ReporterIface {
 
 	@Override
 	public Message receiveMessageFromTracker(DatagramSocket socket) {
-		// TODO Auto-generated method stub
 		byte[] recibirDatos = new byte[MAX_MSG_SIZE_BYTES];
 		// creamos un contenedor para el paquete recibirPaquete
 		DatagramPacket recibirPaquete = new DatagramPacket(recibirDatos, recibirDatos.length);

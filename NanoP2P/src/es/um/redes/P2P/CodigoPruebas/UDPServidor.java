@@ -44,7 +44,6 @@ public class UDPServidor {
 		try {
 			s.response();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

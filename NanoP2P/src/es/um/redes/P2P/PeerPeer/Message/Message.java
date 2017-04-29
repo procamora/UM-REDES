@@ -198,7 +198,7 @@ public abstract class Message {
 		try {
 			reqOpcode = dis.readByte();
 		} catch (IOException e) {
-			throw new IllegalArgumentException("Failed to parse response: buffer has length " + dis);
+			throw new IllegalArgumentException("Failed to parse request: buffer has length " + dis);
 		}
 		switch (reqOpcode) {
 			case OP_GET_CHUNK:

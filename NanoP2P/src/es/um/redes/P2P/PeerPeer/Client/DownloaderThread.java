@@ -10,6 +10,7 @@ import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import es.um.redes.P2P.App.Peer;
 import es.um.redes.P2P.PeerPeer.Message.*;
 import es.um.redes.P2P.util.Ficheros;
 
@@ -51,7 +52,7 @@ public class DownloaderThread extends Thread {
 	}
 
 	public Message receiveMessageFromPeer() {
-		System.out.println("recibe downloader");
+
 		Message msg = null;
 		// byte[] buffer = new byte[1024];
 		try {
@@ -70,7 +71,6 @@ public class DownloaderThread extends Thread {
 
 	public void sendMessageToPeer(Message msg) {
 
-		System.out.println("send downloader");
 		try {
 			OutputStream os = downloadSocket.getOutputStream();
 			dos = new DataOutputStream(os);
@@ -82,13 +82,11 @@ public class DownloaderThread extends Thread {
 
 	// Main code to request chunk lists and chunks
 	public void run() {
-		// pide lista trozos o un trozo
-		// es un bucle, mientras que no te bajes el fichero
-		// si es un fichero se comprueba si nos ehemos bajado los byes del
-		// fichero
-		// si hay varios thread hay que coordinar con variable compartida, que
-		// sera la instancia this
-		// MASTER, servir trozos que te estas bajando, opcional
+		// pide lista trozos o un trozoes un bucle, mientras que no te bajes el
+		// fichero si es un fichero se comprueba si nos ehemos bajado los byes
+		// del fichero si hay varios thread hay que coordinar con variable
+		// compartida, que sera la instancia this MASTER, servir trozos que te
+		// estas bajando, opcional
 		String hash = downloader.getTargetFile().fileHash;
 
 		// pido la lista de trozos del fichero
@@ -98,22 +96,19 @@ public class DownloaderThread extends Thread {
 
 		sendMessageToPeer(msg2);
 		Message msgRecibido = receiveMessageFromPeer();
-		System.out.println(msgRecibido);
+
 		if (msgRecibido.getOpCode() != Message.OP_GET_CHUNK_ACK && msgRecibido.getOpCode() != Message.OP_CHUNK_ACK)
 			return;
 
 		MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
 		switch (msgRecibido.getOpCode()) {
 			case Message.OP_GET_CHUNK_ACK:
-				System.out.println("num chunk: " + response.getNumChunk());
-				System.out.println("chunk datos: ");
 				response.getDatosChunk();
 				break;
-				
+
 			case Message.OP_CHUNK_ACK:
-				System.out.println("num chunk: " + response.getNumChunk());
-				System.out.println("datos size: " + response.getDatos().length);
-				Ficheros.escritura("/tmp/" + downloader.getTargetFile().fileName, response.getDatos(), 0);
+				Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName,
+						response.getDatos(), 0);
 				break;
 			default:
 				break;

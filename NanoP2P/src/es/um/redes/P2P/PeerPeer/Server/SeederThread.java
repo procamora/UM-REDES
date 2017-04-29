@@ -24,7 +24,6 @@ public class SeederThread extends Thread {
 	private PeerDatabase database;
 
 	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader) {
-		// TODO
 		this.socket = socket;
 		this.database = database;
 		this.downloader = downloader;
@@ -40,19 +39,16 @@ public class SeederThread extends Thread {
 	}
 
 	public Message receiveMessageFromPeer() {
-		System.out.println("recibe seeder");
+
 		Message msg = null;
 		// byte[] buffer = new byte[MAX_MSG_SIZE_BYTES];
 		try {
 			InputStream is = socket.getInputStream();
 			dis = new DataInputStream(is);
 			// dis.read(buffer);
-
-			msg = Message.parseResponse(dis);
-			// System.out.println(msg);
+			msg = Message.parseRequest(dis);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return msg;
@@ -60,7 +56,6 @@ public class SeederThread extends Thread {
 
 	public void sendMessageToPeer(Message msg) {
 
-		System.out.println("send seeder");
 		// Message msg = (MessageCQueryACK)
 		// Message.makeGetChunkResponseRequest((short)150, new byte[0]);
 		try {
@@ -69,7 +64,6 @@ public class SeederThread extends Thread {
 			dos.write(msg.toByteArray());
 			// System.out.println("enviado: " + msg);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -78,37 +72,31 @@ public class SeederThread extends Thread {
 		Message respuesta = null;
 		if (response.getOpCode() != Message.OP_GET_CHUNK && response.getOpCode() != Message.OP_CHUNK)
 			return respuesta;
-		
+
 		// tenemos la seguridad de que no hay problemas con el casting
 		MessageChunkQuery mensaje = (MessageChunkQuery) response;
 		switch (mensaje.getOpCode()) {
 			case Message.OP_GET_CHUNK:
-				System.out.println("OP_GET_CHUNK");
-				System.out.println(mensaje.getFileHash());
-				System.out.println(mensaje.getNumChunk());
-				byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays((short) 1, (short) 451, (short) 66);
+				byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays((short) 1, (short) 451,
+						(short) 66);
 				respuesta = Message.makeGetChunkResponseRequest((short) 3, listaTrozos, downloader.getChunkSize());
 				break;
 
 			case Message.OP_CHUNK:
-				System.out.println("OP_CHUNK");
-				System.out.println(mensaje.getFileHash());
-				System.out.println(mensaje.getNumChunk());
 				String rutaFichero = database.lookupFilePath(mensaje.getFileHash());
 				System.out.println(rutaFichero);
 				if (rutaFichero == null)
 					throw new IllegalStateException("No se ha encontrado el fichero: " + mensaje.getFileHash());
-				
+
 				byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) downloader.getChunkSize(), 0);
 				System.out.println("tamaño datos enviados " + datosEnviar.length);
-				respuesta = Message.makeChunkResponseRequest(mensaje.getNumChunk(), datosEnviar, downloader.getChunkSize());
+				respuesta = Message.makeChunkResponseRequest(mensaje.getNumChunk(), datosEnviar,
+						downloader.getChunkSize());
 				break;
-				
+
 			default:
 				break;
 		}
-		
-		System.out.println(response);
 		return respuesta;
 
 	}

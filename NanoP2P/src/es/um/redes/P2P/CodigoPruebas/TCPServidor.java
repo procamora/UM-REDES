@@ -17,7 +17,6 @@ public class TCPServidor {
 			serverSocket = new ServerSocket();
 			serverSocket.bind(new InetSocketAddress(20000));
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		while (true) {
@@ -30,10 +29,8 @@ public class TCPServidor {
 				new SeederThread(clientSocket, new PeerDatabase("/home/procamora/REDES/UM-REDES/comp/peer2/"),
 						new Downloader((short) 4096, null)).start();
 			} catch (SocketException e) {
-				// TODO Auto-generated catch block
 				// e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

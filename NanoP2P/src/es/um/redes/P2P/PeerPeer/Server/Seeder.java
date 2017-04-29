@@ -16,8 +16,8 @@ import es.um.redes.P2P.util.PeerDatabase;
 public class Seeder implements Runnable {
 	public static final int SEEDER_FIRST_PORT = 10000;
 	public static final int SEEDER_LAST_PORT = 10100;
-	//son ficheros que nos estamos descargando, no estan en local aun
-	private Downloader currentDownloader; 
+	// son ficheros que nos estamos descargando, no estan en local aun
+	private Downloader currentDownloader;
 	private ServerSocket serverSocket;
 	private short chunkSize;
 	private boolean estado = true;
@@ -27,15 +27,19 @@ public class Seeder implements Runnable {
 	 */
 	protected PeerDatabase database;
 
-	public Seeder(short chunkSize) {
+	public Seeder(short chunkSize, PeerDatabase database) {
 		// TODO
 		this.chunkSize = chunkSize;
+		this.database = database;
 		try {
 			serverSocket = new ServerSocket();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1); // si falla paramos el programa
 		}
+
+		// FIXME ESTO LO HE PUESTO AQUI PARA PRUEBAS, NO SE SI ES CORRECTO
+		currentDownloader = new Downloader(chunkSize, null);
 	}
 
 	// Pone al servidor a escuchar en un puerto libre del rango y devuelve cuál
@@ -74,7 +78,7 @@ public class Seeder implements Runnable {
 				System.out.println(clientSocket.getPort());
 				new SeederThread(clientSocket, database, currentDownloader).start();
 			} catch (SocketException e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -101,7 +105,7 @@ public class Seeder implements Runnable {
 		new Thread(this).start();
 	}
 
-	//es el fichero que nos estamos decargando
+	// es el fichero que nos estamos decargando
 	public void setCurrentDownloader(Downloader downloader) {
 		// TODO
 	}

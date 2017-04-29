@@ -17,7 +17,6 @@ public class PeerShell implements PeerShellIface {
 
 	@Override
 	public byte getCommand() {
-		// TODO Auto-generated method stub
 		switch (comando) {
 			case "query":
 				return PeerCommands.COM_QUERY;
@@ -44,13 +43,11 @@ public class PeerShell implements PeerShellIface {
 
 	@Override
 	public String[] getCommandArguments() {
-		// TODO Auto-generated method stub
 		return argumentos;
 	}
 
 	@Override
 	public void readCommand() {
-		// TODO Auto-generated method stub
 		System.out.print("[procamora@p2p]# ");
 		String linea = scanner.nextLine();
 		String[] parsea = linea.split(" ");
@@ -58,21 +55,9 @@ public class PeerShell implements PeerShellIface {
 		for (int i = 0; i < parsea.length; i++) {
 			if (i == 0) // comando
 				comando = parsea[i];
-			else { // argumentos
-					// i-1 para que empiece en 0, ya que el i=0 es el comando
+			// argumentos i-1 para que empiece en 0, ya que el i=0 es el comando
+			else
 				argumentos[i - 1] = parsea[i];
-			}
 		}
-
-		// imprimeComando();
-	}
-
-	private void imprimeComando() {
-		System.out.println("inicio comando");
-		System.out.println("comando: " + comando);
-		for (int i = 0; i < argumentos.length; i++)
-			if (argumentos[i] != null)
-				System.out.printf("argumento %d: %s\n", i, argumentos[i]);
-		System.out.println("fin comando");
 	}
 }
