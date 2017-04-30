@@ -21,7 +21,8 @@ public class Ficheros {
 
 		byte chunk[] = new byte[CHUNK_SIZE];
 		File file = new File(fichero);
-		int leidos = 0;
+		int leidos = 0; // variable de control del bucle
+		int leidosTotal = 0; // bytes leidos del fichero
 		if (!file.exists())
 			throw new IllegalStateException("No existe el fichero: " + fichero);
 
@@ -31,14 +32,15 @@ public class Ficheros {
 				// Nos situamos en la posición inical + los bytes leidos
 				rfi.seek(pos + leidos);
 				leidos = rfi.read(chunk); // Leemos el trozo
+				if (leidos != -1)
+					leidosTotal += leidos;
 			} while (leidos != -1 && leidos != CHUNK_SIZE && (long) leidos != file.length());
 			rfi.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		// tiene el tamaño de los byte leidos
-		byte[] buffer = Arrays.copyOfRange(chunk, 0, leidos);
+		byte[] buffer = Arrays.copyOfRange(chunk, 0, leidosTotal);
 
 		return buffer;
 	}
