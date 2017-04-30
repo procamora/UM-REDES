@@ -47,11 +47,11 @@ public class DownloaderThread extends Thread {
 	}
 
 	// Number of chunks already downloaded by this thread
-	public int getNumChunksDownloaded() {
+	private int getNumChunksDownloaded() {
 		return numChunksDownloaded;
 	}
 
-	public Message receiveMessageFromPeer() {
+	private Message receiveMessageFromPeer() {
 
 		Message msg = null;
 		// byte[] buffer = new byte[1024];
@@ -69,7 +69,7 @@ public class DownloaderThread extends Thread {
 		return msg;
 	}
 
-	public void sendMessageToPeer(Message msg) {
+	private void sendMessageToPeer(Message msg) {
 
 		try {
 			OutputStream os = downloadSocket.getOutputStream();
@@ -92,7 +92,8 @@ public class DownloaderThread extends Thread {
 		// pido la lista de trozos del fichero
 		Message msg = Message.makeGetChunkRequest(hash, (short) 0);
 		// pido los datos del fichero correspondientes al num chunk 40
-		Message msg2 = Message.makeChunkRequest(hash, (short) 40);
+		short numChunk = 0;
+		Message msg2 = Message.makeChunkRequest(hash, numChunk);
 
 		sendMessageToPeer(msg2);
 		Message msgRecibido = receiveMessageFromPeer();
@@ -108,7 +109,7 @@ public class DownloaderThread extends Thread {
 
 			case Message.OP_CHUNK_ACK:
 				Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName,
-						response.getDatos(), 0);
+						response.getDatos(), numChunk * downloader.getChunkSize());
 				break;
 			default:
 				break;

@@ -92,7 +92,6 @@ public class Seeder implements Runnable {
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

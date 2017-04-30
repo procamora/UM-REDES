@@ -31,21 +31,34 @@ public class SeederThread extends Thread {
 
 	// Devuelve la lista de trozos que tiene del fichero solicitado
 	public void sendChunkList(String fileHashStr) {
-
+		// FIXME obtener numero de chunks de forma dinamica
+		byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays((short) 1, (short) 451, (short) 66,
+				(short) 667);
+		// el tamaño de listaTrozos.length es el doble de elementos que contiene
+		Message respuesta = Message.makeGetChunkResponseRequest((short) (listaTrozos.length / 2), listaTrozos,
+				downloader.getChunkSize());
+		sendMessageToPeer(respuesta);
 	}
 
 	// Envía por el socket el chunk solicitado por el DownloaderThread
 	protected void sendChunk(int chunkNumber, String fileHashStr) {
+		String rutaFichero = database.lookupFilePath(fileHashStr);
+		if (rutaFichero == null)
+			throw new IllegalStateException("No se ha encontrado el fichero: " + fileHashStr);
+
+		byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) downloader.getChunkSize(),
+				chunkNumber * downloader.getChunkSize());
+		Message respuesta = Message.makeChunkResponseRequest((short) chunkNumber, datosEnviar,
+				downloader.getChunkSize());
+		sendMessageToPeer(respuesta);
 	}
 
-	public Message receiveMessageFromPeer() {
+	private Message receiveMessageFromPeer() {
 
 		Message msg = null;
-		// byte[] buffer = new byte[MAX_MSG_SIZE_BYTES];
 		try {
 			InputStream is = socket.getInputStream();
 			dis = new DataInputStream(is);
-			// dis.read(buffer);
 			msg = Message.parseRequest(dis);
 
 		} catch (IOException e) {
@@ -54,51 +67,34 @@ public class SeederThread extends Thread {
 		return msg;
 	}
 
-	public void sendMessageToPeer(Message msg) {
-
-		// Message msg = (MessageCQueryACK)
-		// Message.makeGetChunkResponseRequest((short)150, new byte[0]);
+	private void sendMessageToPeer(Message msg) {
 		try {
 			OutputStream os = socket.getOutputStream();
 			dos = new DataOutputStream(os);
 			dos.write(msg.toByteArray());
-			// System.out.println("enviado: " + msg);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public Message processMessageFromPeer(Message response) {
-		Message respuesta = null;
+	private void processMessageFromPeer(Message response) {
 		if (response.getOpCode() != Message.OP_GET_CHUNK && response.getOpCode() != Message.OP_CHUNK)
-			return respuesta;
+			return;
 
 		// tenemos la seguridad de que no hay problemas con el casting
 		MessageChunkQuery mensaje = (MessageChunkQuery) response;
 		switch (mensaje.getOpCode()) {
 			case Message.OP_GET_CHUNK:
-				byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays((short) 1, (short) 451,
-						(short) 66);
-				respuesta = Message.makeGetChunkResponseRequest((short) 3, listaTrozos, downloader.getChunkSize());
+				sendChunkList(mensaje.getFileHash());
 				break;
 
 			case Message.OP_CHUNK:
-				String rutaFichero = database.lookupFilePath(mensaje.getFileHash());
-				System.out.println(rutaFichero);
-				if (rutaFichero == null)
-					throw new IllegalStateException("No se ha encontrado el fichero: " + mensaje.getFileHash());
-
-				byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) downloader.getChunkSize(), 0);
-				System.out.println("tamaño datos enviados " + datosEnviar.length);
-				respuesta = Message.makeChunkResponseRequest(mensaje.getNumChunk(), datosEnviar,
-						downloader.getChunkSize());
+				sendChunk(mensaje.getNumChunk(), mensaje.getFileHash());
 				break;
 
 			default:
 				break;
 		}
-		return respuesta;
-
 	}
 
 	// Método principal que coordina la recepción y envío de mensajes
@@ -109,9 +105,9 @@ public class SeederThread extends Thread {
 		// nos da una excepcion correcta que tenemos que capturar
 
 		Message msgRecibido = receiveMessageFromPeer();
-		Message msgEnviado = processMessageFromPeer(msgRecibido);
-		if (msgEnviado != null)
-			sendMessageToPeer(msgEnviado);
+
+		if (msgRecibido != null)
+			processMessageFromPeer(msgRecibido);
 		System.out.println("final correcto");
 
 	}
