@@ -40,3 +40,6 @@ Despues de descargar un fichero en PeerControler, debemos eliminarlo. :)
 
 ## IMPORTANTE
 Nada mas tener un trozo del fichero, el peer debe darse de alta como Seed. Imprescindible para el punto 3: SetChunkDownloaded()
+
+## Criterio de Comparacion
+No olvidemos el criterio de comparacion del mapa de IP y chunks, con el algoritmo de rareza
