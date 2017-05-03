@@ -34,3 +34,6 @@ Para cada fichero el procedimiento sera:
 ## Mensajes TCP
 
 + [ ] El atributo TransactionId debe ser eliminado, solo se usa para UDP.
+
+##
+Despues de descargar un fichero en PeerControler, debemos eliminarlo. :)
