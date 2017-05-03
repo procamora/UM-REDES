@@ -37,3 +37,6 @@ Para cada fichero el procedimiento sera:
 
 ##
 Despues de descargar un fichero en PeerControler, debemos eliminarlo. :)
+
+## IMPORTANTE
+Nada mas tener un trozo del fichero, el peer debe darse de alta como Seed. Imprescindible para el punto 3: SetChunkDownloaded()
