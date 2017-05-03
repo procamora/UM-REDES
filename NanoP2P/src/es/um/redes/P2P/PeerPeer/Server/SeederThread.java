@@ -41,14 +41,14 @@ public class SeederThread extends Thread {
 	}
 
 	// Envía por el socket el chunk solicitado por el DownloaderThread
-	protected void sendChunk(int chunkNumber, String fileHashStr) {
+	protected void sendChunk(long chunkNumber, String fileHashStr) {
 		String rutaFichero = database.lookupFilePath(fileHashStr);
 		if (rutaFichero == null)
 			throw new IllegalStateException("No se ha encontrado el fichero: " + fileHashStr);
 
 		byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) downloader.getChunkSize(),
-				chunkNumber * downloader.getChunkSize());
-		Message respuesta = Message.makeChunkResponseRequest((short) chunkNumber, datosEnviar,
+				(long) chunkNumber * downloader.getChunkSize());
+		Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar,
 				downloader.getChunkSize());
 		sendMessageToPeer(respuesta);
 	}
@@ -103,12 +103,13 @@ public class SeederThread extends Thread {
 		// sabemos que se ha acabado de enviar el fichero cuando el otro cierra
 		// el socket y al hacer el read
 		// nos da una excepcion correcta que tenemos que capturar
+		while (true) {
+			Message msgRecibido = receiveMessageFromPeer();
 
-		Message msgRecibido = receiveMessageFromPeer();
-
-		if (msgRecibido != null)
-			processMessageFromPeer(msgRecibido);
-		System.out.println("final correcto");
+			if (msgRecibido != null)
+				processMessageFromPeer(msgRecibido);
+		}
+		// System.out.println("final correcto");
 
 	}
 }

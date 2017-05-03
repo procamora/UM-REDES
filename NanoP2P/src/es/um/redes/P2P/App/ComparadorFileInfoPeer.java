@@ -2,10 +2,10 @@ package es.um.redes.P2P.App;
 
 import java.util.Comparator;
 
-public class ComparadorFileInfoPeer implements Comparator<FileInfoPeer> {
+public class ComparadorFileInfoPeer implements Comparator<DownloadInfoFile> {
 
 	@Override
-	public int compare(FileInfoPeer o1, FileInfoPeer o2) {
+	public int compare(DownloadInfoFile o1, DownloadInfoFile o2) {
 		int n1 = o1.getPeerSet().size();
 		int n2 = o2.getPeerSet().size();
 		if (n1 > n2)

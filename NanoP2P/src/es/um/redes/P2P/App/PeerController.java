@@ -26,7 +26,7 @@ public class PeerController implements PeerControllerIface {
 	 * auxiliar que contenga lo siguiente: - FileInfo - Set de seed ordenado por
 	 * menor clientes en uso
 	 */
-	private TreeMap<String, FileInfoPeer> mapaFicheros;
+	private TreeMap<String, FileInfo> mapaFicheros;
 
 	private short chunkSize;
 
@@ -35,7 +35,7 @@ public class PeerController implements PeerControllerIface {
 		shell = new PeerShell();
 		reporter = client;
 		this.peerDatabase = peerDatabase;
-		this.mapaFicheros = new TreeMap<String, FileInfoPeer>();
+		this.mapaFicheros = new TreeMap<>();
 	}
 
 	public byte getCurrentCommand() {
@@ -302,8 +302,7 @@ public class PeerController implements PeerControllerIface {
 		for (int i = 0; i < fileList.length; i++) {
 			if (!isLocal(fileList[i].fileHash)) {
 				System.out.println(fileList[i]);
-				FileInfoPeer fileInfoPeer = new FileInfoPeer(fileList[i]);
-				mapaFicheros.put(fileList[i].fileHash, fileInfoPeer);
+				mapaFicheros.put(fileList[i].fileHash, fileList[i]);
 			}
 		}
 	}
@@ -315,11 +314,8 @@ public class PeerController implements PeerControllerIface {
 	 */
 	@Override
 	public void printQueryResult() {
-		for (String hashes : mapaFicheros.keySet()) {
-			FileInfoPeer actual = mapaFicheros.get(hashes);
-			System.out.println(actual);
-
-		}
+		for (String hashes : mapaFicheros.keySet())
+			System.out.println(mapaFicheros.get(hashes));
 	}
 
 	/**
@@ -338,8 +334,7 @@ public class PeerController implements PeerControllerIface {
 		int contador = 0;
 		for (String hashes : mapaFicheros.keySet()) {
 			if (hashes.contains(hashSubstr)) {
-				FileInfoPeer fileInfoPeer = mapaFicheros.get(hashes);
-				listaFicherosValidos[contador] = fileInfoPeer.getFileInfo();
+				listaFicherosValidos[contador] = mapaFicheros.get(hashes);
 				contador++;
 			}
 		}
@@ -360,12 +355,7 @@ public class PeerController implements PeerControllerIface {
 	 */
 	@Override
 	public void downloadFileFromSeeds(InetSocketAddress[] seedList, String targetFileHash) {
-		// para actualizar nuesto mapa
-		if (mapaFicheros.containsKey(targetFileHash)) {
-			FileInfoPeer fileInfoPeer = mapaFicheros.get(targetFileHash);
-			fileInfoPeer.addPeer(seedList); // modificado aliasing
-		}
-		Downloader descarga = new Downloader(chunkSize, mapaFicheros.get(targetFileHash).getFileInfo());
+		Downloader descarga = new Downloader(chunkSize, mapaFicheros.get(targetFileHash));
 		descarga.downloadFile(seedList);
 	}
 

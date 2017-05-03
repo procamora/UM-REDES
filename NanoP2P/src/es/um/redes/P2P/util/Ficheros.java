@@ -17,7 +17,7 @@ public class Ficheros {
 	 *            posición dentro del fichero
 	 * @return array byes leidos
 	 */
-	public static byte[] lectura(String fichero, int CHUNK_SIZE, int pos) {
+	public static byte[] lectura(String fichero, int CHUNK_SIZE, long pos) {
 
 		byte chunk[] = new byte[CHUNK_SIZE];
 		File file = new File(fichero);
@@ -54,7 +54,7 @@ public class Ficheros {
 	 * @param pos
 	 *            posición dentro del fichero
 	 */
-	public static void escritura(String fichero, byte[] datos, int pos) {
+	public static void escritura(String fichero, byte[] datos, long pos) {
 		File file = new File(fichero);
 		if (!file.exists()) {
 			try {
@@ -64,6 +64,7 @@ public class Ficheros {
 			}
 		}
 
+		//FIXME Confirmar que se han escrito todos los bytes que se envian
 		try {
 			RandomAccessFile rfo = new RandomAccessFile(file, "rw");
 			rfo.seek(pos);

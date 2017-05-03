@@ -38,7 +38,7 @@ public class MessageChunkQuery extends Message {
 	 */
 	// private short chunkSize;
 	private String fileHash;
-	private short numChunk;
+	private long numChunk;
 
 	/**
 	 * Constructor used by tracker
@@ -50,7 +50,7 @@ public class MessageChunkQuery extends Message {
 	 *            The chunk size
 	 * @param numChunk
 	 */
-	public MessageChunkQuery(byte opCode, byte tid, String fileHash, short numChunk) {
+	public MessageChunkQuery(byte opCode, byte tid, String fileHash, long numChunk) {
 		setOpCode(opCode);
 		setTransId(tid);
 		this.fileHash = fileHash;
@@ -77,7 +77,7 @@ public class MessageChunkQuery extends Message {
 	 * message of Chunk format
 	 */
 	public byte[] toByteArray() {
-		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES + FIELD_FILEHASH_BYTES + FIELD_CHUNKSIZE_BYTES;
+		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES + FIELD_FILEHASH_BYTES + FIELD_NUMCHUNKSIZE;
 
 		ByteBuffer buf = ByteBuffer.allocate(byteBufferLength);
 
@@ -91,7 +91,7 @@ public class MessageChunkQuery extends Message {
 		buf.put(FileDigest.getDigestFromHexString(this.getFileHash()));
 
 		// Num Chunk
-		buf.putShort((short) this.getNumChunk());
+		buf.putLong((long) this.getNumChunk());
 
 		return buf.array();
 	}
@@ -116,7 +116,7 @@ public class MessageChunkQuery extends Message {
 			this.fileHash = new String(FileDigest.getChecksumHexString(b));
 
 			// Num Chunk
-			this.numChunk = dis.readShort();
+			this.numChunk = dis.readLong();
 
 			valid = true;
 			
@@ -127,7 +127,7 @@ public class MessageChunkQuery extends Message {
 		return valid;
 	}
 
-	public short getNumChunk() {
+	public long getNumChunk() {
 		return numChunk;
 	}
 

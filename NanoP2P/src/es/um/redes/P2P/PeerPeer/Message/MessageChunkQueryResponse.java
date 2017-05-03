@@ -36,7 +36,7 @@ public class MessageChunkQueryResponse extends Message {
 	 * The chunk size.
 	 */
 	// private short chunkSize;
-	private short numChunk;
+	private long numChunk;
 	private byte[] datos;
 	private short chunkSize;
 
@@ -50,7 +50,7 @@ public class MessageChunkQueryResponse extends Message {
 	 *            The chunk size
 	 * @param numChunk
 	 */
-	public MessageChunkQueryResponse(byte opCode, byte tid, short numChunk, byte[] datos, short chunkSize) {
+	public MessageChunkQueryResponse(byte opCode, byte tid, long numChunk, byte[] datos, short chunkSize) {
 		setOpCode(opCode);
 		setTransId(tid);
 		this.numChunk = numChunk;
@@ -78,7 +78,7 @@ public class MessageChunkQueryResponse extends Message {
 	 * message of ChunkACK format
 	 */
 	public byte[] toByteArray() {
-		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES + FIELD_CHUNKSIZE_BYTES + datos.length;
+		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES + FIELD_NUMCHUNKSIZE + datos.length;
 
 		ByteBuffer buf = ByteBuffer.allocate(byteBufferLength);
 
@@ -89,7 +89,7 @@ public class MessageChunkQueryResponse extends Message {
 		buf.put((byte) this.getTransId());
 
 		// Num Chunk
-		buf.putShort((short) this.getNumChunk());
+		buf.putLong((long) this.getNumChunk());
 
 		// File Datos
 		buf.put((byte[]) this.getDatos());
@@ -112,7 +112,7 @@ public class MessageChunkQueryResponse extends Message {
 			setTransId(dis.readByte());
 
 			// Num Chunk
-			this.numChunk = dis.readShort();
+			this.numChunk = dis.readLong();
 
 			// File Datos
 			chunkSize = 4096;// FIXME cambiar
@@ -138,7 +138,7 @@ public class MessageChunkQueryResponse extends Message {
 		datos = Arrays.copyOf(aux, tam);
 	}
 
-	public short getNumChunk() {
+	public long getNumChunk() {
 		return numChunk;
 	}
 
@@ -152,9 +152,9 @@ public class MessageChunkQueryResponse extends Message {
 	}
 
 	// obtienes el array de chunk del que dispone el peer
-	public short[] getDatosChunk() {
+	public long[] getDatosChunk() {
 
-		short[] s = desconcatenaArratBytesDatos();
+		long[] s = desconcatenaArratBytesDatos();
 
 		// imprimo la lista de chunk de la que dispone el peer
 		for (int i = 0; i < s.length; i++)
@@ -167,12 +167,12 @@ public class MessageChunkQueryResponse extends Message {
 	 * Metodo privado usado por OP_GET_CHUNK_ACK, lee el array de bytes y lo
 	 * convierte a un array de short
 	 */
-	private short[] desconcatenaArratBytesDatos() {
+	private long[] desconcatenaArratBytesDatos() {
 		if (getOpCode() != OP_GET_CHUNK_ACK)
 			throw new IllegalStateException("Esta funcion solo la puede hacer OP_GET_CHUNK_ACK");
 
 		ByteBuffer buf = ByteBuffer.wrap(datos);
-		short[] a = new short[numChunk];
+		long[] a = new long[(int) numChunk];
 		for (int i = 0; i < numChunk; i++)
 			a[i] = buf.getShort();
 

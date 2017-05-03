@@ -36,6 +36,11 @@ public abstract class Message {
 	 * Size of "chunksize" field: short (2 bytes)
 	 */
 	protected static final int FIELD_CHUNKSIZE_BYTES = Short.SIZE / 8;
+	
+	/**
+	 * Size of "chunksize" field: short (8 bytes)
+	 */
+	protected static final int FIELD_NUMCHUNKSIZE = Long.SIZE / 8;
 	/**
 	 * Size of "trans_id" field: 1 byte
 	 */
@@ -164,24 +169,24 @@ public abstract class Message {
 		this.transId = fetchAndIncrementTransId();
 	}
 
-	public static Message makeGetChunkRequest(String hash, short numChunks) {
+	public static Message makeGetChunkRequest(String hash, long numChunks) {
 		byte requestOpcode = OP_GET_CHUNK;
 		byte tid = fetchAndIncrementTransId();
 		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
 	}
 
-	public static Message makeGetChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
+	public static Message makeGetChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
 		return new MessageChunkQueryResponse(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
-	public static Message makeChunkRequest(String hash, short numChunks) {
+	public static Message makeChunkRequest(String hash, long numChunks) {
 		byte requestOpcode = OP_CHUNK;
 		byte tid = fetchAndIncrementTransId();
 		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
 	}
 
-	public static Message makeChunkResponseRequest(short numChunk, byte[] datos, short chunkSize) {
+	public static Message makeChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
 		return new MessageChunkQueryResponse(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}

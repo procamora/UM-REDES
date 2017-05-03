@@ -79,6 +79,8 @@ public class DownloaderThread extends Thread {
 			e.printStackTrace();
 		}
 	}
+	
+	//FIXME cuando tenemos un trozo ya tenemos que hacer el addseed del fichero para compartirlo
 
 	// Main code to request chunk lists and chunks
 	public void run() {
@@ -88,32 +90,34 @@ public class DownloaderThread extends Thread {
 		// compartida, que sera la instancia this MASTER, servir trozos que te
 		// estas bajando, opcional
 		String hash = downloader.getTargetFile().fileHash;
+		long totalChunks = downloader.getTotalChunks();
+		long totalChunksDescargados = 0;
+		long chunkActual = 0;
 
 		// pido la lista de trozos del fichero
-		Message msg = Message.makeGetChunkRequest(hash, (short) 0);
-		// pido los datos del fichero correspondientes al num chunk 40
-		short numChunk = 0;
-		Message msg2 = Message.makeChunkRequest(hash, numChunk);
-
-		sendMessageToPeer(msg2);
+		sendMessageToPeer(Message.makeGetChunkRequest(hash, (short) 0));
 		Message msgRecibido = receiveMessageFromPeer();
 
-		if (msgRecibido.getOpCode() != Message.OP_GET_CHUNK_ACK && msgRecibido.getOpCode() != Message.OP_CHUNK_ACK)
-			return;
-
-		MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
-		switch (msgRecibido.getOpCode()) {
-			case Message.OP_GET_CHUNK_ACK:
-				response.getDatosChunk();
-				break;
-
-			case Message.OP_CHUNK_ACK:
-				Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName,
-						response.getDatos(), numChunk * downloader.getChunkSize());
-				break;
-			default:
-				break;
+		if (msgRecibido.getOpCode() == Message.OP_GET_CHUNK_ACK) {
+			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
+			response.getDatosChunk();
 		}
+
+		do {
+			// pido los datos del fichero correspondientes al num chunk 40
+			sendMessageToPeer(Message.makeChunkRequest(hash, chunkActual));
+			Message msgRecibido1 = receiveMessageFromPeer();
+
+			if (msgRecibido1.getOpCode() == Message.OP_CHUNK_ACK) {
+				MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido1;
+
+				Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName,
+						response.getDatos(), (long) (chunkActual * downloader.getChunkSize()));
+
+				chunkActual++;
+				totalChunksDescargados++;
+			}
+		} while (totalChunks != totalChunksDescargados);
 		System.out.println("final correcto");
 	}
 
