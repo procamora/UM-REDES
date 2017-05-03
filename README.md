@@ -3,22 +3,22 @@
 
 ## Tareas pendientes
 
-[ ] Creo que nunChunk tiene que ser un long, ya que segun nuestras estimaciones ocupa 6 bytes y un long son 8 bytes
++ [ ] Creo que nunChunk tiene que ser un long, ya que segun nuestras estimaciones ocupa 6 bytes y un long son 8 bytes
 
 ### PeerController
 
-[ ] Cambiar variable privada `TreeMap<String, FileInfoPeer> mapaFicheros` por un `HashSet<FileInfo>`
++ [ ] Cambiar variable privada `TreeMap<String, FileInfoPeer> mapaFicheros` por un `HashSet<FileInfo>`
 
 
 ### MessageChunkQueryResponse
 
-[ ] Econtrar la forma de que la funcion fromDataInputStream obtenga el chunkSize de forma dinamica
++ [ ] Econtrar la forma de que la funcion fromDataInputStream obtenga el chunkSize de forma dinamica
 
 
 ### Seeder
 
-[ ] Obtener el numero de chunk que tiene el fichero
-[ ] Hacer el bucle del run para ir respondiendo a mensajes mientras que la conexion tcp este abierta
++ [ ] Obtener el numero de chunk que tiene el fichero
++ [ ] Hacer el bucle del run para ir respondiendo a mensajes mientras que la conexion tcp este abierta
 
 
 
