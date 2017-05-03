@@ -7,7 +7,7 @@
 
 ### PeerController
 
-+ [ ] Cambiar variable privada `TreeMap<String, FileInfoPeer> mapaFicheros` por un `HashSet<FileInfo>`
++ [x] Cambiar variable privada `TreeMap<String, FileInfoPeer> mapaFicheros` por un `HashSet<FileInfo>`
 
 
 ### MessageChunkQueryResponse
@@ -30,3 +30,7 @@ Para cada fichero el procedimiento sera:
 3. Descarga los chunks por orden de rareza
 4. Cuando se descarga el chunk vuelve a pedir la lista de chunks al seeder por si tiene trozos nuevos
 5. Pone el chunk descargado en la bd para que otros se puedan descargar ese trozo
+
+## Mensajes TCP
+
++ [ ] El atributo TransactionId debe ser eliminado, solo se usa para UDP.
