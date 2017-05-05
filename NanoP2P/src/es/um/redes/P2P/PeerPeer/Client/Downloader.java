@@ -45,9 +45,10 @@ public class Downloader implements DownloaderIface {
 	// que se están disponibles o que se están descargando. Deberán ser
 	// definidos en la clase que la instancia.
 
-	public long bookNextChunkNumber(long[] listaNumChunk, InetSocketAddress ip) {
-		for (long numChunk : listaNumChunk) {
-			if (!mapaPeers.containsKey(ip)) {
+	public synchronized long bookNextChunkNumber(long[] listaNumChunk, InetSocketAddress ip) {
+		/*for (long numChunk : listaNumChunk) {
+			HashSet<InetSocketAddress> peerSet = mapaPeers.get(numChunk);
+			if (!peerSet.contains(ip)) { // tenemos un fallo,
 				HashSet<InetSocketAddress> ips = new HashSet<>();
 				ips.add(ip);
 				mapaPeers.put(numChunk, ips);
@@ -67,9 +68,42 @@ public class Downloader implements DownloaderIface {
 
 		for (Long entry : mapaPeers.keySet()) {
 			//retorna el primer nunChunk Qque contentga la ip del peer
+		}*/
+
+		for (long numChunk: listaNumChunk) {
+			Estado estado = mapaEstados.get(numChunk);
+			if (estado == null) System.err.println("El numero de Chunk no esta en el mapa");
+			else {
+				if (estado == Estado.NO_DESCARGADO) {
+				//	long chunkForDownload = numChunk;
+					HashSet<InetSocketAddress> peerSet = mapaPeers.get(numChunk);
+					if (peerSet.contains(ip)) {
+						return  numChunk;
+					}
+				}
+			}
+		}
+			return -1;
 		}
 
-	}
+		public synchronized boolean setChunkDownloaded(long numChunk, boolean descargado) {
+			/*
+				Si el numero de trozo se ha descargado,
+				se notifica al traker que ya puede servir ese trozo de fichero
+			 */
+
+
+		if (descargado) {
+				if (mapaPeers.isEmpty()) {
+					//mapaPeers.put(numChunk, )
+				}
+			}
+			return false;
+		}
+
+
+
+
 
 	// Devuelve la información sobre el archivo que se está descargando
 	@Override
