@@ -24,11 +24,6 @@ public class MessageChunkQuery extends Message {
 	 */
 
 	/**
-	 * Size of "chunksize" field: short (2 bytes)
-	 */
-	// private static final int FIELD_CHUNKSIZE_BYTES = Short.SIZE / 8;
-
-	/**
 	 * Message opcodes that use the Chunk format
 	 */
 	private static final Byte[] _conf_opcodes = { OP_GET_CHUNK, OP_CHUNK };
@@ -36,7 +31,6 @@ public class MessageChunkQuery extends Message {
 	/**
 	 * The chunk size.
 	 */
-	// private short chunkSize;
 	private String fileHash;
 	private long numChunk;
 
@@ -50,9 +44,8 @@ public class MessageChunkQuery extends Message {
 	 *            The chunk size
 	 * @param numChunk
 	 */
-	public MessageChunkQuery(byte opCode, byte tid, String fileHash, long numChunk) {
+	public MessageChunkQuery(byte opCode, String fileHash, long numChunk) {
 		setOpCode(opCode);
-		setTransId(tid);
 		this.fileHash = fileHash;
 		this.numChunk = numChunk;
 		valid = true;
@@ -64,12 +57,11 @@ public class MessageChunkQuery extends Message {
 	 * @param buf
 	 */
 	public MessageChunkQuery(DataInputStream dis, byte respOpcode) {
-		if (fromDataInputStream(dis, respOpcode) == false) {
+		if (fromDataInputStream(dis, respOpcode) == false)
 			throw new RuntimeException("Failed to parse message: format is not Chunk.");
-		} else {
-			// assert(valid);
+		else
 			valid = true;
-		}
+
 	}
 
 	/**
@@ -77,15 +69,12 @@ public class MessageChunkQuery extends Message {
 	 * message of Chunk format
 	 */
 	public byte[] toByteArray() {
-		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES + FIELD_FILEHASH_BYTES + FIELD_NUMCHUNKSIZE;
+		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_FILEHASH_BYTES + FIELD_NUMCHUNKSIZE;
 
 		ByteBuffer buf = ByteBuffer.allocate(byteBufferLength);
 
 		// Opcode
 		buf.put((byte) this.getOpCode());
-
-		// Trans id
-		buf.put((byte) this.getTransId());
 
 		// File hash
 		buf.put(FileDigest.getDigestFromHexString(this.getFileHash()));
@@ -107,9 +96,6 @@ public class MessageChunkQuery extends Message {
 			// Opcode
 			setOpCode(respOpcode);
 
-			// Trans id
-			setTransId(dis.readByte());
-
 			// File hash
 			byte[] b = new byte[FIELD_FILEHASH_BYTES];
 			dis.read(b, 0, b.length);
@@ -119,7 +105,7 @@ public class MessageChunkQuery extends Message {
 			this.numChunk = dis.readLong();
 
 			valid = true;
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			assert (valid == false);
@@ -139,7 +125,6 @@ public class MessageChunkQuery extends Message {
 		assert (valid);
 		StringBuffer strBuf = new StringBuffer();
 		strBuf.append("Type:" + this.getOpCodeString());
-		strBuf.append(" TransId:" + this.getTransId());
 		strBuf.append(" Hash:" + this.getFileHash());
 		strBuf.append(" NumChunk:" + this.getNumChunk());
 		return strBuf.toString();
