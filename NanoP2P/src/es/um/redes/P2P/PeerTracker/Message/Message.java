@@ -63,12 +63,12 @@ public abstract class Message
 	public static final byte OP_SEND_CONF = 10;
 	
 	/**
-	 * MessageTCP opcode.
+	 * Message opcode.     
 	 */
 	private byte opCode;
 	
 	/**
-	 * MessageTCP transaction ID.
+	 * Message transaction ID.     
 	 */
 	private byte transId;
 
@@ -118,7 +118,7 @@ public abstract class Message
 	}
 
 	private final void sanityCheck() {
-		if (!valid) throw new RuntimeException("MessageTCP object accessed before correct initialization");
+		if (!valid) throw new RuntimeException("Message object accessed before correct initialization");
 	}
 	public final byte getOpCode() {
 		sanityCheck();

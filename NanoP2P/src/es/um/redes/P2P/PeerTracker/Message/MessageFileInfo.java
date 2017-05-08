@@ -47,7 +47,7 @@ public class MessageFileInfo extends Message {
 	private static final int MAX_FILELIST_ELEMENTS_PRINTED = 10;
 	
 	/**
-	 * MessageTCP opcodes that use the FileInfo format
+	 * Message opcodes that use the FileInfo format
 	 */
 	private static final Byte[] _datafile_opcodes = {
 			OP_ADD_SEED, 

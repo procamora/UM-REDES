@@ -20,7 +20,6 @@ public class PeerController implements PeerControllerIface {
 	private Reporter reporter;
 	private Seeder seeder;
 	private PeerDatabase peerDatabase;
-	private Downloader downloader;
 
 	/**
 	 * Puede que en vez de un TreeSet<FileInfo> sea mejor hacer una clase
@@ -37,7 +36,6 @@ public class PeerController implements PeerControllerIface {
 		reporter = client;
 		this.peerDatabase = peerDatabase;
 		this.mapaFicheros = new TreeMap<>();
-		downloader = null;
 	}
 
 	public byte getCurrentCommand() {
@@ -348,7 +346,8 @@ public class PeerController implements PeerControllerIface {
 	 * objeto descargador para este archivo de destino identificado por su hash.
 	 *
 	 *
-	 *  La lista de pares que comparten actualmente el archivo.
+	 * @param inetSocketAddresses
+	 *            La lista de pares que comparten actualmente el archivo.
 	 *
 	 * @param targetFileHash
 	 *            El archivo de destino para descargar
@@ -356,9 +355,8 @@ public class PeerController implements PeerControllerIface {
 	 */
 	@Override
 	public void downloadFileFromSeeds(InetSocketAddress[] seedList, String targetFileHash) {
-		 downloader = new Downloader(chunkSize, mapaFicheros.get(targetFileHash), peerDatabase.getLocalSharedFiles());
-		 downloader.downloadFile(seedList);
-
+		Downloader descarga = new Downloader(chunkSize, mapaFicheros.get(targetFileHash));
+		descarga.downloadFile(seedList);
 	}
 
 }

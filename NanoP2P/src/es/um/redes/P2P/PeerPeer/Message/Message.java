@@ -18,7 +18,7 @@ import es.um.redes.P2P.util.FileDigest;
  *
  */
 
-public abstract class MessageTCP {
+public abstract class Message {
 	/**
 	 * Size of "opcode" field: byte (1 bytes)
 	 */
@@ -56,12 +56,12 @@ public abstract class MessageTCP {
 	public static final byte OP_CHUNK_ACK = 4;
 
 	/**
-	 * MessageTCP opcode.
+	 * Message opcode.
 	 */
 	private byte opCode;
 
 	/**
-	 * MessageTCP transaction ID.
+	 * Message transaction ID.
 	 */
 	private byte transId;
 
@@ -97,7 +97,7 @@ public abstract class MessageTCP {
 	 * @param fragments
 	 *            All the fragments of the message, including this object
 	 */
-	public abstract void reassemble(Vector<MessageTCP> fragments);
+	public abstract void reassemble(Vector<Message> fragments);
 
 	/**
 	 * @return True if this message consists of several fragments.
@@ -107,14 +107,14 @@ public abstract class MessageTCP {
 	/**
 	 * Default class constructor, creates "empty" message in invalid state
 	 */
-	public MessageTCP() {
+	public Message() {
 		opCode = INVALID_OPCODE;
 		valid = false;
 	}
 
 	private final void sanityCheck() {
 		if (!valid)
-			throw new RuntimeException("MessageTCP object accessed before correct initialization");
+			throw new RuntimeException("Message object accessed before correct initialization");
 	}
 
 	public final byte getOpCode() {
@@ -169,24 +169,24 @@ public abstract class MessageTCP {
 		this.transId = fetchAndIncrementTransId();
 	}
 
-	public static MessageTCP makeGetChunkRequest(String hash, long numChunks) {
+	public static Message makeGetChunkRequest(String hash, long numChunks) {
 		byte requestOpcode = OP_GET_CHUNK;
 		byte tid = fetchAndIncrementTransId();
 		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
 	}
 
-	public static MessageTCP makeGetChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
+	public static Message makeGetChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
 		return new MessageChunkQueryResponse(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
 
-	public static MessageTCP makeChunkRequest(String hash, long numChunks) {
+	public static Message makeChunkRequest(String hash, long numChunks) {
 		byte requestOpcode = OP_CHUNK;
 		byte tid = fetchAndIncrementTransId();
 		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
 	}
 
-	public static MessageTCP makeChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
+	public static Message makeChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
 		byte tid = fetchAndIncrementTransId();
 		return new MessageChunkQueryResponse(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
 	}
@@ -194,10 +194,11 @@ public abstract class MessageTCP {
 	/**
 	 * Class method to parse a request message received by the tracker
 	 * 
-	 * The byte array of the received packet
+	 * @param buf
+	 *            The byte array of the received packet
 	 * @return A message of the appropriate format representing this request
 	 */
-	public static MessageTCP parseRequest(DataInputStream dis) {
+	public static Message parseRequest(DataInputStream dis) {
 		byte reqOpcode;
 		try {
 			reqOpcode = dis.readByte();
@@ -223,7 +224,7 @@ public abstract class MessageTCP {
 	 *            The byte array of the packet received from the tracker
 	 * @return A message of the appropriate format representing this response
 	 */
-	public static MessageTCP parseResponse(DataInputStream dis) {
+	public static Message parseResponse(DataInputStream dis) {
 		byte respOpcode;
 		try {
 			respOpcode = dis.readByte();

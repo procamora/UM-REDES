@@ -2,9 +2,11 @@ package es.um.redes.P2P.PeerPeer.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.net.Socket;
 
 import es.um.redes.P2P.PeerPeer.Client.Downloader;
@@ -33,7 +35,7 @@ public class SeederThread extends Thread {
 		byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays((short) 1, (short) 451, (short) 66,
 				(short) 667);
 		// el tamaño de listaTrozos.length es el doble de elementos que contiene
-		MessageTCP respuesta = MessageTCP.makeGetChunkResponseRequest((short) (listaTrozos.length / 2), listaTrozos,
+		Message respuesta = Message.makeGetChunkResponseRequest((short) (listaTrozos.length / 2), listaTrozos,
 				downloader.getChunkSize());
 		sendMessageToPeer(respuesta);
 	}
@@ -46,18 +48,18 @@ public class SeederThread extends Thread {
 
 		byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) downloader.getChunkSize(),
 				(long) chunkNumber * downloader.getChunkSize());
-		MessageTCP respuesta = MessageTCP.makeChunkResponseRequest(chunkNumber, datosEnviar,
+		Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar,
 				downloader.getChunkSize());
 		sendMessageToPeer(respuesta);
 	}
 
-	private MessageTCP receiveMessageFromPeer() {
+	private Message receiveMessageFromPeer() {
 
-		MessageTCP msg = null;
+		Message msg = null;
 		try {
 			InputStream is = socket.getInputStream();
 			dis = new DataInputStream(is);
-			msg = MessageTCP.parseRequest(dis);
+			msg = Message.parseRequest(dis);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -65,7 +67,7 @@ public class SeederThread extends Thread {
 		return msg;
 	}
 
-	private void sendMessageToPeer(MessageTCP msg) {
+	private void sendMessageToPeer(Message msg) {
 		try {
 			OutputStream os = socket.getOutputStream();
 			dos = new DataOutputStream(os);
@@ -75,18 +77,18 @@ public class SeederThread extends Thread {
 		}
 	}
 
-	private void processMessageFromPeer(MessageTCP response) {
-		if (response.getOpCode() != MessageTCP.OP_GET_CHUNK && response.getOpCode() != MessageTCP.OP_CHUNK)
+	private void processMessageFromPeer(Message response) {
+		if (response.getOpCode() != Message.OP_GET_CHUNK && response.getOpCode() != Message.OP_CHUNK)
 			return;
 
 		// tenemos la seguridad de que no hay problemas con el casting
 		MessageChunkQuery mensaje = (MessageChunkQuery) response;
 		switch (mensaje.getOpCode()) {
-			case MessageTCP.OP_GET_CHUNK:
+			case Message.OP_GET_CHUNK:
 				sendChunkList(mensaje.getFileHash());
 				break;
 
-			case MessageTCP.OP_CHUNK:
+			case Message.OP_CHUNK:
 				sendChunk(mensaje.getNumChunk(), mensaje.getFileHash());
 				break;
 
@@ -102,7 +104,7 @@ public class SeederThread extends Thread {
 		// el socket y al hacer el read
 		// nos da una excepcion correcta que tenemos que capturar
 		while (true) {
-			MessageTCP msgRecibido = receiveMessageFromPeer();
+			Message msgRecibido = receiveMessageFromPeer();
 
 			if (msgRecibido != null)
 				processMessageFromPeer(msgRecibido);
