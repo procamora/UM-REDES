@@ -26,51 +26,62 @@ public class DownloaderThread extends Thread {
 	private Socket downloadSocket;
 	protected DataOutputStream dos; // FIXME USAR, ES UNA MEJORA DE STREAM
 	protected DataInputStream dis;
-	private int numChunksDownloaded;
+	private long numChunksDownloaded;
 
 	public DownloaderThread(Downloader dl, InetSocketAddress seed) {
 		downloader = dl;
+		numChunksDownloaded = 0;
 		try {
 			downloadSocket = new Socket(seed.getAddress(), seed.getPort());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	// It receives a message containing a chunk and it is stored in the file
-	private void receiveAndWriteChunk() {
+	// Recibe un mensaje que contiene un fragmento y se almacena en el archivo
+	private void receiveAndWriteChunk(long chunkActual) {
+		// pido los datos del fichero correspondientes al num chunk 40
+		sendMessageToPeer(Message.makeChunkRequest(downloader.getTargetFile().fileHash, chunkActual));
+		Message msgRecibido1 = receiveMessageFromPeer();
+
+		// if (msgRecibido1.getOpCode() == Message.OP_CHUNK_ACK)
+		MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido1;
+
+		Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName, response.getDatos(),
+				(chunkActual * downloader.getChunkSize()));
 	}
 
-	// It receives a message containing a chunk and it is stored in the file
-	private void receiveAndProcessChunkList() {
+	// Recibe un mensaje que contiene un fragmento y se almacena en el archivo
+	private long receiveAndProcessChunkList() {
+		// pido la lista de trozos del fichero
+		sendMessageToPeer(Message.makeGetChunkRequest(downloader.getTargetFile().fileHash, (short) 0));
+		Message msgRecibido = receiveMessageFromPeer();
+
+		// creo que no hace falta comprobar que es el mensaje correcto
+		MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
+		return downloader.bookNextChunkNumber(response.desconcatenaArrayBytesDatos(), downloadSocket.getInetAddress());
+
 	}
 
-	// Number of chunks already downloaded by this thread
-	private int getNumChunksDownloaded() {
+	// Número de fragmentos ya descargados por este hilo
+	private long getNumChunksDownloaded() {
 		return numChunksDownloaded;
 	}
 
 	private Message receiveMessageFromPeer() {
-
 		Message msg = null;
-		// byte[] buffer = new byte[1024];
 		try {
 			InputStream is = downloadSocket.getInputStream();
 			dis = new DataInputStream(is);
-			/// dis.read(buffer);
-
 			msg = Message.parseResponse(dis);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return msg;
 	}
 
 	private void sendMessageToPeer(Message msg) {
-
 		try {
 			OutputStream os = downloadSocket.getOutputStream();
 			dos = new DataOutputStream(os);
@@ -79,8 +90,9 @@ public class DownloaderThread extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
-	//FIXME cuando tenemos un trozo ya tenemos que hacer el addseed del fichero para compartirlo
+
+	// FIXME cuando tenemos un trozo ya tenemos que hacer el addseed del fichero
+	// para compartirlo
 
 	// Main code to request chunk lists and chunks
 	public void run() {
@@ -89,35 +101,19 @@ public class DownloaderThread extends Thread {
 		// del fichero si hay varios thread hay que coordinar con variable
 		// compartida, que sera la instancia this MASTER, servir trozos que te
 		// estas bajando, opcional
-		String hash = downloader.getTargetFile().fileHash;
 		long totalChunks = downloader.getTotalChunks();
-		long totalChunksDescargados = 0;
 		long chunkActual = 0;
 
-		// pido la lista de trozos del fichero
-		sendMessageToPeer(Message.makeGetChunkRequest(hash, (short) 0));
-		Message msgRecibido = receiveMessageFromPeer();
-
-		if (msgRecibido.getOpCode() == Message.OP_GET_CHUNK_ACK) {
-			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
-			response.getDatosChunk();
-		}
-
 		do {
-			// pido los datos del fichero correspondientes al num chunk 40
-			sendMessageToPeer(Message.makeChunkRequest(hash, chunkActual));
-			Message msgRecibido1 = receiveMessageFromPeer();
+			System.out.println("totalChunks " + totalChunks);
+			System.out.println("numChunksDownloaded " + numChunksDownloaded);
+			//System.out.println("bookNextChunkNumber " + receiveAndProcessChunkList());
+			// chunkActual = receiveAndProcessChunkList();
+			receiveAndWriteChunk(chunkActual);
+			chunkActual++;
+			numChunksDownloaded++;
 
-			if (msgRecibido1.getOpCode() == Message.OP_CHUNK_ACK) {
-				MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido1;
-
-				Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName,
-						response.getDatos(), (long) (chunkActual * downloader.getChunkSize()));
-
-				chunkActual++;
-				totalChunksDescargados++;
-			}
-		} while (totalChunks != totalChunksDescargados);
+		} while (totalChunks != numChunksDownloaded);
 		System.out.println("final correcto");
 	}
 
