@@ -11,7 +11,7 @@ import java.util.Vector;
 
 import es.um.redes.P2P.util.FileDigest;
 
-public class MessageChunkQuery extends Message {
+public class MessageChunkQuery extends MessageTCP {
 
 	/**
 	 * @author procamora
@@ -29,7 +29,7 @@ public class MessageChunkQuery extends Message {
 	// private static final int FIELD_CHUNKSIZE_BYTES = Short.SIZE / 8;
 
 	/**
-	 * Message opcodes that use the Chunk format
+	 * MessageTCP opcodes that use the Chunk format
 	 */
 	private static final Byte[] _conf_opcodes = { OP_GET_CHUNK, OP_CHUNK };
 
@@ -44,7 +44,7 @@ public class MessageChunkQuery extends Message {
 	 * Constructor used by tracker
 	 * 
 	 * @param opCode
-	 *            Message type
+	 *            MessageTCP type
 	 * @param tid
 	 * @param fileHash
 	 *            The chunk size
@@ -162,7 +162,7 @@ public class MessageChunkQuery extends Message {
 	}
 
 	@Override
-	public void reassemble(Vector<Message> fragments) {
+	public void reassemble(Vector<MessageTCP> fragments) {
 	}
 
 	@Override

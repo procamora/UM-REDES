@@ -2,11 +2,9 @@ package es.um.redes.P2P.PeerPeer.Client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -51,16 +49,16 @@ public class DownloaderThread extends Thread {
 		return numChunksDownloaded;
 	}
 
-	private Message receiveMessageFromPeer() {
+	private MessageTCP receiveMessageFromPeer() {
 
-		Message msg = null;
+		MessageTCP msg = null;
 		// byte[] buffer = new byte[1024];
 		try {
 			InputStream is = downloadSocket.getInputStream();
 			dis = new DataInputStream(is);
 			/// dis.read(buffer);
 
-			msg = Message.parseResponse(dis);
+			msg = MessageTCP.parseResponse(dis);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -69,7 +67,7 @@ public class DownloaderThread extends Thread {
 		return msg;
 	}
 
-	private void sendMessageToPeer(Message msg) {
+	private void sendMessageToPeer(MessageTCP msg) {
 
 		try {
 			OutputStream os = downloadSocket.getOutputStream();
@@ -79,6 +77,7 @@ public class DownloaderThread extends Thread {
 			e.printStackTrace();
 		}
 	}
+
 	
 	//FIXME cuando tenemos un trozo ya tenemos que hacer el addseed del fichero para compartirlo
 
@@ -95,20 +94,20 @@ public class DownloaderThread extends Thread {
 		long chunkActual = 0;
 
 		// pido la lista de trozos del fichero
-		sendMessageToPeer(Message.makeGetChunkRequest(hash, (short) 0));
-		Message msgRecibido = receiveMessageFromPeer();
+		sendMessageToPeer(MessageTCP.makeGetChunkRequest(hash, (short) 0));
+		MessageTCP msgRecibido = receiveMessageFromPeer();
 
-		if (msgRecibido.getOpCode() == Message.OP_GET_CHUNK_ACK) {
+		if (msgRecibido.getOpCode() == MessageTCP.OP_GET_CHUNK_ACK) {
 			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
 			response.getDatosChunk();
 		}
 
 		do {
 			// pido los datos del fichero correspondientes al num chunk 40
-			sendMessageToPeer(Message.makeChunkRequest(hash, chunkActual));
-			Message msgRecibido1 = receiveMessageFromPeer();
+			sendMessageToPeer(MessageTCP.makeChunkRequest(hash, chunkActual));
+			MessageTCP msgRecibido1 = receiveMessageFromPeer();
 
-			if (msgRecibido1.getOpCode() == Message.OP_CHUNK_ACK) {
+			if (msgRecibido1.getOpCode() == MessageTCP.OP_CHUNK_ACK) {
 				MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido1;
 
 				Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName,

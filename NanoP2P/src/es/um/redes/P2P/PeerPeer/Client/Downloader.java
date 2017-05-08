@@ -2,12 +2,10 @@ package es.um.redes.P2P.PeerPeer.Client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.TreeMap;
+import java.util.*;
 
-import javax.swing.text.html.HTMLDocument.Iterator;
+import es.um.redes.P2P.App.Tracker;
+import es.um.redes.P2P.PeerTracker.Message.*;
 
 import es.um.redes.P2P.util.FileInfo;
 
@@ -21,17 +19,16 @@ public class Downloader implements DownloaderIface {
 	private InetSocketAddress[] seeds;
 	private int totalChunks;
 	private short chunkSize;
-
 	private TreeMap<Long, HashSet<InetSocketAddress>> mapaPeers;
 	private HashMap<Long, Estado> mapaEstados;
+	private FileInfo[] ficherosLocales;
 
-	public Downloader(short chunkSize, FileInfo targetFile) {
+	public Downloader(short chunkSize, FileInfo targetFile, FileInfo[] ficherosLocales) {
 		this.chunkSize = chunkSize;
 		this.targetFile = targetFile;
-
 		mapaPeers = new TreeMap<>();
 		mapaEstados = new HashMap<>();
-
+		this.ficherosLocales = ficherosLocales;
 		if (targetFile != null) {
 			totalChunks = (int) targetFile.fileSize / chunkSize;
 			if ((int) targetFile.fileSize % chunkSize != 0)
@@ -80,6 +77,7 @@ public class Downloader implements DownloaderIface {
 					if (peerSet.contains(ip)) {
 						return  numChunk;
 					}
+
 				}
 			}
 		}
@@ -88,18 +86,28 @@ public class Downloader implements DownloaderIface {
 
 		public synchronized boolean setChunkDownloaded(long numChunk, boolean descargado) {
 			/*
-				Si el numero de trozo se ha descargado,
-				se notifica al traker que ya puede servir ese trozo de fichero
+				Si el numero de trozo se ha descargado satisfactoriamente,
+				tendriamos que mandar un mensaje addSeed al tracker con la nueva lista de ficheros que tenemos
+				
 			 */
-
-
 		if (descargado) {
-				if (mapaPeers.isEmpty()) {
-					//mapaPeers.put(numChunk, )
+				boolean primerChunkDescargado = true; // Indica si es el primer trozo descargado del fichero
+			    HashSet<Estado> estados = (HashSet<Estado>) mapaEstados.values();
+			    if (!estados.isEmpty()) {
+					for (Estado estado : estados) {
+						if (estado == Estado.DESCARGADO_GUARDADO) {
+							primerChunkDescargado = false;
+						}
+					}
+				}
+				mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
+				if (primerChunkDescargado) {
+					//Message mensajeAddSeed = Message.makeAddSeedRequest(Tracker.TRACKER_PORT, )
 				}
 			}
 			return false;
 		}
+
 
 
 
@@ -147,7 +155,24 @@ public class Downloader implements DownloaderIface {
 	@Override
 	public boolean isDownloadComplete() {
 		// TODO Auto-generated method stub
+		for(Long numchunk: mapaEstados.keySet()) {
+			Estado descargado = mapaEstados.get(numchunk);
+			if (descargado == Estado.NO_DESCARGADO || descargado == Estado.EN_DESCARGA){
+				return false;
+			}
+		}
 		return false;
+	}
+
+	public Set<Long> getListDownloadedChunks(){
+		HashSet<Long> lista = new HashSet<>();
+		for (long numChunk : mapaEstados.keySet()) {
+			Estado estado = mapaEstados.get(numChunk);
+			if (estado == Estado.DESCARGADO_GUARDADO) {
+				lista.add(numChunk);
+			}
+		}
+		return lista;
 	}
 
 	// Método para recoger todos los threads de descarga (DownloaderThread) que

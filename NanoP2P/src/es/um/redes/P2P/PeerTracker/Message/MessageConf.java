@@ -26,7 +26,7 @@ public class MessageConf extends Message {
 	private static final int FIELD_CHUNKSIZE_BYTES = Short.SIZE / 8;  
 
 	/**
-	 * Message opcodes that use the Conf format
+	 * MessageTCP opcodes that use the Conf format
 	 */
 	private static final Byte[] _conf_opcodes = {
 		OP_SEND_CONF};
@@ -39,7 +39,7 @@ public class MessageConf extends Message {
 
 	/**
 	 * Constructor used by tracker
-	 * @param opCode Message type
+	 * @param opCode MessageTCP type
 	 * @param p2pChunkSize The chunk size
 	 */
 	public MessageConf(byte opCode, byte tid, short p2pChunkSize) {

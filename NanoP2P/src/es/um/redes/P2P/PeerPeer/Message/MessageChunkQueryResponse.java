@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-public class MessageChunkQueryResponse extends Message {
+public class MessageChunkQueryResponse extends MessageTCP {
 
 	/**
 	 * @author procamora
@@ -28,7 +28,7 @@ public class MessageChunkQueryResponse extends Message {
 	// private static final int FIELD_CHUNKSIZE_BYTES = Short.SIZE / 8;
 
 	/**
-	 * Message opcodes that use the Chunk format
+	 * MessageTCP opcodes that use the Chunk format
 	 */
 	private static final Byte[] _conf_opcodes = { OP_GET_CHUNK_ACK, OP_CHUNK_ACK };
 
@@ -44,7 +44,7 @@ public class MessageChunkQueryResponse extends Message {
 	 * Constructor used by tracker
 	 * 
 	 * @param opCode
-	 *            Message type
+	 *            MessageTCP type
 	 * @param tid
 	 * @param fileHash
 	 *            The chunk size
@@ -206,7 +206,7 @@ public class MessageChunkQueryResponse extends Message {
 	}
 
 	@Override
-	public void reassemble(Vector<Message> fragments) {
+	public void reassemble(Vector<MessageTCP> fragments) {
 	}
 
 	@Override

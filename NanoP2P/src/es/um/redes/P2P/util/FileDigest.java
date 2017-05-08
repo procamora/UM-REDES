@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
  */
 public class FileDigest {
 	/**
-	 * Message digest algorithm used to identify files in nanoP2P.
+	 * MessageTCP digest algorithm used to identify files in nanoP2P.
 	 */
 	public static final String algorithm = "SHA-1"; 
 	
