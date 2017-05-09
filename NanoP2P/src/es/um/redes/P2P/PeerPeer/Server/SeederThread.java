@@ -55,10 +55,9 @@ public class SeederThread extends Thread {
 		// respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new
 		// byte[0], downloader.getChunkSize());
 		if (ficheroLocal)
-			respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new byte[0], downloader.getChunkSize());
+			respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new byte[0]);
 		else
-			respuesta = Message.makeGetChunkResponseRequest((long) (listaTrozos.length / 8), listaTrozos,
-					downloader.getChunkSize());
+			respuesta = Message.makeGetChunkResponseRequest((long) (listaTrozos.length / 8), listaTrozos);
 		sendMessageToPeer(respuesta);
 	}
 
@@ -70,7 +69,7 @@ public class SeederThread extends Thread {
 
 		byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) downloader.getChunkSize(),
 				(long) chunkNumber * downloader.getChunkSize());
-		Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar, downloader.getChunkSize());
+		Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar);
 		sendMessageToPeer(respuesta);
 	}
 

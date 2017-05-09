@@ -1,18 +1,24 @@
 # UM-REDES
 
 
+## Dudas
+
++ [ ] Que excepcion hay que capturar en seederthread para cuando downloaderthread cierra la conexion
++ [ ] currentDownloader de seederthread no se usarlo
+
 ## Tareas pendientes
 
-+ [ ] Creo que nunChunk tiene que ser un long, ya que segun nuestras estimaciones ocupa 6 bytes y un long son 8 bytes
++ [x] Creo que nunChunk tiene que ser un long, ya que segun nuestras estimaciones ocupa 6 bytes y un long son 8 bytes
 
 ### PeerController
 
 + [x] Cambiar variable privada `TreeMap<String, FileInfoPeer> mapaFicheros` por un `HashSet<FileInfo>`
++ [x] Despues de descargar un fichero en PeerControler, debemos eliminarlo. :)
 
 
 ### MessageChunkQueryResponse
 
-+ [ ] Econtrar la forma de que la funcion fromDataInputStream obtenga el chunkSize de forma dinamica
++ [x] Econtrar la forma de que la funcion fromDataInputStream obtenga el chunkSize de forma dinamica (usando dis.available())
 
 
 ### Seeder
@@ -31,15 +37,9 @@ Para cada fichero el procedimiento sera:
 4. Cuando se descarga el chunk vuelve a pedir la lista de chunks al seeder por si tiene trozos nuevos
 5. Pone el chunk descargado en la bd para que otros se puedan descargar ese trozo
 
++ [x] No olvidemos el criterio de comparacion del mapa de IP y chunks, con el algoritmo de rareza
++ [x] Nada mas tener un trozo del fichero, el peer debe darse de alta como Seed. Imprescindible para el punto 3: SetChunkDownloaded()
+
 ## Mensajes TCP
 
-+ [ ] El atributo TransactionId debe ser eliminado, solo se usa para UDP.
-
-##
-Despues de descargar un fichero en PeerControler, debemos eliminarlo. :)
-
-## IMPORTANTE
-Nada mas tener un trozo del fichero, el peer debe darse de alta como Seed. Imprescindible para el punto 3: SetChunkDownloaded()
-
-## Criterio de Comparacion
-No olvidemos el criterio de comparacion del mapa de IP y chunks, con el algoritmo de rareza
++ [x] El atributo TransactionId debe ser eliminado, solo se usa para UDP.
