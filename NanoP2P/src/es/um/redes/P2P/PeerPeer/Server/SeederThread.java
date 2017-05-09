@@ -16,7 +16,7 @@ import es.um.redes.P2P.util.Ficheros;
 import es.um.redes.P2P.util.FileInfo;
 
 public class SeederThread extends Thread {
-	private Socket socket = null;
+	private Socket socket;
 	private Downloader downloader;
 	/* Global buffer for performance reasons */
 	private byte[] chunkDataBuf;
@@ -25,6 +25,13 @@ public class SeederThread extends Thread {
 	private PeerDatabase database;
 
 	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader) {
+		if (socket == null)
+			throw new IllegalArgumentException("socket no puede ser null en SeederThread");
+		if (database == null)
+			throw new IllegalArgumentException("database no puede ser null en SeederThread");
+		if (downloader == null)
+			throw new IllegalArgumentException("downloader no puede ser null en SeederThread");
+		
 		this.socket = socket;
 		this.database = database;
 		this.downloader = downloader;
@@ -47,14 +54,12 @@ public class SeederThread extends Thread {
 		Message respuesta = null;
 		// respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new
 		// byte[0], downloader.getChunkSize());
-		System.out.println("IMP " + listaTrozos.length/8);
 		if (ficheroLocal)
 			respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new byte[0], downloader.getChunkSize());
 		else
 			respuesta = Message.makeGetChunkResponseRequest((long) (listaTrozos.length / 8), listaTrozos,
 					downloader.getChunkSize());
 		sendMessageToPeer(respuesta);
-		System.out.println("enviado");
 	}
 
 	// Envía por el socket el chunk solicitado por el DownloaderThread
@@ -101,12 +106,10 @@ public class SeederThread extends Thread {
 		MessageChunkQuery mensaje = (MessageChunkQuery) response;
 		switch (mensaje.getOpCode()) {
 			case Message.OP_GET_CHUNK:
-				System.out.println("proceso OP_GET_CHUNK");
 				sendChunkList(mensaje.getFileHash());
 				break;
 
 			case Message.OP_CHUNK:
-				System.out.println("proceso OP_CHUNK");
 				sendChunk(mensaje.getNumChunk(), mensaje.getFileHash());
 				break;
 		}
@@ -118,13 +121,22 @@ public class SeederThread extends Thread {
 		// sabemos que se ha acabado de enviar el fichero cuando el otro cierra
 		// el socket y al hacer el read
 		// nos da una excepcion correcta que tenemos que capturar
-		while (true) {
-			Message msgRecibido = receiveMessageFromPeer();
+		boolean bucle = true;
+		while (bucle) {
+			/*System.out.println("isConnected " + socket.isConnected());
+			System.out.println("isClosed " + socket.isClosed());
+			System.out.println("isInputShutdown " + socket.isInputShutdown());
+			System.out.println("isOutputShutdown " + socket.isOutputShutdown());*/
+			if (socket.isConnected()) {
+				Message msgRecibido = receiveMessageFromPeer();
 
-			if (msgRecibido != null)
-				processMessageFromPeer(msgRecibido);
+				if (msgRecibido != null)
+					processMessageFromPeer(msgRecibido);
+
+			} else
+				bucle = false;
 		}
-		// System.out.println("final correcto");
+		System.out.println("final correcto seeder");
 
 	}
 }

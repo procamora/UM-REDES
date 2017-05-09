@@ -102,8 +102,8 @@ public class MessageChunkQueryResponse extends Message {
 			this.numChunk = dis.readLong();
 
 			// File Datos
-			chunkSize = 4096;// FIXME cambiar
-			byte[] dat = new byte[chunkSize];
+			//chunkSize = 4096;// FIXME cambiar
+			byte[] dat = new byte[dis.available()];
 			int tam = dis.read(dat);
 			setDatos(dat, tam);
 

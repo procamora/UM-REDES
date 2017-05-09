@@ -29,6 +29,11 @@ public class DownloaderThread extends Thread {
 	private long numChunksDownloaded;
 
 	public DownloaderThread(Downloader dl, InetSocketAddress seed) {
+		if (dl == null)
+			throw new IllegalArgumentException("dl no puede ser null en DownloaderThread");
+		if (seed == null)
+			throw new IllegalArgumentException("seed no puede ser null en DownloaderThread");
+
 		downloader = dl;
 		numChunksDownloaded = 0;
 		try {
@@ -54,13 +59,12 @@ public class DownloaderThread extends Thread {
 	// Recibe un mensaje que contiene un fragmento y se almacena en el archivo
 	private long receiveAndProcessChunkList() {
 		// pido la lista de trozos del fichero
-		sendMessageToPeer(Message.makeGetChunkRequest(downloader.getTargetFile().fileHash, (short) 0));
+		sendMessageToPeer(Message.makeGetChunkRequest(downloader.getTargetFile().fileHash, (long) 0));
 		Message msgRecibido = receiveMessageFromPeer();
 
 		// creo que no hace falta comprobar que es el mensaje correcto
 		MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
-		return downloader.bookNextChunkNumber(response.desconcatenaArrayBytesDatos(), downloadSocket.getInetAddress());
-
+		return downloader.bookNextChunkNumber(response.desconcatenaArrayBytesDatos(), downloadSocket);
 	}
 
 	// Número de fragmentos ya descargados por este hilo
@@ -105,15 +109,27 @@ public class DownloaderThread extends Thread {
 		long chunkActual = 0;
 
 		do {
-			System.out.println("totalChunks " + totalChunks);
-			System.out.println("numChunksDownloaded " + numChunksDownloaded);
-			//System.out.println("bookNextChunkNumber " + receiveAndProcessChunkList());
-			// chunkActual = receiveAndProcessChunkList();
-			receiveAndWriteChunk(chunkActual);
-			chunkActual++;
-			numChunksDownloaded++;
+			chunkActual = receiveAndProcessChunkList();
+			//System.out.println("totalChunks " + chunkActual + " Name " + getName());
+			// si hay un chunk valido lo proceso
+			if (chunkActual >= 0) {
+				receiveAndWriteChunk(chunkActual);
+				numChunksDownloaded++;
+				downloader.setChunkDownloaded(chunkActual);
+			} else { // sino hay chunk valido espero 100ms y volvere a probar
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 
 		} while (totalChunks != numChunksDownloaded);
+		// dos.close();
+		// downloadSocket.close();
+
+		System.out.println(downloader.getMapaPeers());
+		System.out.println(downloader.getMapaEstados());
 		System.out.println("final correcto");
 	}
 
