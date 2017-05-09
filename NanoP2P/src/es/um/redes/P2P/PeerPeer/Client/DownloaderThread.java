@@ -128,8 +128,8 @@ public class DownloaderThread extends Thread {
 		// dos.close();
 		// downloadSocket.close();
 
-		System.out.println(downloader.getMapaPeers());
-		System.out.println(downloader.getMapaEstados());
+		//System.out.println(downloader.getMapaPeers());
+		//System.out.println(downloader.getMapaEstados());
 		System.out.println("final correcto");
 	}
 

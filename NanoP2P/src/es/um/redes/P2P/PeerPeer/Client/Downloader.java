@@ -29,6 +29,7 @@ public class Downloader implements DownloaderIface {
 
 	private HashMap<Long, HashSet<Socket>> mapaPeers;
 	private HashMap<Long, Estado> mapaEstados;
+	private ProgressBar progressBar;
 
 	public Downloader(short chunkSize, FileInfo targetFile, PeerController peer) {
 		this.chunkSize = chunkSize;
@@ -42,6 +43,8 @@ public class Downloader implements DownloaderIface {
 			totalChunks = (long) targetFile.fileSize / chunkSize;
 			if ((long) targetFile.fileSize % chunkSize != 0)
 				totalChunks++;
+			progressBar = new ProgressBar(totalChunks); // barra de progreso
+			progressBar.start();
 		}
 		totalChunkDescargados = 0;
 	}
@@ -138,6 +141,8 @@ public class Downloader implements DownloaderIface {
 		 */
 		totalChunkDescargados++;
 
+		progressBar.next();
+
 		// al descargar el primer chunk
 		if (totalChunkDescargados == 1) {
 			mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
@@ -149,6 +154,7 @@ public class Downloader implements DownloaderIface {
 			peer.getMapaFicheros().remove(targetFile.fileHash);
 		} else
 			mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
+
 		return false;
 	}
 
