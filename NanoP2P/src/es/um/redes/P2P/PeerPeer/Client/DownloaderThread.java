@@ -105,7 +105,6 @@ public class DownloaderThread extends Thread {
 		// del fichero si hay varios thread hay que coordinar con variable
 		// compartida, que sera la instancia this MASTER, servir trozos que te
 		// estas bajando, opcional
-		long totalChunks = downloader.getTotalChunks();
 		long chunkActual = 0;
 
 		do {
@@ -124,7 +123,7 @@ public class DownloaderThread extends Thread {
 				}
 			}
 
-		} while (totalChunks != numChunksDownloaded);
+		} while (!downloader.isDownloadComplete());
 		// dos.close();
 		// downloadSocket.close();
 

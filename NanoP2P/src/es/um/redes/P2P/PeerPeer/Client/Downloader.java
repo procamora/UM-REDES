@@ -43,7 +43,7 @@ public class Downloader implements DownloaderIface {
 			totalChunks = (long) targetFile.fileSize / chunkSize;
 			if ((long) targetFile.fileSize % chunkSize != 0)
 				totalChunks++;
-			progressBar = new ProgressBar(totalChunks); // barra de progreso
+			progressBar = new ProgressBar(totalChunks / 5); // barra de progreso
 			progressBar.start();
 		}
 		totalChunkDescargados = 0;
@@ -115,13 +115,24 @@ public class Downloader implements DownloaderIface {
 		// System.out.println(mapaEstados);
 
 		// retorna el primer nunChunk que contentga la ip del peer
-		TreeMap<Long, HashSet<Socket>> sortedMap = sortMapByValue(mapaPeers);
-		for (Long entry : sortedMap.keySet()) {
-			if ((mapaEstados.get(entry) == Estado.NO_DESCARGADO) && (mapaPeers.get(entry).contains(ip))) {
-				mapaEstados.replace(entry, Estado.EN_DESCARGA);
-				return entry;
+		TreeMap<Long, HashSet<Socket>> sortedMap;
+		if (totalChunks < 10000000) {
+			sortedMap = sortMapByValue(mapaPeers);
+			for (Long entry : sortedMap.keySet()) {
+				if ((mapaEstados.get(entry) == Estado.NO_DESCARGADO) && (mapaPeers.get(entry).contains(ip))) {
+					mapaEstados.replace(entry, Estado.EN_DESCARGA);
+					return entry;
+				}
+			}
+		} else { // para ficheros grandes es muy ineficiente
+			for (Long entry : mapaPeers.keySet()) {
+				if ((mapaEstados.get(entry) == Estado.NO_DESCARGADO) && (mapaPeers.get(entry).contains(ip))) {
+					mapaEstados.replace(entry, Estado.EN_DESCARGA);
+					return entry;
+				}
 			}
 		}
+
 		// en caso de que no haya ningun chunk disponible para ese peer
 		return -1;
 	}
@@ -141,7 +152,9 @@ public class Downloader implements DownloaderIface {
 		 */
 		totalChunkDescargados++;
 
-		progressBar.next();
+		// cada 5 chunks imprimo
+		if (totalChunkDescargados % 5 == 0)
+			progressBar.next();
 
 		// al descargar el primer chunk
 		if (totalChunkDescargados == 1) {
@@ -200,7 +213,7 @@ public class Downloader implements DownloaderIface {
 	@Override
 	public boolean isDownloadComplete() {
 		// TODO Auto-generated method stub
-		return false;
+		return totalChunkDescargados == totalChunks;
 	}
 
 	// Método para recoger todos los threads de descarga (DownloaderThread) que
