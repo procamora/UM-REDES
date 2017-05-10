@@ -25,26 +25,14 @@ public abstract class Message {
 	protected static final int FIELD_OPCODE_BYTES = 1;
 
 	/**
-	 * Size of "list-len" field: short (2 bytes)
-	 */
-	protected static final int FIELD_LONGLIST_BYTES = Short.SIZE / 8;
-	/**
 	 * Size of "hash" field(s) used by subclasses (160 bits in SHA-1, 20 bytes)
 	 */
 	protected static final int FIELD_FILEHASH_BYTES = FileDigest.getFileDigestSize();
-	/**
-	 * Size of "chunksize" field: short (2 bytes)
-	 */
-	protected static final int FIELD_CHUNKSIZE_BYTES = Short.SIZE / 8;
-	
+
 	/**
 	 * Size of "chunksize" field: short (8 bytes)
 	 */
 	protected static final int FIELD_NUMCHUNKSIZE = Long.SIZE / 8;
-	/**
-	 * Size of "trans_id" field: 1 byte
-	 */
-	protected static final byte FIELD_TRANSID_BYTES = 1;
 
 	/**
 	 * Opcodes in the peer-tracker protocol of nanoP2P
@@ -59,16 +47,6 @@ public abstract class Message {
 	 * Message opcode.
 	 */
 	private byte opCode;
-
-	/**
-	 * Message transaction ID.
-	 */
-	private byte transId;
-
-	/**
-	 * Current transaction ID.
-	 */
-	private static byte nextTransId = 0;
 
 	/*
 	 * Validity flag used for correctness check (asserts)
@@ -122,18 +100,6 @@ public abstract class Message {
 		return opCode;
 	}
 
-	public static synchronized byte fetchAndIncrementTransId() {
-		if (nextTransId + 1 < nextTransId) {
-			System.err.println("Rollover occured in TransId counter");
-		}
-		return nextTransId++;
-	}
-
-	public final byte getTransId() {
-		sanityCheck();
-		return transId;
-	}
-
 	public final String getOpCodeString() {
 		sanityCheck();
 		switch (opCode) {
@@ -161,34 +127,22 @@ public abstract class Message {
 		this.opCode = opCode;
 	}
 
-	protected final void setTransId(byte id) {
-		this.transId = id;
-	}
-
-	public final void setNewTransId() {
-		this.transId = fetchAndIncrementTransId();
-	}
-
 	public static Message makeGetChunkRequest(String hash, long numChunks) {
 		byte requestOpcode = OP_GET_CHUNK;
-		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
+		return new MessageChunkQuery(requestOpcode, hash, numChunks);
 	}
 
 	public static Message makeGetChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
-		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQueryResponse(OP_GET_CHUNK_ACK, tid, numChunk, datos, chunkSize);
+		return new MessageChunkQueryResponse(OP_GET_CHUNK_ACK, numChunk, datos, chunkSize);
 	}
 
 	public static Message makeChunkRequest(String hash, long numChunks) {
 		byte requestOpcode = OP_CHUNK;
-		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQuery(requestOpcode, tid, hash, numChunks);
+		return new MessageChunkQuery(requestOpcode, hash, numChunks);
 	}
 
 	public static Message makeChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
-		byte tid = fetchAndIncrementTransId();
-		return new MessageChunkQueryResponse(OP_CHUNK_ACK, tid, numChunk, datos, chunkSize);
+		return new MessageChunkQueryResponse(OP_CHUNK_ACK, numChunk, datos, chunkSize);
 	}
 
 	/**

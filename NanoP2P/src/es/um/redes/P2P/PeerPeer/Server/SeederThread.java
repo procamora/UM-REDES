@@ -13,6 +13,7 @@ import es.um.redes.P2P.PeerPeer.Client.Downloader;
 import es.um.redes.P2P.PeerPeer.Message.*;
 import es.um.redes.P2P.util.PeerDatabase;
 import es.um.redes.P2P.util.Ficheros;
+import es.um.redes.P2P.util.FileInfo;
 
 public class SeederThread extends Thread {
 	private Socket socket = null;
@@ -32,12 +33,28 @@ public class SeederThread extends Thread {
 	// Devuelve la lista de trozos que tiene del fichero solicitado
 	public void sendChunkList(String fileHashStr) {
 		// FIXME obtener numero de chunks de forma dinamica
-		byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays((short) 1, (short) 451, (short) 66,
-				(short) 667);
+		// FIXME Si tiene todos los ficheros poner todo a 1
+		byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays((long) 1, (long) 451, (long) 66,
+				(long) 667);
+
+		FileInfo[] ficherosLocales = database.getLocalSharedFiles();
+		boolean ficheroLocal = false;
+		for (int i = 0; i < ficherosLocales.length; i++)
+			if (ficherosLocales[i].fileHash.equals(fileHashStr))
+				ficheroLocal = true;
+
 		// el tamaño de listaTrozos.length es el doble de elementos que contiene
-		Message respuesta = Message.makeGetChunkResponseRequest((short) (listaTrozos.length / 2), listaTrozos,
-				downloader.getChunkSize());
+		Message respuesta = null;
+		// respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new
+		// byte[0], downloader.getChunkSize());
+		System.out.println("IMP " + listaTrozos.length/8);
+		if (ficheroLocal)
+			respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new byte[0], downloader.getChunkSize());
+		else
+			respuesta = Message.makeGetChunkResponseRequest((long) (listaTrozos.length / 8), listaTrozos,
+					downloader.getChunkSize());
 		sendMessageToPeer(respuesta);
+		System.out.println("enviado");
 	}
 
 	// Envía por el socket el chunk solicitado por el DownloaderThread
@@ -48,8 +65,7 @@ public class SeederThread extends Thread {
 
 		byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) downloader.getChunkSize(),
 				(long) chunkNumber * downloader.getChunkSize());
-		Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar,
-				downloader.getChunkSize());
+		Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar, downloader.getChunkSize());
 		sendMessageToPeer(respuesta);
 	}
 
@@ -79,20 +95,19 @@ public class SeederThread extends Thread {
 
 	private void processMessageFromPeer(Message response) {
 		if (response.getOpCode() != Message.OP_GET_CHUNK && response.getOpCode() != Message.OP_CHUNK)
-			return;
+			throw new IllegalStateException("Fallo en cod Mensaje SeederThread.processMessageFromPeer()");
 
 		// tenemos la seguridad de que no hay problemas con el casting
 		MessageChunkQuery mensaje = (MessageChunkQuery) response;
 		switch (mensaje.getOpCode()) {
 			case Message.OP_GET_CHUNK:
+				System.out.println("proceso OP_GET_CHUNK");
 				sendChunkList(mensaje.getFileHash());
 				break;
 
 			case Message.OP_CHUNK:
+				System.out.println("proceso OP_CHUNK");
 				sendChunk(mensaje.getNumChunk(), mensaje.getFileHash());
-				break;
-
-			default:
 				break;
 		}
 	}

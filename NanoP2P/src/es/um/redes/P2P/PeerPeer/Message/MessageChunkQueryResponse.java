@@ -23,11 +23,6 @@ public class MessageChunkQueryResponse extends Message {
 	 */
 
 	/**
-	 * Size of "chunksize" field: short (2 bytes)
-	 */
-	// private static final int FIELD_CHUNKSIZE_BYTES = Short.SIZE / 8;
-
-	/**
 	 * Message opcodes that use the Chunk format
 	 */
 	private static final Byte[] _conf_opcodes = { OP_GET_CHUNK_ACK, OP_CHUNK_ACK };
@@ -50,9 +45,8 @@ public class MessageChunkQueryResponse extends Message {
 	 *            The chunk size
 	 * @param numChunk
 	 */
-	public MessageChunkQueryResponse(byte opCode, byte tid, long numChunk, byte[] datos, short chunkSize) {
+	public MessageChunkQueryResponse(byte opCode, long numChunk, byte[] datos, short chunkSize) {
 		setOpCode(opCode);
-		setTransId(tid);
 		this.numChunk = numChunk;
 		this.datos = datos;
 		this.chunkSize = chunkSize;
@@ -65,12 +59,11 @@ public class MessageChunkQueryResponse extends Message {
 	 * @param buf
 	 */
 	public MessageChunkQueryResponse(DataInputStream dis, byte respOpcode) {
-		if (fromDataInputStream(dis, respOpcode) == false) {
+		if (fromDataInputStream(dis, respOpcode) == false)
 			throw new RuntimeException("Failed to parse message: format is not ChunkACK.");
-		} else {
-			// assert(valid);
+		else
 			valid = true;
-		}
+
 	}
 
 	/**
@@ -78,15 +71,12 @@ public class MessageChunkQueryResponse extends Message {
 	 * message of ChunkACK format
 	 */
 	public byte[] toByteArray() {
-		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_TRANSID_BYTES + FIELD_NUMCHUNKSIZE + datos.length;
+		int byteBufferLength = FIELD_OPCODE_BYTES + FIELD_NUMCHUNKSIZE + datos.length;
 
 		ByteBuffer buf = ByteBuffer.allocate(byteBufferLength);
 
 		// Opcode
 		buf.put((byte) this.getOpCode());
-
-		// Trans id
-		buf.put((byte) this.getTransId());
 
 		// Num Chunk
 		buf.putLong((long) this.getNumChunk());
@@ -107,9 +97,6 @@ public class MessageChunkQueryResponse extends Message {
 		try {
 			// Opcode
 			setOpCode(respOpcode);
-
-			// Trans id
-			setTransId(dis.readByte());
 
 			// Num Chunk
 			this.numChunk = dis.readLong();
@@ -151,39 +138,28 @@ public class MessageChunkQueryResponse extends Message {
 		return s;
 	}
 
-	// obtienes el array de chunk del que dispone el peer
-	public long[] getDatosChunk() {
-
-		long[] s = desconcatenaArratBytesDatos();
-
-		// imprimo la lista de chunk de la que dispone el peer
-		for (int i = 0; i < s.length; i++)
-			System.out.println(s[i]);
-		return s;
-
-	}
-
 	/**
-	 * Metodo privado usado por OP_GET_CHUNK_ACK, lee el array de bytes y lo
+	 * Metodo publico usado por OP_GET_CHUNK_ACK, lee el array de bytes y lo
 	 * convierte a un array de short
 	 */
-	private long[] desconcatenaArratBytesDatos() {
+	public long[] desconcatenaArrayBytesDatos() {
 		if (getOpCode() != OP_GET_CHUNK_ACK)
 			throw new IllegalStateException("Esta funcion solo la puede hacer OP_GET_CHUNK_ACK");
-
-		ByteBuffer buf = ByteBuffer.wrap(datos);
-		long[] a = new long[(int) numChunk];
-		for (int i = 0; i < numChunk; i++)
-			a[i] = buf.getShort();
-
-		return a;
+		// Si no tengo todos los trozos retorno los trozos exactos
+		if (numChunk != Long.MAX_VALUE) {
+			ByteBuffer buf = ByteBuffer.wrap(datos);
+			long[] a = new long[(int) numChunk];
+			for (int i = 0; i < numChunk; i++)
+				a[i] = buf.getLong();
+			return a;
+		} else // si tengo todos los trozos retorno un array[0]
+			return new long[0];
 	}
 
 	public String toString() {
 		assert (valid);
 		StringBuffer strBuf = new StringBuffer();
 		strBuf.append("Type:" + this.getOpCodeString());
-		strBuf.append(" TransId:" + this.getTransId());
 		strBuf.append(" NumChunk:" + this.getNumChunk());
 		strBuf.append(" Datos:" + this.getDatos());
 		return strBuf.toString();
@@ -218,11 +194,11 @@ public class MessageChunkQueryResponse extends Message {
 	 * Metodo estatico que recibe arrays de short y los concatena retornando un
 	 * array de bytes
 	 */
-	public static byte[] concatenateByteArrays(short... arraysChunks) {
+	public static byte[] concatenateByteArrays(long... arraysChunks) {
 
-		ByteBuffer buf = ByteBuffer.allocate(arraysChunks.length * FIELD_CHUNKSIZE_BYTES);
-		for (short cs : arraysChunks)
-			buf.putShort((short) cs);
+		ByteBuffer buf = ByteBuffer.allocate(arraysChunks.length * FIELD_NUMCHUNKSIZE);
+		for (long cs : arraysChunks)
+			buf.putLong(cs);
 
 		return buf.array();
 	}
