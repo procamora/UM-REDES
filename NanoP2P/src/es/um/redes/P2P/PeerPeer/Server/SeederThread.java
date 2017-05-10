@@ -25,6 +25,7 @@ public class SeederThread extends Thread {
 	private PeerDatabase database;
 	private Short chunkSize;
 	private Long[] chunkDisponibles;
+	private boolean bucle;
 
 	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader, Short chunkSize) {
 		if (socket == null)
@@ -36,6 +37,7 @@ public class SeederThread extends Thread {
 		this.database = database;
 		this.downloader = downloader;
 		this.chunkSize = chunkSize;
+		bucle = true;
 	}
 
 	// Devuelve la lista de trozos que tiene del fichero solicitado
@@ -82,14 +84,16 @@ public class SeederThread extends Thread {
 			dis = new DataInputStream(is);
 			msg = Message.parseRequest(dis);
 
+			// capturamos la excepcion cuando cierran los downloaderthread y
+			// cerramos tambien el socket
 		} catch (IOException e) {
+
 			try {
 				socket.close();
+				bucle = false;
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			//e.printStackTrace();
 		}
 		return msg;
 	}
@@ -127,23 +131,12 @@ public class SeederThread extends Thread {
 		// sabemos que se ha acabado de enviar el fichero cuando el otro cierra
 		// el socket y al hacer el read
 		// nos da una excepcion correcta que tenemos que capturar
-		boolean bucle = true;
 		while (bucle) {
-			/*
-			 * System.out.println("isConnected " + socket.isConnected());
-			 * System.out.println("isClosed " + socket.isClosed());
-			 * System.out.println("isInputShutdown " +
-			 * socket.isInputShutdown()); System.out.println("isOutputShutdown "
-			 * + socket.isOutputShutdown());
-			 */
-			if (socket.isConnected()) {
-				Message msgRecibido = receiveMessageFromPeer();
+			Message msgRecibido = receiveMessageFromPeer();
 
-				if (msgRecibido != null)
-					processMessageFromPeer(msgRecibido);
+			if (msgRecibido != null)
+				processMessageFromPeer(msgRecibido);
 
-			} else
-				bucle = false;
 		}
 		System.out.println("final correcto seeder");
 
