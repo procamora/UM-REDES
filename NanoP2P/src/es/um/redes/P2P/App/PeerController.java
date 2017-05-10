@@ -345,7 +345,7 @@ public class PeerController implements PeerControllerIface {
 		FileInfo[] listaFicherosValidos = new FileInfo[mapaFicheros.keySet().size()];
 		int contador = 0;
 		for (String hashes : mapaFicheros.keySet()) {
-			if (hashes.contains(hashSubstr)) {
+			if (hashes.contains(hashSubstr.toUpperCase())) {
 				listaFicherosValidos[contador] = mapaFicheros.get(hashes);
 				contador++;
 			}

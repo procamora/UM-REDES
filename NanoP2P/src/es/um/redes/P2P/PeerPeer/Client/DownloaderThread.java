@@ -27,6 +27,7 @@ public class DownloaderThread extends Thread {
 	protected DataOutputStream dos; // FIXME USAR, ES UNA MEJORA DE STREAM
 	protected DataInputStream dis;
 	private long numChunksDownloaded;
+	private InetSocketAddress seed; // usada para establece conexion tcp
 
 	public DownloaderThread(Downloader dl, InetSocketAddress seed) {
 		if (dl == null)
@@ -36,10 +37,16 @@ public class DownloaderThread extends Thread {
 
 		downloader = dl;
 		numChunksDownloaded = 0;
+		this.seed = seed;
+
+		estableceConexion();
+	}
+
+	private void estableceConexion() {
 		try {
 			downloadSocket = new Socket(seed.getAddress(), seed.getPort());
 		} catch (IOException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
@@ -47,13 +54,15 @@ public class DownloaderThread extends Thread {
 	private void receiveAndWriteChunk(long chunkActual) {
 		// pido los datos del fichero correspondientes al num chunk 40
 		sendMessageToPeer(Message.makeChunkRequest(downloader.getTargetFile().fileHash, chunkActual));
-		Message msgRecibido1 = receiveMessageFromPeer();
+		Message msgRecibido = receiveMessageFromPeer();
 
-		// if (msgRecibido1.getOpCode() == Message.OP_CHUNK_ACK)
-		MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido1;
+		if (msgRecibido != null) {
+			// if (msgRecibido1.getOpCode() == Message.OP_CHUNK_ACK)
+			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
 
-		Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName, response.getDatos(),
-				(chunkActual * downloader.getChunkSize()));
+			Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName, response.getDatos(),
+					(chunkActual * downloader.getChunkSize()));
+		}
 	}
 
 	// Recibe un mensaje que contiene un fragmento y se almacena en el archivo
@@ -63,8 +72,11 @@ public class DownloaderThread extends Thread {
 		Message msgRecibido = receiveMessageFromPeer();
 
 		// creo que no hace falta comprobar que es el mensaje correcto
-		MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
-		return downloader.bookNextChunkNumber(response.desconcatenaArrayBytesDatos(), downloadSocket);
+		if (msgRecibido != null) {
+			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
+			return downloader.bookNextChunkNumber(response.desconcatenaArrayBytesDatos());
+		}
+		return -1;
 	}
 
 	// Número de fragmentos ya descargados por este hilo
@@ -78,9 +90,15 @@ public class DownloaderThread extends Thread {
 			InputStream is = downloadSocket.getInputStream();
 			dis = new DataInputStream(is);
 			msg = Message.parseResponse(dis);
-
+			// FIXME tratar el caso en el que seederthread termina antes de
+			// tiempo?
 		} catch (IOException e) {
-			e.printStackTrace();
+			try {
+				downloadSocket.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			// e.printStackTrace();
 		}
 		return msg;
 	}
@@ -108,32 +126,35 @@ public class DownloaderThread extends Thread {
 		long chunkActual = 0;
 
 		do {
-			chunkActual = receiveAndProcessChunkList();
-			// System.out.println("totalChunks " + chunkActual + " Name " +
-			// getName());
-			// si hay un chunk valido lo proceso
-			if (chunkActual >= 0) {
-				receiveAndWriteChunk(chunkActual);
-				numChunksDownloaded++;
-				downloader.setChunkDownloaded(chunkActual);
-			} else { // sino hay chunk valido espero 100ms y volvere a probar
+			if (!downloadSocket.isClosed()) {
+				chunkActual = receiveAndProcessChunkList();
+				// si hay un chunk valido lo proceso
+				if (chunkActual >= 0) {
+					receiveAndWriteChunk(chunkActual);
+					numChunksDownloaded++;
+					downloader.setChunkDownloaded(chunkActual);
+				} else { // sino hay chunk valido espero 1s y volvere a probar
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			} else { // sino hay chunk valido espero 1s y volvere a probar
 				try {
-					Thread.sleep(100);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				}
+				} // intentamos recuperar la conexion
+				estableceConexion();
 			}
 
 		} while (!downloader.isDownloadComplete());
 		try {
 			downloadSocket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// System.out.println(downloader.getMapaPeers());
-		// System.out.println(downloader.getMapaEstados());
 		System.out.println("final correcto");
 	}
 

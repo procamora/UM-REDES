@@ -1,7 +1,6 @@
 package es.um.redes.P2P.PeerPeer.Client;
 
 import java.util.concurrent.Semaphore;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
@@ -13,12 +12,11 @@ public class ProgressBar extends Thread {
 	private long total;
 
 	public ProgressBar(long total) {
-		if (total < 5)
+		if (total < Downloader.CHUNKS_PROGRESSBAR)
 			this.total = 1;
 		else
 			this.total = total;
 		contador = 1;
-		// setDaemon(true);
 	}
 
 	public void printProgress(long startTime, long total, long current) {
