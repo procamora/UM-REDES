@@ -17,7 +17,7 @@ public interface DownloaderIface {
 	InetSocketAddress[] getSeeds();
 
 	//Devuelve el número total de Chunks en los que está compuesto el archivo
-	int getTotalChunks();
+	Long getTotalChunks();
 
 	//Inicia el proceso de descarga del archivo a partir de la lista de Seeds
 	boolean downloadFile(InetSocketAddress[] seedList);

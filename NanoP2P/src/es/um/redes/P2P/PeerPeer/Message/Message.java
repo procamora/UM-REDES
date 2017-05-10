@@ -132,8 +132,8 @@ public abstract class Message {
 		return new MessageChunkQuery(requestOpcode, hash, numChunks);
 	}
 
-	public static Message makeGetChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
-		return new MessageChunkQueryResponse(OP_GET_CHUNK_ACK, numChunk, datos, chunkSize);
+	public static Message makeGetChunkResponseRequest(long numChunk, byte[] datos) {
+		return new MessageChunkQueryResponse(OP_GET_CHUNK_ACK, numChunk, datos);
 	}
 
 	public static Message makeChunkRequest(String hash, long numChunks) {
@@ -141,8 +141,8 @@ public abstract class Message {
 		return new MessageChunkQuery(requestOpcode, hash, numChunks);
 	}
 
-	public static Message makeChunkResponseRequest(long numChunk, byte[] datos, short chunkSize) {
-		return new MessageChunkQueryResponse(OP_CHUNK_ACK, numChunk, datos, chunkSize);
+	public static Message makeChunkResponseRequest(long numChunk, byte[] datos) {
+		return new MessageChunkQueryResponse(OP_CHUNK_ACK, numChunk, datos);
 	}
 
 	/**

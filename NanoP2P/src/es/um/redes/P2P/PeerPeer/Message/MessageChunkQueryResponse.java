@@ -27,13 +27,8 @@ public class MessageChunkQueryResponse extends Message {
 	 */
 	private static final Byte[] _conf_opcodes = { OP_GET_CHUNK_ACK, OP_CHUNK_ACK };
 
-	/**
-	 * The chunk size.
-	 */
-	// private short chunkSize;
 	private long numChunk;
 	private byte[] datos;
-	private short chunkSize;
 
 	/**
 	 * Constructor used by tracker
@@ -45,11 +40,10 @@ public class MessageChunkQueryResponse extends Message {
 	 *            The chunk size
 	 * @param numChunk
 	 */
-	public MessageChunkQueryResponse(byte opCode, long numChunk, byte[] datos, short chunkSize) {
+	public MessageChunkQueryResponse(byte opCode, long numChunk, byte[] datos) {
 		setOpCode(opCode);
 		this.numChunk = numChunk;
 		this.datos = datos;
-		this.chunkSize = chunkSize;
 		valid = true;
 	}
 
@@ -102,10 +96,8 @@ public class MessageChunkQueryResponse extends Message {
 			this.numChunk = dis.readLong();
 
 			// File Datos
-			chunkSize = 4096;// FIXME cambiar
-			byte[] dat = new byte[chunkSize];
-			int tam = dis.read(dat);
-			setDatos(dat, tam);
+			datos = new byte[dis.available()];
+			dis.read(datos);
 
 			valid = true;
 
@@ -114,15 +106,6 @@ public class MessageChunkQueryResponse extends Message {
 			assert (valid == false);
 		}
 		return valid;
-	}
-
-	/**
-	 * metodo para establecer el datos con el tamaño exato de bytes que tiene
-	 * necesario para ficheros menores que el tamaño de chunk
-	 */
-	private void setDatos(byte[] aux, int tam) {
-		datos = new byte[tam];
-		datos = Arrays.copyOf(aux, tam);
 	}
 
 	public long getNumChunk() {

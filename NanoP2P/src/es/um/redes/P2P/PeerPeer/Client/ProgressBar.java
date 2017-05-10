@@ -1,12 +1,24 @@
-package es.um.redes.P2P.CodigoPruebas;
+package es.um.redes.P2P.PeerPeer.Client;
+
+import java.util.concurrent.Semaphore;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 // https://stackoverflow.com/questions/1001290/console-based-progress-in-java
 
-public class ProgressBar {
-	private static void printProgress(long startTime, long total, long current) {
+public class ProgressBar extends Thread {
+	private long contador;
+	private Semaphore continua = new Semaphore(1);
+	private long total;
+
+	public ProgressBar(long total) {
+		this.total = total;
+		contador = 1;
+		//setDaemon(true);
+	}
+
+	public void printProgress(long startTime, long total, long current) {
 		long eta = current == 0 ? 0 : (total - current) * (System.currentTimeMillis() - startTime) / current;
 
 		String etaHms = current == 0 ? "N/A"
@@ -27,17 +39,21 @@ public class ProgressBar {
 		System.out.print(string);
 	}
 
-	public static void main(String[] args) {
-		long total = 235;
-		long startTime = System.currentTimeMillis();
+	public void next() {
+		contador++;
+		continua.release();
+	}
 
-		for (int i = 1; i <= total; i = i + 3) {
+	@Override
+	public void run() {
+		long startTime = System.currentTimeMillis();
+		while (contador != total) {
+			// for (int i = 1; i <= total; i++) {
 			try {
-				Thread.sleep(50);
-				printProgress(startTime, total, i);
+				printProgress(startTime, total, contador+1);
+				continua.acquire();
 			} catch (InterruptedException e) {
 			}
 		}
 	}
-
 }

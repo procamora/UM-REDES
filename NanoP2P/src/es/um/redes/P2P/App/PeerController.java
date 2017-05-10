@@ -38,8 +38,20 @@ public class PeerController implements PeerControllerIface {
 		this.mapaFicheros = new TreeMap<>();
 	}
 
+	public Reporter getReporter() {
+		return reporter;
+	}
+
 	public byte getCurrentCommand() {
 		return currentCommand;
+	}
+
+	public Seeder getSeeder() {
+		return seeder;
+	}
+
+	public TreeMap<String, FileInfo> getMapaFicheros() {
+		return mapaFicheros;
 	}
 
 	public short getChunkSize() {
@@ -355,7 +367,9 @@ public class PeerController implements PeerControllerIface {
 	 */
 	@Override
 	public void downloadFileFromSeeds(InetSocketAddress[] seedList, String targetFileHash) {
-		Downloader descarga = new Downloader(chunkSize, mapaFicheros.get(targetFileHash));
+		Downloader descarga = new Downloader(chunkSize, mapaFicheros.get(targetFileHash), this);
+		// FIXME esto estara bien? setCurrentDownloader
+		// seeder.setCurrentDownloader(descarga);
 		descarga.downloadFile(seedList);
 	}
 

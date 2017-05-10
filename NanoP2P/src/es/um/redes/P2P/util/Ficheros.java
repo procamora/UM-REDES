@@ -18,6 +18,8 @@ public class Ficheros {
 	 * @return array byes leidos
 	 */
 	public static byte[] lectura(String fichero, int CHUNK_SIZE, long pos) {
+		if (pos < 0)
+			throw new IllegalArgumentException("Posicion tiene que ser >= 0");
 
 		byte chunk[] = new byte[CHUNK_SIZE];
 		File file = new File(fichero);
@@ -55,6 +57,9 @@ public class Ficheros {
 	 *            posición dentro del fichero
 	 */
 	public static void escritura(String fichero, byte[] datos, long pos) {
+		if (pos < 0)
+			throw new IllegalArgumentException("Posicion tiene que ser >= 0");
+
 		File file = new File(fichero);
 		if (!file.exists()) {
 			try {
@@ -64,7 +69,7 @@ public class Ficheros {
 			}
 		}
 
-		//FIXME Confirmar que se han escrito todos los bytes que se envian
+		// FIXME Confirmar que se han escrito todos los bytes que se envian
 		try {
 			RandomAccessFile rfo = new RandomAccessFile(file, "rw");
 			rfo.seek(pos);
