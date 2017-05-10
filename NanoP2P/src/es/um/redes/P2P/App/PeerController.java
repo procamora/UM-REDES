@@ -221,17 +221,17 @@ public class PeerController implements PeerControllerIface {
 							contador++;
 					}
 
-					if (contador != 1 || opcionesHash[0] == null)
-						System.out.println("El hash introducido no coincide con ningun fichero");
-
-					else if (opcionesHash[0] != null && contador == 1)
-						control = (MessageSeedInfo) Message.makeGetSeedsRequest(opcionesHash[0].fileHash);
-					else {
+					if (contador > 1) {
 						System.out.println(
 								"El hash introducido no es suficientemente exacto, estos son los ficheros que coinciden:");
 						for (int i = 0; i < opcionesHash.length; i++)
-							System.out.println(opcionesHash[i]);
-					}
+							if (opcionesHash[i] != null)
+								System.out.println(opcionesHash[i]);
+					} else if (opcionesHash[0] != null && contador == 1)
+						control = (MessageSeedInfo) Message.makeGetSeedsRequest(opcionesHash[0].fileHash);
+					else
+						System.out.println("El hash introducido no coincide con ningun fichero");
+
 				}
 				break;
 
@@ -369,7 +369,7 @@ public class PeerController implements PeerControllerIface {
 	public void downloadFileFromSeeds(InetSocketAddress[] seedList, String targetFileHash) {
 		Downloader descarga = new Downloader(chunkSize, mapaFicheros.get(targetFileHash), this);
 		// FIXME esto estara bien? setCurrentDownloader
-		// seeder.setCurrentDownloader(descarga);
+		seeder.setCurrentDownloader(descarga);
 		descarga.downloadFile(seedList);
 	}
 

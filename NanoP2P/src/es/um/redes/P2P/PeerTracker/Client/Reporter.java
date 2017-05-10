@@ -70,6 +70,7 @@ public class Reporter implements ReporterIface {
 		DatagramPacket recibirPaquete = new DatagramPacket(recibirDatos, recibirDatos.length);
 		// cliente inactivo hasta recibir un paquete, guarda en recibirPaquete
 		try {
+			socket.setSoTimeout(100);
 			socket.receive(recibirPaquete);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -85,6 +86,7 @@ public class Reporter implements ReporterIface {
 	public Message conversationWithTracker(Message request) {
 		// TODO Auto-generated method stub
 		// si hay fallos habra que retransmitir
+		//if null iteramos por timeout
 		sendMessageToTracker(peerTrackerSocket, request, address);
 		Message m = receiveMessageFromTracker(peerTrackerSocket);
 		return m;

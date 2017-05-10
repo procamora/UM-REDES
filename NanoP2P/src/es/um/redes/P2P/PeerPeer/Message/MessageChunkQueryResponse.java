@@ -177,10 +177,10 @@ public class MessageChunkQueryResponse extends Message {
 	 * Metodo estatico que recibe arrays de short y los concatena retornando un
 	 * array de bytes
 	 */
-	public static byte[] concatenateByteArrays(long... arraysChunks) {
+	public static byte[] concatenateByteArrays(Long[] arraysChunks) {
 
 		ByteBuffer buf = ByteBuffer.allocate(arraysChunks.length * FIELD_NUMCHUNKSIZE);
-		for (long cs : arraysChunks)
+		for (Long cs : arraysChunks)
 			buf.putLong(cs);
 
 		return buf.array();

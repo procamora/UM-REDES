@@ -4,7 +4,7 @@
 ## Dudas
 
 + [ ] Que excepcion hay que capturar en seederthread para cuando downloaderthread cierra la conexion
-+ [ ] currentDownloader de seederthread no se usarlo
++ [X] currentDownloader de seederthread no se usarlo
 
 ## Tareas pendientes
 

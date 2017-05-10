@@ -27,7 +27,7 @@ public class TCPServidor {
 				// En algún momento se llamará a
 				System.out.println(clientSocket.getPort());
 				new SeederThread(clientSocket, new PeerDatabase("/home/procamora/REDES/UM-REDES/comp/peer2/"),
-						new Downloader((short) 4096, null, null)).start();
+						new Downloader((short) 4096, null, null), null).start();
 			} catch (SocketException e) {
 				// e.printStackTrace();
 			} catch (IOException e) {

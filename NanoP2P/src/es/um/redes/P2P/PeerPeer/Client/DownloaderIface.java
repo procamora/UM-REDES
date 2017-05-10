@@ -23,7 +23,7 @@ public interface DownloaderIface {
 	boolean downloadFile(InetSocketAddress[] seedList);
 
 	//Devuelve el número de chunks que han sido descargados de cada uno de los Seeders
-	int[] getChunksDownloadedFromSeeders();
+	Long[] getChunksDownloadedFromSeeders();
 
 	//Informa si la descarga del fichero ya se ha completado
 	boolean isDownloadComplete();
