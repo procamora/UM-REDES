@@ -75,7 +75,6 @@ public class Seeder implements Runnable {
 			try {
 				clientSocket = serverSocket.accept();
 				// En algún momento se llamará a
-				//System.out.println(clientSocket.getPort());
 				new SeederThread(clientSocket, database, currentDownloader, chunkSize).start();
 			} catch (SocketException e) {
 				// e.printStackTrace();

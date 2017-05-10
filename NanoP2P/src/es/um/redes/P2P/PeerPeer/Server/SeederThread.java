@@ -24,7 +24,6 @@ public class SeederThread extends Thread {
 	protected DataInputStream dis;
 	private PeerDatabase database;
 	private Short chunkSize;
-	private Long[] chunkDisponibles;
 	private boolean bucle;
 
 	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader, Short chunkSize) {

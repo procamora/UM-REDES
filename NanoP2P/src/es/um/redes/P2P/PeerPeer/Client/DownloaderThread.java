@@ -2,11 +2,9 @@ package es.um.redes.P2P.PeerPeer.Client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -22,6 +20,7 @@ import es.um.redes.P2P.util.Ficheros;
  *         provided to the constructor.
  */
 public class DownloaderThread extends Thread {
+	private final static int FRECUENCIA_UPDATE_SEEDLIST = 150;
 	private Downloader downloader;
 	private Socket downloadSocket;
 	protected DataOutputStream dos; // FIXME USAR, ES UNA MEJORA DE STREAM
@@ -126,6 +125,10 @@ public class DownloaderThread extends Thread {
 		long chunkActual = 0;
 
 		do {
+			if (numChunksDownloaded % FRECUENCIA_UPDATE_SEEDLIST == 0)
+				// preguntamos por nuevos seeders
+				downloader.joinDownloaderThreads(); 
+			
 			if (!downloadSocket.isClosed()) {
 				chunkActual = receiveAndProcessChunkList();
 				// si hay un chunk valido lo proceso
@@ -143,6 +146,8 @@ public class DownloaderThread extends Thread {
 			} else { // sino hay chunk valido espero 1s y volvere a probar
 				try {
 					Thread.sleep(1000);
+					// preguntamos por nuevos seeders
+					downloader.joinDownloaderThreads();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} // intentamos recuperar la conexion

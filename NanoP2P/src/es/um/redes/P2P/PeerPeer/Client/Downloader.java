@@ -1,16 +1,11 @@
 package es.um.redes.P2P.PeerPeer.Client;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-
 import es.um.redes.P2P.App.PeerController;
 import es.um.redes.P2P.PeerTracker.Message.Message;
+import es.um.redes.P2P.PeerTracker.Message.MessageSeedInfo;
 import es.um.redes.P2P.util.FileInfo;
 
 enum Estado {
@@ -21,7 +16,7 @@ public class Downloader implements DownloaderIface {
 
 	public static final int CHUNKS_PROGRESSBAR = 100;
 	private FileInfo targetFile;
-	private InetSocketAddress[] seeds; // posiblemente no haga falta
+	private HashSet<InetSocketAddress> seeds; // posiblemente no haga falta
 	private long totalChunks;
 	private short chunkSize;
 	private PeerController peer;
@@ -52,6 +47,8 @@ public class Downloader implements DownloaderIface {
 		chunksDownloadedFromSeeders = new HashSet<>();
 
 		totalChunkDescargados = 0;
+
+		seeds = new HashSet<>();
 	}
 
 	// IMPORTANTE
@@ -77,9 +74,9 @@ public class Downloader implements DownloaderIface {
 			}
 
 		} else {
+			System.err.println("RECIBO CHUNKS SUELTOS, BIEN!!!!");
 			// comprobar listaNumChunk al inicio, si el chunk ya esta
-			// descargado, si
-			// lo esta pasar al siguiete chunk
+			// descargado, si lo esta pasar al siguiete chunk
 			for (long numChunk : listaNumChunk) {
 				if (!mapaEstados.containsKey(numChunk))
 					mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
@@ -134,7 +131,7 @@ public class Downloader implements DownloaderIface {
 	@Override
 	public InetSocketAddress[] getSeeds() {
 		// TODO Auto-generated method stub
-		return seeds;
+		return (InetSocketAddress[]) seeds.toArray();
 	}
 
 	// Devuelve el número total de Chunks en los que está compuesto el archivo
@@ -148,8 +145,11 @@ public class Downloader implements DownloaderIface {
 	public boolean downloadFile(InetSocketAddress[] seedList) {
 		// TODO Auto-generated method stub
 		for (int i = 0; i < seedList.length; i++) {
-			if (seedList[i] != null)
+			if (seedList[i] != null && !seeds.contains(seedList[i])) {
+				seeds.add(seedList[i]);
+				System.out.println(seedList[i]);
 				new DownloaderThread(this, seedList[i]).start();
+			}
 		}
 		return isDownloadComplete();
 	}
@@ -184,8 +184,14 @@ public class Downloader implements DownloaderIface {
 	// estaban activos
 	@Override
 	public void joinDownloaderThreads() {
-		// TODO Auto-generated method stub
+		// FIXME no se si este metodo es el correcto
 
+		Message request = Message.makeGetSeedsRequest(targetFile.fileHash);
+		Message response = peer.getReporter().conversationWithTracker(request);
+		if (response.getOpCode() == Message.OP_SEED_LIST) {
+			InetSocketAddress[] seedList = ((MessageSeedInfo) response).getSeedList();
+			downloadFile(seedList);
+		}
 	}
 
 	// Devuelve el tamaño de trozo que se está utilizando
