@@ -151,14 +151,12 @@ public abstract class Message {
 	 * @param buf
 	 *            The byte array of the received packet
 	 * @return A message of the appropriate format representing this request
+	 * @throws IOException 
 	 */
-	public static Message parseRequest(DataInputStream dis) {
+	public static Message parseRequest(DataInputStream dis) throws IOException {
 		byte reqOpcode;
-		try {
-			reqOpcode = dis.readByte();
-		} catch (IOException e) {
-			throw new IllegalArgumentException("Failed to parse request: buffer has length " + dis);
-		}
+		reqOpcode = dis.readByte();
+
 		switch (reqOpcode) {
 			case OP_GET_CHUNK:
 			case OP_CHUNK:

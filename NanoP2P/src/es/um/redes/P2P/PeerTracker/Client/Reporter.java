@@ -69,14 +69,18 @@ public class Reporter implements ReporterIface {
 		// creamos un contenedor para el paquete recibirPaquete
 		DatagramPacket recibirPaquete = new DatagramPacket(recibirDatos, recibirDatos.length);
 		// cliente inactivo hasta recibir un paquete, guarda en recibirPaquete
-		try {
-			socket.receive(recibirPaquete);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Message m = null;
 
-		// parseamos la respuesta al mensaje correspondiente
-		Message m = Message.parseResponse(recibirPaquete.getData());
+		try {
+			socket.setSoTimeout(100);
+			socket.receive(recibirPaquete);
+			// parseamos la respuesta al mensaje correspondiente
+			m = Message.parseResponse(recibirPaquete.getData());
+		} catch (SocketTimeoutException e) {
+			// excepcion correcta de timeout
+		} catch (IOException e) {
+			e.printStackTrace(); // excepcion recive
+		}
 
 		return m;
 	}
@@ -85,8 +89,12 @@ public class Reporter implements ReporterIface {
 	public Message conversationWithTracker(Message request) {
 		// TODO Auto-generated method stub
 		// si hay fallos habra que retransmitir
-		sendMessageToTracker(peerTrackerSocket, request, address);
-		Message m = receiveMessageFromTracker(peerTrackerSocket);
+		// if null iteramos por timeout
+		Message m = null;
+		do {
+			sendMessageToTracker(peerTrackerSocket, request, address);
+			m = receiveMessageFromTracker(peerTrackerSocket);
+		} while (m == null);
 		return m;
 	}
 

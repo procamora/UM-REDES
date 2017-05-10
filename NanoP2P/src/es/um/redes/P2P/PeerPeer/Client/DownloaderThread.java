@@ -109,7 +109,8 @@ public class DownloaderThread extends Thread {
 
 		do {
 			chunkActual = receiveAndProcessChunkList();
-			//System.out.println("totalChunks " + chunkActual + " Name " + getName());
+			// System.out.println("totalChunks " + chunkActual + " Name " +
+			// getName());
 			// si hay un chunk valido lo proceso
 			if (chunkActual >= 0) {
 				receiveAndWriteChunk(chunkActual);
@@ -124,11 +125,15 @@ public class DownloaderThread extends Thread {
 			}
 
 		} while (!downloader.isDownloadComplete());
-		// dos.close();
-		// downloadSocket.close();
+		try {
+			downloadSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		//System.out.println(downloader.getMapaPeers());
-		//System.out.println(downloader.getMapaEstados());
+		// System.out.println(downloader.getMapaPeers());
+		// System.out.println(downloader.getMapaEstados());
 		System.out.println("final correcto");
 	}
 

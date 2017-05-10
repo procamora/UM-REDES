@@ -31,7 +31,6 @@ public class Seeder implements Runnable {
 		// TODO
 		this.chunkSize = chunkSize;
 		this.database = database;
-		currentDownloader = null;
 		try {
 			serverSocket = new ServerSocket();
 		} catch (IOException e) {
@@ -40,7 +39,7 @@ public class Seeder implements Runnable {
 		}
 
 		// FIXME ESTO LO HE PUESTO AQUI PARA PRUEBAS, NO SE SI ES CORRECTO
-		currentDownloader = new Downloader(chunkSize, null, null);
+		//currentDownloader = new Downloader(chunkSize, null, null);
 	}
 
 	// Pone al servidor a escuchar en un puerto libre del rango y devuelve cuál
@@ -77,7 +76,7 @@ public class Seeder implements Runnable {
 				clientSocket = serverSocket.accept();
 				// En algún momento se llamará a
 				//System.out.println(clientSocket.getPort());
-				new SeederThread(clientSocket, database, currentDownloader).start();
+				new SeederThread(clientSocket, database, currentDownloader, chunkSize).start();
 			} catch (SocketException e) {
 				// e.printStackTrace();
 			} catch (IOException e) {

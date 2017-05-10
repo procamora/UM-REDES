@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,12 +27,16 @@ public class Downloader implements DownloaderIface {
 	private short chunkSize;
 	private PeerController peer;
 	private long totalChunkDescargados;
+	private HashSet<Long> chunksDownloadedFromSeeders;
 
 	private HashMap<Long, HashSet<Socket>> mapaPeers;
 	private HashMap<Long, Estado> mapaEstados;
 	private ProgressBar progressBar;
 
 	public Downloader(short chunkSize, FileInfo targetFile, PeerController peer) {
+		if (targetFile == null)
+			throw new IllegalArgumentException("tarjetfile no puede ser null");
+
 		this.chunkSize = chunkSize;
 		this.targetFile = targetFile;
 		this.peer = peer; // para hacer el addseed
@@ -39,13 +44,13 @@ public class Downloader implements DownloaderIface {
 		mapaPeers = new HashMap<>();
 		mapaEstados = new HashMap<>();
 
-		if (targetFile != null) {
-			totalChunks = (long) targetFile.fileSize / chunkSize;
-			if ((long) targetFile.fileSize % chunkSize != 0)
-				totalChunks++;
-			progressBar = new ProgressBar(totalChunks / 5); // barra de progreso
-			progressBar.start();
-		}
+		totalChunks = (long) targetFile.fileSize / chunkSize;
+		if ((long) targetFile.fileSize % chunkSize != 0)
+			totalChunks++;
+		progressBar = new ProgressBar(totalChunks / 5); // barra de progreso
+		progressBar.start();
+		chunksDownloadedFromSeeders = new HashSet<>();
+
 		totalChunkDescargados = 0;
 	}
 
@@ -63,56 +68,39 @@ public class Downloader implements DownloaderIface {
 	// que se están disponibles o que se están descargando. Deberán ser
 	// definidos en la clase que la instancia.
 
+	private void inicializaMapas(Long numChunk, Socket ip) {
+		// actualizo lista de estados
+		if (!mapaEstados.containsKey(numChunk))
+			mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
+
+		// actualizo lista de peers
+		if (mapaPeers.containsKey(numChunk)) {
+			HashSet<Socket> peerSet = mapaPeers.get(numChunk);
+			if (!peerSet.contains(ip)) {
+				HashSet<Socket> copia = new HashSet<>(peerSet);
+				copia.add(ip);
+				mapaPeers.remove(numChunk);
+				mapaPeers.put(numChunk, copia);
+			}
+		} else {
+			HashSet<Socket> peerSet = new HashSet<>();
+			peerSet.add(ip);
+			mapaPeers.put(numChunk, peerSet);
+		}
+
+	}
+
 	public synchronized long bookNextChunkNumber(long[] listaNumChunk, Socket ip) {
 
 		// Si es un fichero local del peer añado a mano a cada chunk el peer
-		if (listaNumChunk.length == 0) {
-			for (long numChunk = 0; numChunk < totalChunks; numChunk++) {
-				if (!mapaEstados.containsKey(numChunk))
-					mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
-
-				// actualizo lista de peers
-				if (mapaPeers.containsKey(numChunk)) {
-					HashSet<Socket> peerSet = mapaPeers.get(numChunk);
-					if (!peerSet.contains(ip)) {
-						HashSet<Socket> copia = new HashSet<>(peerSet);
-						copia.add(ip);
-						mapaPeers.remove(numChunk);
-						mapaPeers.put(numChunk, copia);
-					}
-				} else {
-					HashSet<Socket> peerSet = new HashSet<>();
-					peerSet.add(ip);
-					mapaPeers.put(numChunk, peerSet);
-				}
-			}
-		}
+		if (listaNumChunk.length == 0)
+			for (long numChunk = 0; numChunk < totalChunks; numChunk++)
+				inicializaMapas(numChunk, ip);
 
 		// comprobar listaNumChunk al inicio, si el chunk ya esta descargado, si
 		// lo esta pasar al siguiete chunk
-		for (long numChunk : listaNumChunk) {
-			// actualizo lista de estados
-			if (!mapaEstados.containsKey(numChunk))
-				mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
-
-			// actualizo lista de peers
-			if (mapaPeers.containsKey(numChunk)) {
-				HashSet<Socket> peerSet = mapaPeers.get(numChunk);
-				if (!peerSet.contains(ip)) {
-					HashSet<Socket> copia = new HashSet<>(peerSet);
-					copia.add(ip);
-					mapaPeers.remove(numChunk);
-					mapaPeers.put(numChunk, copia);
-				}
-			} else {
-				HashSet<Socket> peerSet = new HashSet<>();
-				peerSet.add(ip);
-				mapaPeers.put(numChunk, peerSet);
-			}
-		}
-
-		// System.out.println(mapaPeers);
-		// System.out.println(mapaEstados);
+		for (long numChunk : listaNumChunk)
+			inicializaMapas(numChunk, ip);
 
 		// retorna el primer nunChunk que contentga la ip del peer
 		TreeMap<Long, HashSet<Socket>> sortedMap;
@@ -155,6 +143,8 @@ public class Downloader implements DownloaderIface {
 		// cada 5 chunks imprimo
 		if (totalChunkDescargados % 5 == 0)
 			progressBar.next();
+
+		chunksDownloadedFromSeeders.add(numChunk);
 
 		// al descargar el primer chunk
 		if (totalChunkDescargados == 1) {
@@ -204,9 +194,9 @@ public class Downloader implements DownloaderIface {
 	// Devuelve el número de chunks que han sido descargados de cada uno de los
 	// Seeders
 	@Override
-	public int[] getChunksDownloadedFromSeeders() {
-		// TODO Auto-generated method stub
-		return null;
+	public Long[] getChunksDownloadedFromSeeders() {
+		Long[] array = chunksDownloadedFromSeeders.toArray(new Long[chunksDownloadedFromSeeders.size()]);
+		return array;
 	}
 
 	// Informa si la descarga del fichero ya se ha completado

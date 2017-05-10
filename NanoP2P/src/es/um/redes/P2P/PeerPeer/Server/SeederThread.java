@@ -23,42 +23,46 @@ public class SeederThread extends Thread {
 	protected DataOutputStream dos;
 	protected DataInputStream dis;
 	private PeerDatabase database;
+	private Short chunkSize;
+	private Long[] chunkDisponibles;
+	private boolean bucle;
 
-	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader) {
+	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader, Short chunkSize) {
 		if (socket == null)
 			throw new IllegalArgumentException("socket no puede ser null en SeederThread");
 		if (database == null)
 			throw new IllegalArgumentException("database no puede ser null en SeederThread");
-		if (downloader == null)
-			throw new IllegalArgumentException("downloader no puede ser null en SeederThread");
-		
+
 		this.socket = socket;
 		this.database = database;
 		this.downloader = downloader;
+		this.chunkSize = chunkSize;
+		bucle = true;
 	}
 
 	// Devuelve la lista de trozos que tiene del fichero solicitado
 	public void sendChunkList(String fileHashStr) {
 		// FIXME obtener numero de chunks de forma dinamica
 		// FIXME Si tiene todos los ficheros poner todo a 1
-		byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays((long) 1, (long) 451, (long) 66,
-				(long) 667);
 
-		FileInfo[] ficherosLocales = database.getLocalSharedFiles();
-		boolean ficheroLocal = false;
-		for (int i = 0; i < ficherosLocales.length; i++)
-			if (ficherosLocales[i].fileHash.equals(fileHashStr))
-				ficheroLocal = true;
-
-		// el tamaño de listaTrozos.length es el doble de elementos que contiene
 		Message respuesta = null;
-		// respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new
-		// byte[0], downloader.getChunkSize());
-		if (ficheroLocal)
-			respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new byte[0]);
-		else
+
+		if (downloader != null && downloader.getTargetFile().fileHash.equals(fileHashStr)) {
+			Long[] chunkDisponibles = downloader.getChunksDownloadedFromSeeders();
+			byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays(chunkDisponibles);
+			// el tamaño de listaTrozos.length es el doble de elementos que
+			// contiene
 			respuesta = Message.makeGetChunkResponseRequest((long) (listaTrozos.length / 8), listaTrozos);
-		sendMessageToPeer(respuesta);
+			sendMessageToPeer(respuesta);
+		} else {
+			FileInfo[] ficherosLocales = database.getLocalSharedFiles();
+			for (int i = 0; i < ficherosLocales.length; i++)
+				if (ficherosLocales[i].fileHash.equals(fileHashStr)) {
+					respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new byte[0]);
+					sendMessageToPeer(respuesta);
+					return; // terminaamos de buscar
+				}
+		}
 	}
 
 	// Envía por el socket el chunk solicitado por el DownloaderThread
@@ -67,8 +71,7 @@ public class SeederThread extends Thread {
 		if (rutaFichero == null)
 			throw new IllegalStateException("No se ha encontrado el fichero: " + fileHashStr);
 
-		byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) downloader.getChunkSize(),
-				(long) chunkNumber * downloader.getChunkSize());
+		byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) chunkSize, (long) chunkNumber * chunkSize);
 		Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar);
 		sendMessageToPeer(respuesta);
 	}
@@ -81,8 +84,16 @@ public class SeederThread extends Thread {
 			dis = new DataInputStream(is);
 			msg = Message.parseRequest(dis);
 
+			// capturamos la excepcion cuando cierran los downloaderthread y
+			// cerramos tambien el socket
 		} catch (IOException e) {
-			e.printStackTrace();
+
+			try {
+				socket.close();
+				bucle = false;
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 		return msg;
 	}
@@ -120,20 +131,12 @@ public class SeederThread extends Thread {
 		// sabemos que se ha acabado de enviar el fichero cuando el otro cierra
 		// el socket y al hacer el read
 		// nos da una excepcion correcta que tenemos que capturar
-		boolean bucle = true;
 		while (bucle) {
-			/*System.out.println("isConnected " + socket.isConnected());
-			System.out.println("isClosed " + socket.isClosed());
-			System.out.println("isInputShutdown " + socket.isInputShutdown());
-			System.out.println("isOutputShutdown " + socket.isOutputShutdown());*/
-			if (socket.isConnected()) {
-				Message msgRecibido = receiveMessageFromPeer();
+			Message msgRecibido = receiveMessageFromPeer();
 
-				if (msgRecibido != null)
-					processMessageFromPeer(msgRecibido);
+			if (msgRecibido != null)
+				processMessageFromPeer(msgRecibido);
 
-			} else
-				bucle = false;
 		}
 		System.out.println("final correcto seeder");
 
