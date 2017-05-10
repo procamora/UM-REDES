@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 
 import es.um.redes.P2P.App.PeerController;
 import es.um.redes.P2P.PeerTracker.Message.Message;
@@ -21,6 +19,7 @@ enum Estado {
 
 public class Downloader implements DownloaderIface {
 
+	public static final int CHUNKS_PROGRESSBAR = 100;
 	private FileInfo targetFile;
 	private InetSocketAddress[] seeds; // posiblemente no haga falta
 	private long totalChunks;
@@ -29,7 +28,7 @@ public class Downloader implements DownloaderIface {
 	private long totalChunkDescargados;
 	private HashSet<Long> chunksDownloadedFromSeeders;
 
-	private HashMap<Long, HashSet<Socket>> mapaPeers;
+	// private HashMap<Long, HashSet<Socket>> mapaPeers;
 	private HashMap<Long, Estado> mapaEstados;
 	private ProgressBar progressBar;
 
@@ -41,25 +40,18 @@ public class Downloader implements DownloaderIface {
 		this.targetFile = targetFile;
 		this.peer = peer; // para hacer el addseed
 
-		mapaPeers = new HashMap<>();
 		mapaEstados = new HashMap<>();
+		// mapaPeers = new HashMap<>();
 
 		totalChunks = (long) targetFile.fileSize / chunkSize;
 		if ((long) targetFile.fileSize % chunkSize != 0)
 			totalChunks++;
-		progressBar = new ProgressBar(totalChunks / 5); // barra de progreso
+
+		progressBar = new ProgressBar(totalChunks / CHUNKS_PROGRESSBAR);
 		progressBar.start();
 		chunksDownloadedFromSeeders = new HashSet<>();
 
 		totalChunkDescargados = 0;
-	}
-
-	private TreeMap<Long, HashSet<Socket>> sortMapByValue(HashMap<Long, HashSet<Socket>> map) {
-		// TreeMap is a map sorted by its keys. The comparator is used to sort
-		// the TreeMap by keys.
-		TreeMap<Long, HashSet<Socket>> result = new TreeMap<>(new Comparador(map, mapaEstados));
-		result.putAll(map);
-		return result;
 	}
 
 	// IMPORTANTE
@@ -68,69 +60,40 @@ public class Downloader implements DownloaderIface {
 	// que se están disponibles o que se están descargando. Deberán ser
 	// definidos en la clase que la instancia.
 
-	private void inicializaMapas(Long numChunk, Socket ip) {
-		// actualizo lista de estados
-		if (!mapaEstados.containsKey(numChunk))
-			mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
-
-		// actualizo lista de peers
-		if (mapaPeers.containsKey(numChunk)) {
-			HashSet<Socket> peerSet = mapaPeers.get(numChunk);
-			if (!peerSet.contains(ip)) {
-				HashSet<Socket> copia = new HashSet<>(peerSet);
-				copia.add(ip);
-				mapaPeers.remove(numChunk);
-				mapaPeers.put(numChunk, copia);
-			}
-		} else {
-			HashSet<Socket> peerSet = new HashSet<>();
-			peerSet.add(ip);
-			mapaPeers.put(numChunk, peerSet);
-		}
-
-	}
-
-	public synchronized long bookNextChunkNumber(long[] listaNumChunk, Socket ip) {
-
+	public synchronized long bookNextChunkNumber(long[] listaNumChunk) {
+		long chunkSeleccionado = -1;
+		boolean getChunk = true;
 		// Si es un fichero local del peer añado a mano a cada chunk el peer
-		if (listaNumChunk.length == 0)
-			for (long numChunk = 0; numChunk < totalChunks; numChunk++)
-				inicializaMapas(numChunk, ip);
-
-		// comprobar listaNumChunk al inicio, si el chunk ya esta descargado, si
-		// lo esta pasar al siguiete chunk
-		for (long numChunk : listaNumChunk)
-			inicializaMapas(numChunk, ip);
-
-		// retorna el primer nunChunk que contentga la ip del peer
-		TreeMap<Long, HashSet<Socket>> sortedMap;
-		if (totalChunks < 10000000) {
-			sortedMap = sortMapByValue(mapaPeers);
-			for (Long entry : sortedMap.keySet()) {
-				if ((mapaEstados.get(entry) == Estado.NO_DESCARGADO) && (mapaPeers.get(entry).contains(ip))) {
-					mapaEstados.replace(entry, Estado.EN_DESCARGA);
-					return entry;
+		if (listaNumChunk.length == 0) {
+			for (long numChunk = 0; numChunk < totalChunks; numChunk++) {
+				if (!mapaEstados.containsKey(numChunk))
+					mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
+				// retorna el primer nunChunk que contentga la ip del peer
+				if (mapaEstados.get(numChunk) == Estado.NO_DESCARGADO && getChunk) {
+					mapaEstados.replace(numChunk, Estado.EN_DESCARGA);
+					chunkSeleccionado = numChunk;
+					getChunk = false;
 				}
 			}
-		} else { // para ficheros grandes es muy ineficiente
-			for (Long entry : mapaPeers.keySet()) {
-				if ((mapaEstados.get(entry) == Estado.NO_DESCARGADO) && (mapaPeers.get(entry).contains(ip))) {
-					mapaEstados.replace(entry, Estado.EN_DESCARGA);
-					return entry;
+
+		} else {
+			// comprobar listaNumChunk al inicio, si el chunk ya esta
+			// descargado, si
+			// lo esta pasar al siguiete chunk
+			for (long numChunk : listaNumChunk) {
+				if (!mapaEstados.containsKey(numChunk))
+					mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
+
+				// retorna el primer nunChunk que contentga la ip del peer
+				if (mapaEstados.get(numChunk) == Estado.NO_DESCARGADO && getChunk) {
+					mapaEstados.replace(numChunk, Estado.EN_DESCARGA);
+					chunkSeleccionado = numChunk;
+					getChunk = false;
 				}
 			}
 		}
-
 		// en caso de que no haya ningun chunk disponible para ese peer
-		return -1;
-	}
-
-	public Map<Long, HashSet<Socket>> getMapaPeers() {
-		return sortMapByValue(mapaPeers);
-	}
-
-	public Map<Long, Estado> getMapaEstados() {
-		return Collections.unmodifiableMap(mapaEstados);
+		return chunkSeleccionado;
 	}
 
 	public synchronized boolean setChunkDownloaded(long numChunk) {
@@ -141,7 +104,7 @@ public class Downloader implements DownloaderIface {
 		totalChunkDescargados++;
 
 		// cada 5 chunks imprimo
-		if (totalChunkDescargados % 5 == 0)
+		if (totalChunkDescargados % CHUNKS_PROGRESSBAR == 0)
 			progressBar.next();
 
 		chunksDownloadedFromSeeders.add(numChunk);
@@ -203,6 +166,17 @@ public class Downloader implements DownloaderIface {
 	@Override
 	public boolean isDownloadComplete() {
 		// TODO Auto-generated method stub
+		if (totalChunkDescargados == totalChunks) {
+			System.out.println("igual");
+			System.out.println(totalChunks);
+			System.out.println(totalChunkDescargados);
+
+		} else if (totalChunkDescargados > totalChunks) {
+			System.out.println("mayor");
+			System.out.println(totalChunks);
+			System.out.println(totalChunkDescargados);
+		}
+
 		return totalChunkDescargados == totalChunks;
 	}
 
