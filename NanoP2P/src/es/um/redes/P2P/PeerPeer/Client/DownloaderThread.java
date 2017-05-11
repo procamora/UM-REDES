@@ -85,11 +85,8 @@ public class DownloaderThread extends Thread {
 			dis = new DataInputStream(is);
 			msg = Message.parseResponse(dis);
 		} catch (IOException e) {
-			try {
-				downloadSocket.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			// si hay un problema no retorno null, y se informara que el chunk
+			// no se ha podido sdescargar
 			// e.printStackTrace();
 		}
 		return msg;
@@ -138,19 +135,20 @@ public class DownloaderThread extends Thread {
 					downloader.joinDownloaderThreads();
 					// indicamos que no hemos podido descargarnos el fichero
 					downloader.setChunkDownloaded(chunkActual, false);
+					break;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 
 		} while (!downloader.isDownloadComplete());
-		
+
 		try {
 			downloadSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("final correcto");
 	}
 

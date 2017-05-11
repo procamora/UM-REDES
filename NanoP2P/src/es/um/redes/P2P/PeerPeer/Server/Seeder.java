@@ -36,6 +36,7 @@ public class Seeder implements Runnable {
 			e.printStackTrace();
 			System.exit(-1); // si falla paramos el programa
 		}
+
 	}
 
 	// Pone al servidor a escuchar en un puerto libre del rango y devuelve cuál
@@ -105,4 +106,5 @@ public class Seeder implements Runnable {
 	public int getSeederPort() {
 		return serverSocket.getLocalPort();
 	}
+
 }

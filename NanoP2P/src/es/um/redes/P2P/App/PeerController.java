@@ -226,7 +226,7 @@ public class PeerController implements PeerControllerIface {
 						for (int i = 0; i < opcionesHash.length; i++)
 							if (opcionesHash[i] != null)
 								System.out.println(opcionesHash[i]);
-					} else if (opcionesHash[0] != null && contador == 1)
+					} else if (contador == 1 && opcionesHash[0] != null)
 						control = (MessageSeedInfo) Message.makeGetSeedsRequest(opcionesHash[0].fileHash);
 					else
 						System.out.println("El hash introducido no coincide con ningun fichero");
