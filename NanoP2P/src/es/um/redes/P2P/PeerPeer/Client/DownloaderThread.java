@@ -125,7 +125,8 @@ public class DownloaderThread extends Thread {
 				if (chunkActual >= 0) {
 					receiveAndWriteChunk(chunkActual);
 					numChunksDownloaded++;
-					downloader.setChunkDownloaded(chunkActual);
+					//FIXME repasar que pasa si no podemos descargarlo
+					downloader.setChunkDownloaded(chunkActual, true);
 				} else { // sino hay chunk valido espero 1s y volvere a probar
 					try {
 						Thread.sleep(1000);

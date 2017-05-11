@@ -16,7 +16,7 @@ public class Downloader implements DownloaderIface {
 
 	public static final int CHUNKS_PROGRESSBAR = 100;
 	private FileInfo targetFile;
-	private HashSet<InetSocketAddress> seeds; // posiblemente no haga falta
+	private HashSet<InetSocketAddress> seeds;
 	private long totalChunks;
 	private short chunkSize;
 	private PeerController peer;
@@ -93,31 +93,35 @@ public class Downloader implements DownloaderIface {
 		return chunkSeleccionado;
 	}
 
-	public synchronized boolean setChunkDownloaded(long numChunk) {
+	public synchronized boolean setChunkDownloaded(long numChunk, boolean descargado) {
 		/*
 		 * Si el numero de trozo se ha descargado, se notifica al traker que ya
 		 * puede servir ese trozo de fichero
 		 */
-		totalChunkDescargados++;
+		if (descargado) {
+			totalChunkDescargados++;
 
-		// cada 5 chunks imprimo
-		if (totalChunkDescargados % CHUNKS_PROGRESSBAR == 0)
-			progressBar.next();
+			// cada 5 chunks imprimo
+			if (totalChunkDescargados % CHUNKS_PROGRESSBAR == 0)
+				progressBar.next();
 
-		chunksDownloadedFromSeeders.add(numChunk);
+			chunksDownloadedFromSeeders.add(numChunk);
 
-		// al descargar el primer chunk
-		if (totalChunkDescargados == 1) {
-			mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
-			// mandamos aadseed
-			FileInfo[] lista = { targetFile };
-			Message request = Message.makeAddSeedRequest(peer.getSeeder().getSeederPort(), lista);
-			peer.getReporter().conversationWithTracker(request);
-			// eliminamos fichero de lista de descarga
-			peer.getMapaFicheros().remove(targetFile.fileHash);
-		} else
-			mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
-
+			// al descargar el primer chunk
+			if (totalChunkDescargados == 1) {
+				mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
+				// mandamos aadseed
+				FileInfo[] lista = { targetFile };
+				Message request = Message.makeAddSeedRequest(peer.getSeeder().getSeederPort(), lista);
+				peer.getReporter().conversationWithTracker(request);
+				// eliminamos fichero de lista de descarga
+				peer.getMapaFicheros().remove(targetFile.fileHash);
+			} else
+				mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
+			return true;
+		}
+		//Si no lo hemos podido descargar
+		mapaEstados.replace(numChunk, Estado.NO_DESCARGADO);
 		return false;
 	}
 
