@@ -23,7 +23,7 @@ public class DownloaderThread extends Thread {
 	private final static int FRECUENCIA_UPDATE_SEEDLIST = 150;
 	private Downloader downloader;
 	private Socket downloadSocket;
-	protected DataOutputStream dos; // FIXME USAR, ES UNA MEJORA DE STREAM
+	protected DataOutputStream dos;
 	protected DataInputStream dis;
 	private long numChunksDownloaded;
 	private InetSocketAddress seed; // usada para establece conexion tcp
@@ -89,8 +89,6 @@ public class DownloaderThread extends Thread {
 			InputStream is = downloadSocket.getInputStream();
 			dis = new DataInputStream(is);
 			msg = Message.parseResponse(dis);
-			// FIXME tratar el caso en el que seederthread termina antes de
-			// tiempo?
 		} catch (IOException e) {
 			try {
 				downloadSocket.close();
@@ -112,23 +110,15 @@ public class DownloaderThread extends Thread {
 		}
 	}
 
-	// FIXME cuando tenemos un trozo ya tenemos que hacer el addseed del fichero
-	// para compartirlo
-
 	// Main code to request chunk lists and chunks
 	public void run() {
-		// pide lista trozos o un trozoes un bucle, mientras que no te bajes el
-		// fichero si es un fichero se comprueba si nos ehemos bajado los byes
-		// del fichero si hay varios thread hay que coordinar con variable
-		// compartida, que sera la instancia this MASTER, servir trozos que te
-		// estas bajando, opcional
 		long chunkActual = 0;
 
 		do {
 			if (numChunksDownloaded % FRECUENCIA_UPDATE_SEEDLIST == 0)
 				// preguntamos por nuevos seeders
-				downloader.joinDownloaderThreads(); 
-			
+				downloader.joinDownloaderThreads();
+
 			if (!downloadSocket.isClosed()) {
 				chunkActual = receiveAndProcessChunkList();
 				// si hay un chunk valido lo proceso

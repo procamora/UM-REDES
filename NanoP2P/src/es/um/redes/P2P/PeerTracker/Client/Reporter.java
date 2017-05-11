@@ -87,9 +87,7 @@ public class Reporter implements ReporterIface {
 
 	@Override
 	public Message conversationWithTracker(Message request) {
-		// TODO Auto-generated method stub
-		// si hay fallos habra que retransmitir
-		// if null iteramos por timeout
+		// si hay fallos habra que retransmitir if null iteramos por timeout
 		Message m = null;
 		do {
 			sendMessageToTracker(peerTrackerSocket, request, address);

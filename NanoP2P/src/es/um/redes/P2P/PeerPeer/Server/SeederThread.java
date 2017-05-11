@@ -41,9 +41,6 @@ public class SeederThread extends Thread {
 
 	// Devuelve la lista de trozos que tiene del fichero solicitado
 	public void sendChunkList(String fileHashStr) {
-		// FIXME obtener numero de chunks de forma dinamica
-		// FIXME Si tiene todos los ficheros poner todo a 1
-
 		Message respuesta = null;
 
 		if (downloader != null && downloader.getTargetFile().fileHash.equals(fileHashStr)) {
@@ -59,7 +56,7 @@ public class SeederThread extends Thread {
 				if (ficherosLocales[i].fileHash.equals(fileHashStr)) {
 					respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new byte[0]);
 					sendMessageToPeer(respuesta);
-					return; // terminaamos de buscar
+					return; // terminamos de buscar
 				}
 		}
 	}
@@ -126,10 +123,6 @@ public class SeederThread extends Thread {
 
 	// Método principal que coordina la recepción y envío de mensajes
 	public void run() {
-		// while true hasta que el cliente tenga todos los trozos del ficheros
-		// sabemos que se ha acabado de enviar el fichero cuando el otro cierra
-		// el socket y al hacer el read
-		// nos da una excepcion correcta que tenemos que capturar
 		while (bucle) {
 			Message msgRecibido = receiveMessageFromPeer();
 

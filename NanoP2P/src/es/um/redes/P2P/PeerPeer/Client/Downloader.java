@@ -130,7 +130,6 @@ public class Downloader implements DownloaderIface {
 	// Obtiene la lista de Seeds desde los cuales se está descargando el archivo
 	@Override
 	public InetSocketAddress[] getSeeds() {
-		// TODO Auto-generated method stub
 		return (InetSocketAddress[]) seeds.toArray();
 	}
 
@@ -143,7 +142,6 @@ public class Downloader implements DownloaderIface {
 	// Inicia el proceso de descarga del archivo a partir de la lista de Seeds
 	@Override
 	public boolean downloadFile(InetSocketAddress[] seedList) {
-		// TODO Auto-generated method stub
 		for (int i = 0; i < seedList.length; i++) {
 			if (seedList[i] != null && !seeds.contains(seedList[i])) {
 				seeds.add(seedList[i]);
@@ -158,25 +156,14 @@ public class Downloader implements DownloaderIface {
 	// Seeders
 	@Override
 	public Long[] getChunksDownloadedFromSeeders() {
-		Long[] array = chunksDownloadedFromSeeders.toArray(new Long[chunksDownloadedFromSeeders.size()]);
-		return array;
+		// Long[] array = chunksDownloadedFromSeeders.toArray(new
+		// Long[chunksDownloadedFromSeeders.size()]);
+		return (Long[]) chunksDownloadedFromSeeders.toArray();
 	}
 
 	// Informa si la descarga del fichero ya se ha completado
 	@Override
 	public boolean isDownloadComplete() {
-		// TODO Auto-generated method stub
-		if (totalChunkDescargados == totalChunks) {
-			System.out.println("igual");
-			System.out.println(totalChunks);
-			System.out.println(totalChunkDescargados);
-
-		} else if (totalChunkDescargados > totalChunks) {
-			System.out.println("mayor");
-			System.out.println(totalChunks);
-			System.out.println(totalChunkDescargados);
-		}
-
 		return totalChunkDescargados == totalChunks;
 	}
 

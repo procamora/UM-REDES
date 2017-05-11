@@ -92,7 +92,6 @@ public class PeerController implements PeerControllerIface {
 
 	@Override
 	public void setCurrentCommandArguments(String[] args) {
-		// TODO Auto-generated method stub
 		// currentArguments = args;
 		for (int i = 0; i < args.length; i++) {
 			currentArguments[i] = args[i];
@@ -368,7 +367,6 @@ public class PeerController implements PeerControllerIface {
 	@Override
 	public void downloadFileFromSeeds(InetSocketAddress[] seedList, String targetFileHash) {
 		Downloader descarga = new Downloader(chunkSize, mapaFicheros.get(targetFileHash), this);
-		// FIXME esto estara bien? setCurrentDownloader
 		seeder.setCurrentDownloader(descarga);
 		descarga.downloadFile(seedList);
 	}
