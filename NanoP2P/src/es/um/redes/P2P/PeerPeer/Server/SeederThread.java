@@ -2,12 +2,11 @@ package es.um.redes.P2P.PeerPeer.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.net.Socket;
+import java.util.HashSet;
 
 import es.um.redes.P2P.PeerPeer.Client.Downloader;
 import es.um.redes.P2P.PeerPeer.Message.*;
@@ -44,7 +43,7 @@ public class SeederThread extends Thread {
 		Message respuesta = null;
 
 		if (downloader != null && downloader.getTargetFile().fileHash.equals(fileHashStr)) {
-			Long[] chunkDisponibles = downloader.getChunksDownloadedFromSeeders();
+			HashSet<Long> chunkDisponibles = downloader.getChunksDownloadedFromSeeders();
 			byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays(chunkDisponibles);
 			// el tamaño de listaTrozos.length es el doble de elementos que
 			// contiene

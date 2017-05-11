@@ -26,7 +26,6 @@ public class DownloaderThread extends Thread {
 	protected DataOutputStream dos;
 	protected DataInputStream dis;
 	private long numChunksDownloaded;
-	private InetSocketAddress seed; // usada para establece conexion tcp
 
 	public DownloaderThread(Downloader dl, InetSocketAddress seed) {
 		if (dl == null)
@@ -36,21 +35,15 @@ public class DownloaderThread extends Thread {
 
 		downloader = dl;
 		numChunksDownloaded = 0;
-		this.seed = seed;
-
-		estableceConexion();
-	}
-
-	private void estableceConexion() {
 		try {
 			downloadSocket = new Socket(seed.getAddress(), seed.getPort());
 		} catch (IOException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 
 	// Recibe un mensaje que contiene un fragmento y se almacena en el archivo
-	private void receiveAndWriteChunk(long chunkActual) {
+	private boolean receiveAndWriteChunk(long chunkActual) {
 		// pido los datos del fichero correspondientes al num chunk 40
 		sendMessageToPeer(Message.makeChunkRequest(downloader.getTargetFile().fileHash, chunkActual));
 		Message msgRecibido = receiveMessageFromPeer();
@@ -61,7 +54,9 @@ public class DownloaderThread extends Thread {
 
 			Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName, response.getDatos(),
 					(chunkActual * downloader.getChunkSize()));
+			return true;
 		}
+		return false;
 	}
 
 	// Recibe un mensaje que contiene un fragmento y se almacena en el archivo
@@ -75,7 +70,7 @@ public class DownloaderThread extends Thread {
 			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
 			return downloader.bookNextChunkNumber(response.desconcatenaArrayBytesDatos());
 		}
-		return -1;
+		return Downloader.NUM_CHUNK_NO_DISPONIBLE;
 	}
 
 	// Número de fragmentos ya descargados por este hilo
@@ -121,12 +116,14 @@ public class DownloaderThread extends Thread {
 
 			if (!downloadSocket.isClosed()) {
 				chunkActual = receiveAndProcessChunkList();
+				// System.out.println(getName() + " chunk " + chunkActual);
 				// si hay un chunk valido lo proceso
 				if (chunkActual >= 0) {
-					receiveAndWriteChunk(chunkActual);
-					numChunksDownloaded++;
-					//FIXME repasar que pasa si no podemos descargarlo
-					downloader.setChunkDownloaded(chunkActual, true);
+					if (receiveAndWriteChunk(chunkActual)) {
+						numChunksDownloaded++;
+						downloader.setChunkDownloaded(chunkActual, true);
+					} else
+						downloader.setChunkDownloaded(chunkActual, false);
 				} else { // sino hay chunk valido espero 1s y volvere a probar
 					try {
 						Thread.sleep(1000);
@@ -139,18 +136,21 @@ public class DownloaderThread extends Thread {
 					Thread.sleep(1000);
 					// preguntamos por nuevos seeders
 					downloader.joinDownloaderThreads();
+					// indicamos que no hemos podido descargarnos el fichero
+					downloader.setChunkDownloaded(chunkActual, false);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				} // intentamos recuperar la conexion
-				estableceConexion();
+				}
 			}
 
 		} while (!downloader.isDownloadComplete());
+		
 		try {
 			downloadSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		System.out.println("final correcto");
 	}
 

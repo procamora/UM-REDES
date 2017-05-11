@@ -15,6 +15,8 @@ enum Estado {
 public class Downloader implements DownloaderIface {
 
 	public static final int CHUNKS_PROGRESSBAR = 100;
+	public static final int NUM_CHUNK_NO_DISPONIBLE = -1;
+
 	private FileInfo targetFile;
 	private HashSet<InetSocketAddress> seeds;
 	private long totalChunks;
@@ -58,7 +60,7 @@ public class Downloader implements DownloaderIface {
 	// definidos en la clase que la instancia.
 
 	public synchronized long bookNextChunkNumber(long[] listaNumChunk) {
-		long chunkSeleccionado = -1;
+		long chunkSeleccionado = NUM_CHUNK_NO_DISPONIBLE;
 		boolean getChunk = true;
 		// Si es un fichero local del peer añado a mano a cada chunk el peer
 		if (listaNumChunk.length == 0) {
@@ -120,7 +122,7 @@ public class Downloader implements DownloaderIface {
 				mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
 			return true;
 		}
-		//Si no lo hemos podido descargar
+		// Si no lo hemos podido descargar
 		mapaEstados.replace(numChunk, Estado.NO_DESCARGADO);
 		return false;
 	}
@@ -143,11 +145,21 @@ public class Downloader implements DownloaderIface {
 		return totalChunks;
 	}
 
+	/**
+	 * Compruebo que el seeder del que quiero descargarme archivos no soy yo
+	 * mismo
+	 */
+	private boolean isLocalSeeder(InetSocketAddress seedList) {
+		if (peer.getSeeder().getSeederPort() == seedList.getPort())
+			return true;
+		return false;
+	}
+
 	// Inicia el proceso de descarga del archivo a partir de la lista de Seeds
 	@Override
-	public boolean downloadFile(InetSocketAddress[] seedList) {
+	public synchronized boolean downloadFile(InetSocketAddress[] seedList) {
 		for (int i = 0; i < seedList.length; i++) {
-			if (seedList[i] != null && !seeds.contains(seedList[i])) {
+			if (seedList[i] != null && !seeds.contains(seedList[i]) && !isLocalSeeder(seedList[i])) {
 				seeds.add(seedList[i]);
 				System.out.println(seedList[i]);
 				new DownloaderThread(this, seedList[i]).start();
@@ -159,10 +171,8 @@ public class Downloader implements DownloaderIface {
 	// Devuelve el número de chunks que han sido descargados de cada uno de los
 	// Seeders
 	@Override
-	public Long[] getChunksDownloadedFromSeeders() {
-		// Long[] array = chunksDownloadedFromSeeders.toArray(new
-		// Long[chunksDownloadedFromSeeders.size()]);
-		return (Long[]) chunksDownloadedFromSeeders.toArray();
+	public synchronized HashSet<Long> getChunksDownloadedFromSeeders() {
+		return new HashSet<>(chunksDownloadedFromSeeders);
 	}
 
 	// Informa si la descarga del fichero ya se ha completado
@@ -174,7 +184,7 @@ public class Downloader implements DownloaderIface {
 	// Método para recoger todos los threads de descarga (DownloaderThread) que
 	// estaban activos
 	@Override
-	public void joinDownloaderThreads() {
+	public synchronized void joinDownloaderThreads() {
 		// FIXME no se si este metodo es el correcto
 
 		Message request = Message.makeGetSeedsRequest(targetFile.fileHash);
