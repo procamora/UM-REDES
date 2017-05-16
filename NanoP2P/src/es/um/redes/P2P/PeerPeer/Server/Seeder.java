@@ -28,7 +28,6 @@ public class Seeder implements Runnable {
 	protected PeerDatabase database;
 
 	public Seeder(short chunkSize, PeerDatabase database) {
-		// TODO
 		this.chunkSize = chunkSize;
 		this.database = database;
 		try {
@@ -38,14 +37,11 @@ public class Seeder implements Runnable {
 			System.exit(-1); // si falla paramos el programa
 		}
 
-		// FIXME ESTO LO HE PUESTO AQUI PARA PRUEBAS, NO SE SI ES CORRECTO
-		//currentDownloader = new Downloader(chunkSize, null, null);
 	}
 
 	// Pone al servidor a escuchar en un puerto libre del rango y devuelve cuál
 	// es dicho puerto
 	public int getAvailablePort() {
-		// TODO
 		int n = SEEDER_FIRST_PORT;
 		boolean estado = true;
 		while (estado) {
@@ -68,14 +64,12 @@ public class Seeder implements Runnable {
 	 * Función del hilo principal del servidor.
 	 */
 	public void run() {
-		// TODO
 		while (estado) {// hasta que pulsemos quit
 			// estamos todo el rato aceptando conexiones
 			Socket clientSocket = null;
 			try {
 				clientSocket = serverSocket.accept();
 				// En algún momento se llamará a
-				//System.out.println(clientSocket.getPort());
 				new SeederThread(clientSocket, database, currentDownloader, chunkSize).start();
 			} catch (SocketException e) {
 				// e.printStackTrace();
@@ -110,7 +104,7 @@ public class Seeder implements Runnable {
 	}
 
 	public int getSeederPort() {
-		// TODO
 		return serverSocket.getLocalPort();
 	}
+
 }

@@ -151,7 +151,7 @@ public abstract class Message {
 	 * @param buf
 	 *            The byte array of the received packet
 	 * @return A message of the appropriate format representing this request
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static Message parseRequest(DataInputStream dis) throws IOException {
 		byte reqOpcode;
@@ -176,13 +176,10 @@ public abstract class Message {
 	 *            The byte array of the packet received from the tracker
 	 * @return A message of the appropriate format representing this response
 	 */
-	public static Message parseResponse(DataInputStream dis) {
+	public static Message parseResponse(DataInputStream dis) throws IOException {
 		byte respOpcode;
-		try {
-			respOpcode = dis.readByte();
-		} catch (IOException e) {
-			throw new IllegalArgumentException("Failed to parse response: buffer has length " + dis);
-		}
+		respOpcode = dis.readByte();
+
 		switch (respOpcode) {
 			case OP_GET_CHUNK:
 			case OP_CHUNK:

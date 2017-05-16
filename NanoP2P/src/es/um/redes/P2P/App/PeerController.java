@@ -92,7 +92,6 @@ public class PeerController implements PeerControllerIface {
 
 	@Override
 	public void setCurrentCommandArguments(String[] args) {
-		// TODO Auto-generated method stub
 		// currentArguments = args;
 		for (int i = 0; i < args.length; i++) {
 			currentArguments[i] = args[i];
@@ -227,7 +226,7 @@ public class PeerController implements PeerControllerIface {
 						for (int i = 0; i < opcionesHash.length; i++)
 							if (opcionesHash[i] != null)
 								System.out.println(opcionesHash[i]);
-					} else if (opcionesHash[0] != null && contador == 1)
+					} else if (contador == 1 && opcionesHash[0] != null)
 						control = (MessageSeedInfo) Message.makeGetSeedsRequest(opcionesHash[0].fileHash);
 					else
 						System.out.println("El hash introducido no coincide con ningun fichero");
@@ -345,7 +344,7 @@ public class PeerController implements PeerControllerIface {
 		FileInfo[] listaFicherosValidos = new FileInfo[mapaFicheros.keySet().size()];
 		int contador = 0;
 		for (String hashes : mapaFicheros.keySet()) {
-			if (hashes.contains(hashSubstr)) {
+			if (hashes.contains(hashSubstr.toUpperCase())) {
 				listaFicherosValidos[contador] = mapaFicheros.get(hashes);
 				contador++;
 			}
@@ -368,7 +367,6 @@ public class PeerController implements PeerControllerIface {
 	@Override
 	public void downloadFileFromSeeds(InetSocketAddress[] seedList, String targetFileHash) {
 		Downloader descarga = new Downloader(chunkSize, mapaFicheros.get(targetFileHash), this);
-		// FIXME esto estara bien? setCurrentDownloader
 		seeder.setCurrentDownloader(descarga);
 		descarga.downloadFile(seedList);
 	}

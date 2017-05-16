@@ -1,6 +1,7 @@
 package es.um.redes.P2P.PeerPeer.Client;
 
 import java.net.InetSocketAddress;
+import java.util.HashSet;
 
 import es.um.redes.P2P.util.FileInfo;
 
@@ -23,7 +24,7 @@ public interface DownloaderIface {
 	boolean downloadFile(InetSocketAddress[] seedList);
 
 	//Devuelve el número de chunks que han sido descargados de cada uno de los Seeders
-	Long[] getChunksDownloadedFromSeeders();
+	HashSet<Long> getChunksDownloadedFromSeeders();
 
 	//Informa si la descarga del fichero ya se ha completado
 	boolean isDownloadComplete();

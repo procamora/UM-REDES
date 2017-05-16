@@ -2,12 +2,11 @@ package es.um.redes.P2P.PeerPeer.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.net.Socket;
+import java.util.HashSet;
 
 import es.um.redes.P2P.PeerPeer.Client.Downloader;
 import es.um.redes.P2P.PeerPeer.Message.*;
@@ -24,7 +23,6 @@ public class SeederThread extends Thread {
 	protected DataInputStream dis;
 	private PeerDatabase database;
 	private Short chunkSize;
-	private Long[] chunkDisponibles;
 	private boolean bucle;
 
 	public SeederThread(Socket socket, PeerDatabase database, Downloader downloader, Short chunkSize) {
@@ -42,13 +40,10 @@ public class SeederThread extends Thread {
 
 	// Devuelve la lista de trozos que tiene del fichero solicitado
 	public void sendChunkList(String fileHashStr) {
-		// FIXME obtener numero de chunks de forma dinamica
-		// FIXME Si tiene todos los ficheros poner todo a 1
-
 		Message respuesta = null;
 
 		if (downloader != null && downloader.getTargetFile().fileHash.equals(fileHashStr)) {
-			Long[] chunkDisponibles = downloader.getChunksDownloadedFromSeeders();
+			HashSet<Long> chunkDisponibles = downloader.getChunksDownloadedFromSeeders();
 			byte[] listaTrozos = MessageChunkQueryResponse.concatenateByteArrays(chunkDisponibles);
 			// el tamaño de listaTrozos.length es el doble de elementos que
 			// contiene
@@ -60,7 +55,7 @@ public class SeederThread extends Thread {
 				if (ficherosLocales[i].fileHash.equals(fileHashStr)) {
 					respuesta = Message.makeGetChunkResponseRequest(Long.MAX_VALUE, new byte[0]);
 					sendMessageToPeer(respuesta);
-					return; // terminaamos de buscar
+					return; // terminamos de buscar
 				}
 		}
 	}
@@ -127,10 +122,6 @@ public class SeederThread extends Thread {
 
 	// Método principal que coordina la recepción y envío de mensajes
 	public void run() {
-		// while true hasta que el cliente tenga todos los trozos del ficheros
-		// sabemos que se ha acabado de enviar el fichero cuando el otro cierra
-		// el socket y al hacer el read
-		// nos da una excepcion correcta que tenemos que capturar
 		while (bucle) {
 			Message msgRecibido = receiveMessageFromPeer();
 

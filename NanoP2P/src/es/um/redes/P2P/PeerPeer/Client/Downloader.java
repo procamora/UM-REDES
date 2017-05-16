@@ -1,18 +1,11 @@
 package es.um.redes.P2P.PeerPeer.Client;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
-
 import es.um.redes.P2P.App.PeerController;
 import es.um.redes.P2P.PeerTracker.Message.Message;
+import es.um.redes.P2P.PeerTracker.Message.MessageSeedInfo;
 import es.um.redes.P2P.util.FileInfo;
 
 enum Estado {
@@ -21,15 +14,18 @@ enum Estado {
 
 public class Downloader implements DownloaderIface {
 
+	public static final int CHUNKS_PROGRESSBAR = 100;
+	public static final int NUM_CHUNK_NO_DISPONIBLE = -1;
+
 	private FileInfo targetFile;
-	private InetSocketAddress[] seeds; // posiblemente no haga falta
+	private HashSet<InetSocketAddress> seeds;
 	private long totalChunks;
 	private short chunkSize;
 	private PeerController peer;
 	private long totalChunkDescargados;
 	private HashSet<Long> chunksDownloadedFromSeeders;
 
-	private HashMap<Long, HashSet<Socket>> mapaPeers;
+	// private HashMap<Long, HashSet<Socket>> mapaPeers;
 	private HashMap<Long, Estado> mapaEstados;
 	private ProgressBar progressBar;
 
@@ -41,25 +37,20 @@ public class Downloader implements DownloaderIface {
 		this.targetFile = targetFile;
 		this.peer = peer; // para hacer el addseed
 
-		mapaPeers = new HashMap<>();
 		mapaEstados = new HashMap<>();
+		// mapaPeers = new HashMap<>();
 
 		totalChunks = (long) targetFile.fileSize / chunkSize;
 		if ((long) targetFile.fileSize % chunkSize != 0)
 			totalChunks++;
-		progressBar = new ProgressBar(totalChunks / 5); // barra de progreso
+
+		progressBar = new ProgressBar(totalChunks / CHUNKS_PROGRESSBAR);
 		progressBar.start();
 		chunksDownloadedFromSeeders = new HashSet<>();
 
 		totalChunkDescargados = 0;
-	}
 
-	private TreeMap<Long, HashSet<Socket>> sortMapByValue(HashMap<Long, HashSet<Socket>> map) {
-		// TreeMap is a map sorted by its keys. The comparator is used to sort
-		// the TreeMap by keys.
-		TreeMap<Long, HashSet<Socket>> result = new TreeMap<>(new Comparador(map, mapaEstados));
-		result.putAll(map);
-		return result;
+		seeds = new HashSet<>();
 	}
 
 	// IMPORTANTE
@@ -68,96 +59,71 @@ public class Downloader implements DownloaderIface {
 	// que se están disponibles o que se están descargando. Deberán ser
 	// definidos en la clase que la instancia.
 
-	private void inicializaMapas(Long numChunk, Socket ip) {
-		// actualizo lista de estados
-		if (!mapaEstados.containsKey(numChunk))
-			mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
-
-		// actualizo lista de peers
-		if (mapaPeers.containsKey(numChunk)) {
-			HashSet<Socket> peerSet = mapaPeers.get(numChunk);
-			if (!peerSet.contains(ip)) {
-				HashSet<Socket> copia = new HashSet<>(peerSet);
-				copia.add(ip);
-				mapaPeers.remove(numChunk);
-				mapaPeers.put(numChunk, copia);
-			}
-		} else {
-			HashSet<Socket> peerSet = new HashSet<>();
-			peerSet.add(ip);
-			mapaPeers.put(numChunk, peerSet);
-		}
-
-	}
-
-	public synchronized long bookNextChunkNumber(long[] listaNumChunk, Socket ip) {
-
+	public synchronized long bookNextChunkNumber(long[] listaNumChunk) {
+		long chunkSeleccionado = NUM_CHUNK_NO_DISPONIBLE;
+		boolean getChunk = true;
 		// Si es un fichero local del peer añado a mano a cada chunk el peer
-		if (listaNumChunk.length == 0)
-			for (long numChunk = 0; numChunk < totalChunks; numChunk++)
-				inicializaMapas(numChunk, ip);
-
-		// comprobar listaNumChunk al inicio, si el chunk ya esta descargado, si
-		// lo esta pasar al siguiete chunk
-		for (long numChunk : listaNumChunk)
-			inicializaMapas(numChunk, ip);
-
-		// retorna el primer nunChunk que contentga la ip del peer
-		TreeMap<Long, HashSet<Socket>> sortedMap;
-		if (totalChunks < 10000000) {
-			sortedMap = sortMapByValue(mapaPeers);
-			for (Long entry : sortedMap.keySet()) {
-				if ((mapaEstados.get(entry) == Estado.NO_DESCARGADO) && (mapaPeers.get(entry).contains(ip))) {
-					mapaEstados.replace(entry, Estado.EN_DESCARGA);
-					return entry;
+		if (listaNumChunk.length == 0) {
+			for (long numChunk = 0; numChunk < totalChunks; numChunk++) {
+				if (!mapaEstados.containsKey(numChunk))
+					mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
+				// retorna el primer nunChunk que contentga la ip del peer
+				if (mapaEstados.get(numChunk) == Estado.NO_DESCARGADO && getChunk) {
+					mapaEstados.replace(numChunk, Estado.EN_DESCARGA);
+					chunkSeleccionado = numChunk;
+					getChunk = false;
 				}
 			}
-		} else { // para ficheros grandes es muy ineficiente
-			for (Long entry : mapaPeers.keySet()) {
-				if ((mapaEstados.get(entry) == Estado.NO_DESCARGADO) && (mapaPeers.get(entry).contains(ip))) {
-					mapaEstados.replace(entry, Estado.EN_DESCARGA);
-					return entry;
+
+		} else {
+			System.err.println("RECIBO CHUNKS SUELTOS, BIEN!!!!");
+			// comprobar listaNumChunk al inicio, si el chunk ya esta
+			// descargado, si lo esta pasar al siguiete chunk
+			for (long numChunk : listaNumChunk) {
+				if (!mapaEstados.containsKey(numChunk))
+					mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
+
+				// retorna el primer nunChunk que contentga la ip del peer
+				if (mapaEstados.get(numChunk) == Estado.NO_DESCARGADO && getChunk) {
+					mapaEstados.replace(numChunk, Estado.EN_DESCARGA);
+					chunkSeleccionado = numChunk;
+					getChunk = false;
 				}
 			}
 		}
-
 		// en caso de que no haya ningun chunk disponible para ese peer
-		return -1;
+		return chunkSeleccionado;
 	}
 
-	public Map<Long, HashSet<Socket>> getMapaPeers() {
-		return sortMapByValue(mapaPeers);
-	}
-
-	public Map<Long, Estado> getMapaEstados() {
-		return Collections.unmodifiableMap(mapaEstados);
-	}
-
-	public synchronized boolean setChunkDownloaded(long numChunk) {
+	public synchronized boolean setChunkDownloaded(long numChunk, boolean descargado) {
 		/*
 		 * Si el numero de trozo se ha descargado, se notifica al traker que ya
 		 * puede servir ese trozo de fichero
 		 */
-		totalChunkDescargados++;
+		if (descargado) {
+			totalChunkDescargados++;
 
-		// cada 5 chunks imprimo
-		if (totalChunkDescargados % 5 == 0)
-			progressBar.next();
+			// cada 5 chunks imprimo
+			if (totalChunkDescargados % CHUNKS_PROGRESSBAR == 0)
+				progressBar.next();
 
-		chunksDownloadedFromSeeders.add(numChunk);
+			chunksDownloadedFromSeeders.add(numChunk);
 
-		// al descargar el primer chunk
-		if (totalChunkDescargados == 1) {
-			mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
-			// mandamos aadseed
-			FileInfo[] lista = { targetFile };
-			Message request = Message.makeAddSeedRequest(peer.getSeeder().getSeederPort(), lista);
-			peer.getReporter().conversationWithTracker(request);
-			// eliminamos fichero de lista de descarga
-			peer.getMapaFicheros().remove(targetFile.fileHash);
-		} else
-			mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
-
+			// al descargar el primer chunk
+			if (totalChunkDescargados == 1) {
+				mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
+				// mandamos aadseed
+				FileInfo[] lista = { targetFile };
+				Message request = Message.makeAddSeedRequest(peer.getSeeder().getSeederPort(), lista);
+				peer.getReporter().conversationWithTracker(request);
+				// eliminamos fichero de lista de descarga
+				peer.getMapaFicheros().remove(targetFile.fileHash);
+			} else
+				mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
+			return true;
+		}
+		// Si no lo hemos podido descargar
+		mapaEstados.replace(numChunk, Estado.NO_DESCARGADO);
 		return false;
 	}
 
@@ -170,8 +136,7 @@ public class Downloader implements DownloaderIface {
 	// Obtiene la lista de Seeds desde los cuales se está descargando el archivo
 	@Override
 	public InetSocketAddress[] getSeeds() {
-		// TODO Auto-generated method stub
-		return seeds;
+		return (InetSocketAddress[]) seeds.toArray();
 	}
 
 	// Devuelve el número total de Chunks en los que está compuesto el archivo
@@ -180,13 +145,25 @@ public class Downloader implements DownloaderIface {
 		return totalChunks;
 	}
 
+	/**
+	 * Compruebo que el seeder del que quiero descargarme archivos no soy yo
+	 * mismo
+	 */
+	private boolean isLocalSeeder(InetSocketAddress seedList) {
+		if (peer.getSeeder().getSeederPort() == seedList.getPort())
+			return true;
+		return false;
+	}
+
 	// Inicia el proceso de descarga del archivo a partir de la lista de Seeds
 	@Override
-	public boolean downloadFile(InetSocketAddress[] seedList) {
-		// TODO Auto-generated method stub
+	public synchronized boolean downloadFile(InetSocketAddress[] seedList) {
 		for (int i = 0; i < seedList.length; i++) {
-			if (seedList[i] != null)
+			if (seedList[i] != null && !seeds.contains(seedList[i]) && !isLocalSeeder(seedList[i])) {
+				seeds.add(seedList[i]);
+				System.out.println(seedList[i]);
 				new DownloaderThread(this, seedList[i]).start();
+			}
 		}
 		return isDownloadComplete();
 	}
@@ -194,24 +171,28 @@ public class Downloader implements DownloaderIface {
 	// Devuelve el número de chunks que han sido descargados de cada uno de los
 	// Seeders
 	@Override
-	public Long[] getChunksDownloadedFromSeeders() {
-		Long[] array = chunksDownloadedFromSeeders.toArray(new Long[chunksDownloadedFromSeeders.size()]);
-		return array;
+	public synchronized HashSet<Long> getChunksDownloadedFromSeeders() {
+		return new HashSet<>(chunksDownloadedFromSeeders);
 	}
 
 	// Informa si la descarga del fichero ya se ha completado
 	@Override
 	public boolean isDownloadComplete() {
-		// TODO Auto-generated method stub
 		return totalChunkDescargados == totalChunks;
 	}
 
 	// Método para recoger todos los threads de descarga (DownloaderThread) que
 	// estaban activos
 	@Override
-	public void joinDownloaderThreads() {
-		// TODO Auto-generated method stub
+	public synchronized void joinDownloaderThreads() {
+		// FIXME no se si este metodo es el correcto
 
+		Message request = Message.makeGetSeedsRequest(targetFile.fileHash);
+		Message response = peer.getReporter().conversationWithTracker(request);
+		if (response.getOpCode() == Message.OP_SEED_LIST) {
+			InetSocketAddress[] seedList = ((MessageSeedInfo) response).getSeedList();
+			downloadFile(seedList);
+		}
 	}
 
 	// Devuelve el tamaño de trozo que se está utilizando
