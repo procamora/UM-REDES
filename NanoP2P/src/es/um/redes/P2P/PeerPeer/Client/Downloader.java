@@ -3,6 +3,9 @@ package es.um.redes.P2P.PeerPeer.Client;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+
+import es.um.redes.P2P.App.Peer;
 import es.um.redes.P2P.App.PeerController;
 import es.um.redes.P2P.PeerTracker.Message.Message;
 import es.um.redes.P2P.PeerTracker.Message.MessageSeedInfo;
@@ -29,6 +32,10 @@ public class Downloader implements DownloaderIface {
 	private HashMap<Long, Estado> mapaEstados;
 	private ProgressBar progressBar;
 
+	private long tiempoInicio;
+	private long tiempoFin;
+
+
 	public Downloader(short chunkSize, FileInfo targetFile, PeerController peer) {
 		if (targetFile == null)
 			throw new IllegalArgumentException("tarjetfile no puede ser null");
@@ -51,6 +58,9 @@ public class Downloader implements DownloaderIface {
 		totalChunkDescargados = 0;
 
 		seeds = new HashSet<>();
+
+		this.tiempoInicio = System.currentTimeMillis();
+		this.tiempoFin = 0;
 	}
 
 	// IMPORTANTE
@@ -163,8 +173,11 @@ public class Downloader implements DownloaderIface {
 				seeds.add(seedList[i]);
 				System.out.println(seedList[i]);
 				new DownloaderThread(this, seedList[i]).start();
+
 			}
+
 		}
+		tiempoFin = System.currentTimeMillis();
 		return isDownloadComplete();
 	}
 
@@ -178,7 +191,11 @@ public class Downloader implements DownloaderIface {
 	// Informa si la descarga del fichero ya se ha completado
 	@Override
 	public boolean isDownloadComplete() {
-		return totalChunkDescargados == totalChunks;
+		boolean completado = totalChunkDescargados == totalChunks;
+		if (completado) {
+			resumenDescarga();
+		}
+		return completado;
 	}
 
 	// Método para recoger todos los threads de descarga (DownloaderThread) que
@@ -199,6 +216,34 @@ public class Downloader implements DownloaderIface {
 	@Override
 	public short getChunkSize() {
 		return chunkSize;
+	}
+
+
+	public void velocidadDescarga(Double bytes) {
+		double seconds = (tiempoFin - tiempoInicio) / 1000;
+		double megabytes = (bytes / 1024) / 1024;
+		double bytesSeconds = (megabytes / seconds);
+		System.out.print("Velocidad de descarga: ");
+		System.out.printf("%.3f", bytesSeconds);
+		System.out.println(" MB/seg");
+	}
+
+	public void resumenDescarga() {
+
+		System.out.println();
+		System.out.println("Fichero: " + targetFile.fileName + " anadido al repositorio: " + Peer.db.getSharedFolderPath());
+		System.out.println("Resumen de Descarga:");
+		System.out.println("Numbers of chunks: " + totalChunks);
+		System.out.println();
+		double totalBytes = 0;
+		for (InetSocketAddress inet : seeds){
+			System.out.println("Seed IP:" + inet.getAddress() + " puerto: " + inet.getPort());
+		}
+		for (Long numchunk: chunksDownloadedFromSeeders) {
+			totalBytes += numchunk;
+		}
+		velocidadDescarga(totalBytes);
+		System.out.println();
 	}
 
 }
