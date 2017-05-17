@@ -20,12 +20,15 @@ import es.um.redes.P2P.util.Ficheros;
  *         provided to the constructor.
  */
 public class DownloaderThread extends Thread {
-	private final static int FRECUENCIA_UPDATE_SEEDLIST = 150;
+	private final static int FRECUENCIA_UPDATE_SEEDLIST = 500;
 	private Downloader downloader;
 	private Socket downloadSocket;
 	protected DataOutputStream dos;
 	protected DataInputStream dis;
 	private long numChunksDownloaded;
+	private long tiempoInicio;
+	private long tiempoFin;
+	private InetSocketAddress seed;
 
 	public DownloaderThread(Downloader dl, InetSocketAddress seed) {
 		if (dl == null)
@@ -35,8 +38,11 @@ public class DownloaderThread extends Thread {
 
 		downloader = dl;
 		numChunksDownloaded = 0;
+		tiempoInicio = System.currentTimeMillis();
+
 		try {
 			downloadSocket = new Socket(seed.getAddress(), seed.getPort());
+			this.seed = seed;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -44,10 +50,9 @@ public class DownloaderThread extends Thread {
 
 	// Recibe un mensaje que contiene un fragmento y se almacena en el archivo
 	private boolean receiveAndWriteChunk(long chunkActual) {
-		// pido los datos del fichero correspondientes al num chunk 40
-		sendMessageToPeer(Message.makeChunkRequest(downloader.getTargetFile().fileHash, chunkActual));
+		Message requests = Message.makeChunkRequest(downloader.getTargetFile().fileHash, chunkActual);
+		sendMessageToPeer(requests);
 		Message msgRecibido = receiveMessageFromPeer();
-
 		if (msgRecibido != null) {
 			// if (msgRecibido1.getOpCode() == Message.OP_CHUNK_ACK)
 			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
@@ -62,7 +67,8 @@ public class DownloaderThread extends Thread {
 	// Recibe un mensaje que contiene un fragmento y se almacena en el archivo
 	private long receiveAndProcessChunkList() {
 		// pido la lista de trozos del fichero
-		sendMessageToPeer(Message.makeGetChunkRequest(downloader.getTargetFile().fileHash, (long) 0));
+		Message requests = Message.makeGetChunkRequest(downloader.getTargetFile().fileHash, (long) 0);
+		sendMessageToPeer(requests);
 		Message msgRecibido = receiveMessageFromPeer();
 
 		// creo que no hace falta comprobar que es el mensaje correcto
@@ -87,7 +93,6 @@ public class DownloaderThread extends Thread {
 		} catch (IOException e) {
 			// si hay un problema no retorno null, y se informara que el chunk
 			// no se ha podido sdescargar
-			// e.printStackTrace();
 		}
 		return msg;
 	}
@@ -102,42 +107,46 @@ public class DownloaderThread extends Thread {
 		}
 	}
 
+	private void calculaEstadisticas() {
+		String info;
+		try {
+			double byteDescargados = (numChunksDownloaded * downloader.getChunkSize());
+			String MbDescargados = String.format("%,.2f", byteDescargados / 1024 / 1024);
+			String speedMb = null;
+			double seconds = (tiempoFin - tiempoInicio) / 1000;
+			double megabytes = ((byteDescargados / seconds) / 1024) / 1024;
+			speedMb = String.format("%,.2f", megabytes);
+			info = "\nHilo " + getName() + "\tSeeder: " + downloadSocket + "\tMegaBytes descargados: " + MbDescargados
+					+ "Mb\tVelocidad: " + speedMb + "Mb/s";
+		} catch (ArithmeticException ae) {
+			info = "\nHilo " + getName() + " no se puieron obtener estadisticas";
+		}
+		Downloader.addResumenThread(info);
+	}
+
 	// Main code to request chunk lists and chunks
 	public void run() {
 		long chunkActual = 0;
+		System.out.println("Inicia hilo " + getName());
 
 		do {
-			if (numChunksDownloaded % FRECUENCIA_UPDATE_SEEDLIST == 0)
-				// preguntamos por nuevos seeders
-				downloader.joinDownloaderThreads();
+			// if (numChunksDownloaded % FRECUENCIA_UPDATE_SEEDLIST == 0)
+			// FIXME preguntamos por nuevos seeders
+			// downloader.addThreads();
 
-			if (!downloadSocket.isClosed()) {
-				chunkActual = receiveAndProcessChunkList();
-				// System.out.println(getName() + " chunk " + chunkActual);
-				// si hay un chunk valido lo proceso
-				if (chunkActual >= 0) {
-					if (receiveAndWriteChunk(chunkActual)) {
-						numChunksDownloaded++;
-						downloader.setChunkDownloaded(chunkActual, true);
-					} else
-						downloader.setChunkDownloaded(chunkActual, false);
-				} else { // sino hay chunk valido espero 1s y volvere a probar
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+			chunkActual = receiveAndProcessChunkList();
+			// si hay un chunk valido lo proceso
+			if (chunkActual >= 0) {
+				if (receiveAndWriteChunk(chunkActual)) {
+					numChunksDownloaded++;
+					downloader.setChunkDownloaded(chunkActual, true);
+				} else
+					downloader.setChunkDownloaded(chunkActual, false);
 			} else { // sino hay chunk valido espero 1s y volvere a probar
 				try {
 					Thread.sleep(1000);
-					// preguntamos por nuevos seeders
-					downloader.joinDownloaderThreads();
-					// indicamos que no hemos podido descargarnos el fichero
-					downloader.setChunkDownloaded(chunkActual, false);
-					break;
+					// downloader.addThreads(); FIXME
 				} catch (InterruptedException e) {
-					e.printStackTrace();
 				}
 			}
 
@@ -149,7 +158,9 @@ public class DownloaderThread extends Thread {
 			e.printStackTrace();
 		}
 
-		System.out.println("final correcto");
+		tiempoFin = System.currentTimeMillis();
+		calculaEstadisticas();
+		downloader.joinDownloaderThreads(seed);
 	}
 
 }

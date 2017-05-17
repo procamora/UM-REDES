@@ -30,7 +30,7 @@ public interface DownloaderIface {
 	boolean isDownloadComplete();
 
 	//Método para recoger todos los threads de descarga (DownloaderThread) que estaban activos
-	void joinDownloaderThreads();
+	void joinDownloaderThreads(InetSocketAddress seed);
 	
 	//Devuelve el tamaño de trozo que se está utilizando
 	short getChunkSize();

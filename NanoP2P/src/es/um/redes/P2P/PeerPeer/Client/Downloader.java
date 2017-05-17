@@ -3,7 +3,6 @@ package es.um.redes.P2P.PeerPeer.Client;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import es.um.redes.P2P.App.Peer;
 import es.um.redes.P2P.App.PeerController;
@@ -19,6 +18,7 @@ public class Downloader implements DownloaderIface {
 
 	public static final int CHUNKS_PROGRESSBAR = 100;
 	public static final int NUM_CHUNK_NO_DISPONIBLE = -1;
+	private static StringBuffer buffer = new StringBuffer();
 
 	private FileInfo targetFile;
 	private HashSet<InetSocketAddress> seeds;
@@ -34,7 +34,6 @@ public class Downloader implements DownloaderIface {
 
 	private long tiempoInicio;
 	private long tiempoFin;
-
 
 	public Downloader(short chunkSize, FileInfo targetFile, PeerController peer) {
 		if (targetFile == null)
@@ -113,7 +112,7 @@ public class Downloader implements DownloaderIface {
 		if (descargado) {
 			totalChunkDescargados++;
 
-			// cada 5 chunks imprimo
+			// cada X chunks imprimo
 			if (totalChunkDescargados % CHUNKS_PROGRESSBAR == 0)
 				progressBar.next();
 
@@ -126,8 +125,7 @@ public class Downloader implements DownloaderIface {
 				FileInfo[] lista = { targetFile };
 				Message request = Message.makeAddSeedRequest(peer.getSeeder().getSeederPort(), lista);
 				peer.getReporter().conversationWithTracker(request);
-				// eliminamos fichero de lista de descarga
-				peer.getMapaFicheros().remove(targetFile.fileHash);
+
 			} else
 				mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
 			return true;
@@ -160,6 +158,17 @@ public class Downloader implements DownloaderIface {
 	 * mismo
 	 */
 	private boolean isLocalSeeder(InetSocketAddress seedList) {
+		System.out.println("seed " + seedList);
+		System.out.println(seedList.getAddress().getHostAddress());
+		System.out.println(seedList.getAddress());
+
+		System.out.println("peer");
+		System.out.println(peer.getSeeder().getSeederAddress());
+		System.out.println(peer.getSeeder().getSeederPort());
+
+		System.out.println();
+		System.out.println();
+		System.out.println();
 		if (peer.getSeeder().getSeederPort() == seedList.getPort())
 			return true;
 		return false;
@@ -169,13 +178,12 @@ public class Downloader implements DownloaderIface {
 	@Override
 	public synchronized boolean downloadFile(InetSocketAddress[] seedList) {
 		for (int i = 0; i < seedList.length; i++) {
-			if (seedList[i] != null && !seeds.contains(seedList[i]) && !isLocalSeeder(seedList[i])) {
+			if (seedList[i] != null && !seeds
+					.contains(seedList[i]) /* && !isLocalSeeder(seedList[i]) */) {
 				seeds.add(seedList[i]);
-				System.out.println(seedList[i]);
+				System.out.println("Thread " + seedList[i]);
 				new DownloaderThread(this, seedList[i]).start();
-
 			}
-
 		}
 		tiempoFin = System.currentTimeMillis();
 		return isDownloadComplete();
@@ -191,17 +199,24 @@ public class Downloader implements DownloaderIface {
 	// Informa si la descarga del fichero ya se ha completado
 	@Override
 	public boolean isDownloadComplete() {
-		boolean completado = totalChunkDescargados == totalChunks;
-		if (completado) {
-			resumenDescarga();
-		}
-		return completado;
+		return totalChunkDescargados == totalChunks;
 	}
 
 	// Método para recoger todos los threads de descarga (DownloaderThread) que
 	// estaban activos
 	@Override
-	public synchronized void joinDownloaderThreads() {
+	public synchronized void joinDownloaderThreads(InetSocketAddress seed) {
+		seeds.remove(seed);
+
+		if (seeds.isEmpty()) {
+			// FIXME aqui hacer la comprobacion del hash del fichero
+			peer.getMapaFicheros().remove(targetFile.fileHash);
+			System.out.println(buffer);
+		}
+
+	}
+
+	public synchronized void addThreads() {
 		// FIXME no se si este metodo es el correcto
 
 		Message request = Message.makeGetSeedsRequest(targetFile.fileHash);
@@ -218,6 +233,9 @@ public class Downloader implements DownloaderIface {
 		return chunkSize;
 	}
 
+	public static synchronized void addResumenThread(String texto) {
+		buffer.append(texto);
+	}
 
 	public void velocidadDescarga(Double bytes) {
 		double seconds = (tiempoFin - tiempoInicio) / 1000;
@@ -231,15 +249,16 @@ public class Downloader implements DownloaderIface {
 	public void resumenDescarga() {
 
 		System.out.println();
-		System.out.println("Fichero: " + targetFile.fileName + " anadido al repositorio: " + Peer.db.getSharedFolderPath());
+		System.out.println(
+				"Fichero: " + targetFile.fileName + " anadido al repositorio: " + Peer.db.getSharedFolderPath());
 		System.out.println("Resumen de Descarga:");
 		System.out.println("Numbers of chunks: " + totalChunks);
 		System.out.println();
 		double totalBytes = 0;
-		for (InetSocketAddress inet : seeds){
+		for (InetSocketAddress inet : seeds) {
 			System.out.println("Seed IP:" + inet.getAddress() + " puerto: " + inet.getPort());
 		}
-		for (Long numchunk: chunksDownloadedFromSeeders) {
+		for (Long numchunk : chunksDownloadedFromSeeders) {
 			totalBytes += numchunk;
 		}
 		velocidadDescarga(totalBytes);

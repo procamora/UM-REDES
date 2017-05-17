@@ -48,6 +48,14 @@ public class ProgressBar extends Thread {
 	@Override
 	public void run() {
 		long startTime = System.currentTimeMillis();
+
+		try {
+			continua.acquire();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			// e1.printStackTrace();
+		}
+
 		while (contador != total) {
 			// for (int i = 1; i <= total; i++) {
 			try {
