@@ -7,20 +7,17 @@ import java.util.concurrent.TimeUnit;
 // https://stackoverflow.com/questions/1001290/console-based-progress-in-java
 
 public class ProgressBar extends Thread {
-	private long contador;
-	private Semaphore continua = new Semaphore(1);
+	private double contador;
+	private Semaphore continua = new Semaphore(0);
 	private long total;
 
 	public ProgressBar(long total) {
-		if (total < Downloader.CHUNKS_PROGRESSBAR)
-			this.total = 1;
-		else
-			this.total = total;
-		contador = 1;
+		this.total = total;
+		contador = 0;
 	}
 
-	public void printProgress(long startTime, long total, long current) {
-		long eta = current == 0 ? 0 : (total - current) * (System.currentTimeMillis() - startTime) / current;
+	public void printProgress(long startTime, long total, double current) {
+		long eta = (long) (current == 0 ? 0 : (total - current) * (System.currentTimeMillis() - startTime) / current);
 
 		String etaHms = current == 0 ? "N/A"
 				: String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(eta),
@@ -35,13 +32,13 @@ public class ProgressBar extends Thread {
 				.append('>').append(String.join("", Collections.nCopies(100 - percent, " "))).append(']')
 				.append(String.join("",
 						Collections.nCopies((int) (Math.log10(total)) - (int) (Math.log10(current)), " ")))
-				.append(String.format(" %d/%d, ETA: %s", current, total, etaHms));
+				.append(String.format(" %.0f/%d, ETA: %s", current, total, etaHms));
 
 		System.out.print(string);
 	}
 
-	public void next() {
-		contador++;
+	public void next(double aumento) {
+		contador += aumento;
 		continua.release();
 	}
 
@@ -49,18 +46,10 @@ public class ProgressBar extends Thread {
 	public void run() {
 		long startTime = System.currentTimeMillis();
 
-		try {
-			continua.acquire();
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			// e1.printStackTrace();
-		}
-
-		while (contador != total) {
-			// for (int i = 1; i <= total; i++) {
+		while (total >= contador) {
 			try {
-				printProgress(startTime, total, contador + 1);
 				continua.acquire();
+				printProgress(startTime, total, contador);
 			} catch (InterruptedException e) {
 			}
 		}
