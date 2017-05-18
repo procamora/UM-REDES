@@ -4,9 +4,11 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import es.um.redes.P2P.App.Peer;
 import es.um.redes.P2P.App.PeerController;
 import es.um.redes.P2P.PeerTracker.Message.Message;
 import es.um.redes.P2P.PeerTracker.Message.MessageSeedInfo;
+import es.um.redes.P2P.util.FileDigest;
 import es.um.redes.P2P.util.FileInfo;
 
 enum Estado {
@@ -186,6 +188,16 @@ public class Downloader implements DownloaderIface {
 		return totalChunkDescargados == totalChunks;
 	}
 
+	private boolean isFileCorrecto() {
+		String fileRuta = Peer.db.getSharedFolderPath() + targetFile.fileName;
+		byte[] byteHash = FileDigest.computeFileChecksum(fileRuta);
+
+		if (FileDigest.getChecksumHexString(byteHash).equals(targetFile.fileHash))
+			return true;
+		
+		return false;
+	}
+
 	// Método para recoger todos los threads de descarga (DownloaderThread) que
 	// estaban activos
 	@Override
@@ -193,8 +205,15 @@ public class Downloader implements DownloaderIface {
 		seeds.remove(seed);
 
 		if (seeds.isEmpty()) {
-			// FIXME aqui hacer la comprobacion del hash del fichero
-			peer.getMapaFicheros().remove(targetFile.fileHash);
+
+			if (isFileCorrecto()) {
+				System.out.println("\nFICHERO DESCARGADO CON EXITO!! HASH COMPROBADO");
+				peer.getMapaFicheros().remove(targetFile.fileHash);
+				peer.getPeerDatabase().addDownloadedFile(targetFile);
+			} else
+				System.err.println("\nFichero descargado con errores, vuelva a descargarlo");
+
+			System.out.println("\nEstadisticas:");
 			System.out.println(buffer);
 			buffer = new StringBuffer(); // vacio para siguientes descargas
 		}

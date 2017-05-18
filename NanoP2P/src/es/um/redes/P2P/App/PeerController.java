@@ -42,6 +42,10 @@ public class PeerController implements PeerControllerIface {
 		return reporter;
 	}
 
+	public PeerDatabase getPeerDatabase() {
+		return peerDatabase;
+	}
+
 	public byte getCurrentCommand() {
 		return currentCommand;
 	}
@@ -290,11 +294,9 @@ public class PeerController implements PeerControllerIface {
 	}
 
 	private boolean isLocal(String hash) {
-		FileInfo[] locales = peerDatabase.getLocalSharedFiles();
-		for (int i = 0; i < locales.length; i++) {
-			if (locales[i].fileHash.equals(hash))
+		for (FileInfo file : peerDatabase.getLocalSharedFiles())
+			if (file.fileHash.equals(hash))
 				return true;
-		}
 		return false;
 	}
 
