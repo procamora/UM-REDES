@@ -16,10 +16,8 @@ public class MessageChunkQueryResponse extends Message {
 	 * 
 	 *         Peer-tracker protocol data message, format "ChunkACK"
 	 * 
-	 *              1b   20 B       5B 
-	 *         +--------------+------------+ 
-	 *         |Type   | Hash |  Num_Chunk | 
-	 *         +------+-------+------------+
+	 *         1b 20 B 5B +--------------+------------+ |Type | Hash | Num_Chunk
+	 *         | +------+-------+------------+
 	 */
 
 	/**
@@ -52,8 +50,8 @@ public class MessageChunkQueryResponse extends Message {
 	 * 
 	 * @param buf
 	 */
-	public MessageChunkQueryResponse(DataInputStream dis, byte respOpcode) {
-		if (fromDataInputStream(dis, respOpcode) == false)
+	public MessageChunkQueryResponse(DataInputStream dis, byte respOpcode, short chunkSize) {
+		if (fromDataInputStream(dis, respOpcode, chunkSize) == false)
 			throw new RuntimeException("Failed to parse message: format is not ChunkACK.");
 		else
 			valid = true;
@@ -86,7 +84,7 @@ public class MessageChunkQueryResponse extends Message {
 	 * received packet
 	 */
 	@Override
-	protected boolean fromDataInputStream(DataInputStream dis, byte respOpcode) {
+	protected boolean fromDataInputStream(DataInputStream dis, byte respOpcode, short chunkSize) {
 
 		try {
 			// Opcode
@@ -96,9 +94,8 @@ public class MessageChunkQueryResponse extends Message {
 			this.numChunk = dis.readLong();
 
 			// File Datos
-			datos = new byte[dis.available()];
-			dis.read(datos);
-
+			datos = new byte[chunkSize];
+			dis.readFully(datos);
 			valid = true;
 
 		} catch (IOException e) {

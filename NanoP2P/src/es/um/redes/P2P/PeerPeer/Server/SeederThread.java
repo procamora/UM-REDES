@@ -77,7 +77,7 @@ public class SeederThread extends Thread {
 		try {
 			InputStream is = socket.getInputStream();
 			dis = new DataInputStream(is);
-			msg = Message.parseRequest(dis);
+			msg = Message.parseRequest(dis, (short) 0);
 
 			// capturamos la excepcion cuando cierran los downloaderthread y
 			// cerramos tambien el socket

@@ -52,7 +52,8 @@ public class DownloaderThread extends Thread {
 	private boolean receiveAndWriteChunk(long chunkActual) {
 		Message requests = Message.makeChunkRequest(downloader.getTargetFile().fileHash, chunkActual);
 		sendMessageToPeer(requests);
-		Message msgRecibido = receiveMessageFromPeer();
+
+		Message msgRecibido = receiveMessageFromPeer(getSizeChunkRead(chunkActual));
 		if (msgRecibido != null) {
 			// if (msgRecibido1.getOpCode() == Message.OP_CHUNK_ACK)
 			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
@@ -64,12 +65,28 @@ public class DownloaderThread extends Thread {
 		return false;
 	}
 
+	/**
+	 * Metodo que retorna el tamaño del array que esperamos recibir
+	 * 
+	 * @param numChunk
+	 * @return
+	 */
+	private short getSizeChunkRead(long numChunk) {
+		long posicion = numChunk * downloader.getChunkSize();
+		long bytesRestantes = downloader.getTargetFile().fileSize - posicion;
+		if (bytesRestantes < 4096)
+			return (short) bytesRestantes;
+		else
+			return downloader.getChunkSize();
+
+	}
+
 	// Recibe un mensaje que contiene un fragmento y se almacena en el archivo
 	private long receiveAndProcessChunkList() {
 		// pido la lista de trozos del fichero
 		Message requests = Message.makeGetChunkRequest(downloader.getTargetFile().fileHash, (long) 0);
 		sendMessageToPeer(requests);
-		Message msgRecibido = receiveMessageFromPeer();
+		Message msgRecibido = receiveMessageFromPeer((short) 0);
 
 		// creo que no hace falta comprobar que es el mensaje correcto
 		if (msgRecibido != null) {
@@ -84,12 +101,12 @@ public class DownloaderThread extends Thread {
 		return numChunksDownloaded;
 	}
 
-	private Message receiveMessageFromPeer() {
+	private Message receiveMessageFromPeer(short chunkSize) {
 		Message msg = null;
 		try {
 			InputStream is = downloadSocket.getInputStream();
 			dis = new DataInputStream(is);
-			msg = Message.parseResponse(dis);
+			msg = Message.parseResponse(dis, chunkSize);
 		} catch (IOException e) {
 			// si hay un problema no retorno null, y se informara que el chunk
 			// no se ha podido sdescargar
@@ -116,8 +133,8 @@ public class DownloaderThread extends Thread {
 			double seconds = (tiempoFin - tiempoInicio) / 1000;
 			double megabytes = ((byteDescargados / seconds) / 1024) / 1024;
 			speedMb = String.format("%,.2f", megabytes);
-			info = "\nHilo " + getName() + "\tSeeder: " + downloadSocket + "\tMegaBytes descargados: " + MbDescargados
-					+ "Mb\tVelocidad: " + speedMb + "Mb/s";
+			info = "\n" + downloader.getTargetFile().fileName + "\tHilo " + getName() + "\tSeeder: " + downloadSocket
+					+ "\tMegaBytes descargados: " + MbDescargados + "Mb\tVelocidad: " + speedMb + "Mb/s";
 		} catch (ArithmeticException ae) {
 			info = "\nHilo " + getName() + " no se puieron obtener estadisticas";
 		}

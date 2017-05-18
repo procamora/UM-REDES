@@ -56,7 +56,7 @@ public abstract class Message {
 	/*
 	 * Abstract methods whose implementation depends on the message format.
 	 */
-	protected abstract boolean fromDataInputStream(DataInputStream dis, byte respOpcode);
+	protected abstract boolean fromDataInputStream(DataInputStream dis, byte respOpcode, short chunkSize);
 
 	public abstract byte[] toByteArray();
 
@@ -153,7 +153,7 @@ public abstract class Message {
 	 * @return A message of the appropriate format representing this request
 	 * @throws IOException
 	 */
-	public static Message parseRequest(DataInputStream dis) throws IOException {
+	public static Message parseRequest(DataInputStream dis, short chunkSize) throws IOException {
 		byte reqOpcode;
 		reqOpcode = dis.readByte();
 
@@ -163,7 +163,7 @@ public abstract class Message {
 				return new MessageChunkQuery(dis, reqOpcode);
 			case OP_GET_CHUNK_ACK:
 			case OP_CHUNK_ACK:
-				return new MessageChunkQueryResponse(dis, reqOpcode);
+				return new MessageChunkQueryResponse(dis, reqOpcode, chunkSize);
 			default:
 				throw new IllegalArgumentException("Invalid request opcode: " + reqOpcode);
 		}
@@ -176,7 +176,7 @@ public abstract class Message {
 	 *            The byte array of the packet received from the tracker
 	 * @return A message of the appropriate format representing this response
 	 */
-	public static Message parseResponse(DataInputStream dis) throws IOException {
+	public static Message parseResponse(DataInputStream dis, short chunkSize) throws IOException {
 		byte respOpcode;
 		respOpcode = dis.readByte();
 
@@ -186,7 +186,7 @@ public abstract class Message {
 				return new MessageChunkQuery(dis, respOpcode);
 			case OP_GET_CHUNK_ACK:
 			case OP_CHUNK_ACK:
-				return new MessageChunkQueryResponse(dis, respOpcode);
+				return new MessageChunkQueryResponse(dis, respOpcode, chunkSize);
 			default:
 				throw new IllegalArgumentException("Failed to parse message: Invalid response opcode " + respOpcode);
 		}

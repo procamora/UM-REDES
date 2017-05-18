@@ -57,7 +57,7 @@ public class MessageChunkQuery extends Message {
 	 * @param buf
 	 */
 	public MessageChunkQuery(DataInputStream dis, byte respOpcode) {
-		if (fromDataInputStream(dis, respOpcode) == false)
+		if (fromDataInputStream(dis, respOpcode, (short) 0) == false)
 			throw new RuntimeException("Failed to parse message: format is not Chunk.");
 		else
 			valid = true;
@@ -90,7 +90,7 @@ public class MessageChunkQuery extends Message {
 	 * received packet
 	 */
 	@Override
-	protected boolean fromDataInputStream(DataInputStream dis, byte respOpcode) {
+	protected boolean fromDataInputStream(DataInputStream dis, byte respOpcode, short chunkSize) {
 
 		try {
 			// Opcode
