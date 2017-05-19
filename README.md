@@ -1,14 +1,22 @@
 # UM-REDES
 
 
-## Dudas
 
-+ [ ] Que excepcion hay que capturar en seederthread para cuando downloaderthread cierra la conexion
-+ [X] currentDownloader de seederthread no se usarlo
 
 ## Tareas pendientes
 
 + [x] Creo que nunChunk tiene que ser un long, ya que segun nuestras estimaciones ocupa 6 bytes y un long son 8 bytes
++ [ ] Revisar toda la automata de UDP
++ [ ] Revisar toda la automata de TCP
++ [ ] La descarga de un fichero por un seeder que no tiene todos los trozos creo que no funciona correctamente
++ [ ] Tratar los 2 ultimos casos de error
+
+
+## Dudas
+
++ [x] Que excepcion hay que capturar en seederthread para cuando downloaderthread cierra la conexion
++ [x] currentDownloader de seederthread no se usarlo
+
 
 ### PeerController
 
@@ -23,8 +31,8 @@
 
 ### Seeder
 
-+ [ ] Obtener el numero de chunk que tiene el fichero
-+ [ ] Hacer el bucle del run para ir respondiendo a mensajes mientras que la conexion tcp este abierta
++ [x] Obtener el numero de chunk que tiene el fichero
++ [x] Hacer el bucle del run para ir respondiendo a mensajes mientras que la conexion tcp este abierta
 
 
 
