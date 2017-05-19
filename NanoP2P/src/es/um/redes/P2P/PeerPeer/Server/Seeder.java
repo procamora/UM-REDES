@@ -34,7 +34,6 @@ public class Seeder implements Runnable {
 			serverSocket = new ServerSocket();
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.exit(-1); // si falla paramos el programa
 		}
 
 	}

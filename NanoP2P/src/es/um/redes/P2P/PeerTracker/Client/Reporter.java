@@ -6,6 +6,7 @@ import java.net.*;
 import es.um.redes.P2P.PeerTracker.Message.Message;
 
 public class Reporter implements ReporterIface {
+	private static final int TIMEOUT = 1000;
 
 	private final int PORT = 4450;
 	private final int MAX_MSG_SIZE_BYTES = 1024;
@@ -34,9 +35,8 @@ public class Reporter implements ReporterIface {
 		try {
 			peerTrackerSocket = new DatagramSocket();
 		} catch (SocketException e) {
-			e.printStackTrace();
 			System.err.println("Reporter cannot create datagram socket for communication with tracker");
-			System.exit(-1);
+			// e.printStackTrace();
 		}
 	}
 
@@ -72,11 +72,12 @@ public class Reporter implements ReporterIface {
 		Message m = null;
 
 		try {
-			socket.setSoTimeout(100);
+			socket.setSoTimeout(TIMEOUT);
 			socket.receive(recibirPaquete);
 			// parseamos la respuesta al mensaje correspondiente
 			m = Message.parseResponse(recibirPaquete.getData());
 		} catch (SocketTimeoutException e) {
+			System.err.println("Timeout con el tracker, intentando otra vez...");
 			// excepcion correcta de timeout
 		} catch (IOException e) {
 			e.printStackTrace(); // excepcion recive

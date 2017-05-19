@@ -74,7 +74,7 @@ public class DownloaderThread extends Thread {
 	private short getSizeChunkRead(long numChunk) {
 		long posicion = numChunk * downloader.getChunkSize();
 		long bytesRestantes = downloader.getTargetFile().fileSize - posicion;
-		if (bytesRestantes < 4096)
+		if (bytesRestantes < downloader.getChunkSize())
 			return (short) bytesRestantes;
 		else
 			return downloader.getChunkSize();
@@ -91,7 +91,13 @@ public class DownloaderThread extends Thread {
 		// creo que no hace falta comprobar que es el mensaje correcto
 		if (msgRecibido != null) {
 			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
-			return downloader.bookNextChunkNumber(response.desconcatenaArrayBytesDatos());
+			try {
+				return downloader.bookNextChunkNumber(response.desconcatenaArrayBytesDatos());
+			} catch (Exception e) {
+				System.err.println(
+						"EL socket " + downloadSocket + "es cerrado por mandar mensaje con formato incorrecto");
+				close();
+			}
 		}
 		return Downloader.NUM_CHUNK_NO_DISPONIBLE;
 	}
@@ -120,7 +126,10 @@ public class DownloaderThread extends Thread {
 			dos = new DataOutputStream(os);
 			dos.write(msg.toByteArray());
 		} catch (IOException e) {
-			e.printStackTrace();
+			// excepcion causada por cierre del seederthread (porque no tiene el
+			// fichero compartido)
+			close();
+			System.err.println("El seeder" + downloadSocket + " ya no dispone del fichero");
 		}
 	}
 
@@ -134,11 +143,29 @@ public class DownloaderThread extends Thread {
 			double megabytes = ((byteDescargados / seconds) / 1024) / 1024;
 			speedMb = String.format("%,.2f", megabytes);
 			info = "\n" + downloader.getTargetFile().fileName + "\tHilo " + getName() + "\tSeeder: " + downloadSocket
-					+ "\tMegaBytes descargados: " + MbDescargados + "Mb\tVelocidad: " + speedMb + "Mb/s";
+					+ "\tMegaBytes descargados: " + MbDescargados + "Mb\tVelocidad: " + speedMb + "Mb/s\tTiempo: "
+					+ calculaTiempoDescarga();
 		} catch (ArithmeticException ae) {
 			info = "\nHilo " + getName() + " no se puieron obtener estadisticas";
 		}
 		Downloader.addResumenThread(info);
+	}
+
+	private String calculaTiempoDescarga() {
+		long millis = tiempoFin - tiempoInicio;
+		long second = (millis / 1000) % 60;
+		long minute = (millis / (1000 * 60)) % 60;
+		long hour = (millis / (1000 * 60 * 60)) % 24;
+
+		return String.format("%02d:%02d:%02d", hour, minute, second);
+	}
+
+	private void close() {
+		try {
+			downloadSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// Main code to request chunk lists and chunks
@@ -151,29 +178,28 @@ public class DownloaderThread extends Thread {
 			// FIXME preguntamos por nuevos seeders
 			// downloader.addThreads();
 
-			chunkActual = receiveAndProcessChunkList();
-			// si hay un chunk valido lo proceso
-			if (chunkActual >= 0) {
-				if (receiveAndWriteChunk(chunkActual)) {
-					numChunksDownloaded++;
-					downloader.setChunkDownloaded(chunkActual, true);
-				} else
-					downloader.setChunkDownloaded(chunkActual, false);
-			} else { // sino hay chunk valido espero 1s y volvere a probar
-				try {
-					Thread.sleep(1000);
-					// downloader.addThreads(); FIXME
-				} catch (InterruptedException e) {
+			if (!downloadSocket.isClosed()) {
+				chunkActual = receiveAndProcessChunkList();
+				// si hay un chunk valido lo proceso
+				if (chunkActual >= 0) {
+					if (receiveAndWriteChunk(chunkActual)) {
+						numChunksDownloaded++;
+						downloader.setChunkDownloaded(chunkActual, true);
+					} else
+						downloader.setChunkDownloaded(chunkActual, false);
+				} else { // sino hay chunk valido espero 1s y volvere a probar
+					try {
+						//System.err.println("Fallo chunk " + chunkActual + " continuamos con otro");
+						Thread.sleep(1000);
+						// downloader.addThreads(); FIXME
+					} catch (InterruptedException e) {
+					}
 				}
 			}
 
 		} while (!downloader.isDownloadComplete());
-
-		try {
-			downloadSocket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		System.err.println("fin thread");
+		close();
 
 		tiempoFin = System.currentTimeMillis();
 		calculaEstadisticas();

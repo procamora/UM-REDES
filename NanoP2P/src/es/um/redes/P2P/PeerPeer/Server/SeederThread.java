@@ -127,7 +127,6 @@ public class SeederThread extends Thread {
 
 			if (msgRecibido != null)
 				processMessageFromPeer(msgRecibido);
-
 		}
 		System.out.println("final correcto seeder");
 

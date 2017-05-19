@@ -49,9 +49,11 @@ public class Downloader implements DownloaderIface {
 		if ((long) targetFile.fileSize % chunkSize != 0)
 			totalChunks++;
 
-		progressBar = new ProgressBar(totalChunks);
-		progressBar.start();
 		porcentajeRefresco = (totalChunks * PORCENTAJE_REFRESCO) / 100;
+		if (porcentajeRefresco > 1) {
+			progressBar = new ProgressBar(totalChunks);
+			progressBar.start();
+		}
 
 		chunksDownloadedFromSeeders = new HashSet<>();
 
@@ -65,6 +67,10 @@ public class Downloader implements DownloaderIface {
 	// la lista de trozos
 	// que se están disponibles o que se están descargando. Deberán ser
 	// definidos en la clase que la instancia.
+
+	private void actualizaMapa() {
+		// FIXME refactorizar codigo bookNextChunkNumber
+	}
 
 	public synchronized long bookNextChunkNumber(long[] listaNumChunk) {
 		long chunkSeleccionado = NUM_CHUNK_NO_DISPONIBLE;
@@ -110,9 +116,10 @@ public class Downloader implements DownloaderIface {
 		if (descargado) {
 			totalChunkDescargados++;
 
-			// cada 2% descargado imprimo
-			if (totalChunkDescargados % (long) porcentajeRefresco == 0)
-				progressBar.next(porcentajeRefresco);
+			// cada 2% descargado imprimo, para archivos pequeños no
+			if (porcentajeRefresco > 1)
+				if (totalChunkDescargados % (long) porcentajeRefresco == 0)
+					progressBar.next(porcentajeRefresco);
 
 			chunksDownloadedFromSeeders.add(numChunk);
 
@@ -194,7 +201,7 @@ public class Downloader implements DownloaderIface {
 
 		if (FileDigest.getChecksumHexString(byteHash).equals(targetFile.fileHash))
 			return true;
-		
+
 		return false;
 	}
 

@@ -50,8 +50,9 @@ public class ProgressBar extends Thread {
 			try {
 				continua.acquire();
 				printProgress(startTime, total, contador);
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 			}
 		}
+		System.err.println("fin profressbar");
 	}
 }

@@ -120,11 +120,13 @@ public class MessageChunkQueryResponse extends Message {
 
 	/**
 	 * Metodo publico usado por OP_GET_CHUNK_ACK, lee el array de bytes y lo
-	 * convierte a un array de short
+	 * convierte a un array de long
+	 * @throws Exception 
 	 */
-	public long[] desconcatenaArrayBytesDatos() {
+	public long[] desconcatenaArrayBytesDatos() throws Exception {
 		if (getOpCode() != OP_GET_CHUNK_ACK)
 			throw new IllegalStateException("Esta funcion solo la puede hacer OP_GET_CHUNK_ACK");
+		try{
 		// Si no tengo todos los trozos retorno los trozos exactos
 		if (numChunk != Long.MAX_VALUE) {
 			ByteBuffer buf = ByteBuffer.wrap(datos);
@@ -134,6 +136,10 @@ public class MessageChunkQueryResponse extends Message {
 			return a;
 		} else // si tengo todos los trozos retorno un array[0]
 			return new long[0];
+		}
+		catch (Exception e) {
+			throw new Exception();
+		}
 	}
 
 	public String toString() {
