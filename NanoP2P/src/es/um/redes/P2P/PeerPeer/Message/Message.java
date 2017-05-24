@@ -62,25 +62,6 @@ public abstract class Message {
 
 	public abstract String toString();
 
-	/**
-	 * @return The total number of fragments the original message was split
-	 *         into.
-	 */
-	public abstract int getTotalFragments();
-
-	/**
-	 * Reassembles a set of fragments into one of the fragments, obtaining the
-	 * original message before it was split.
-	 * 
-	 * @param fragments
-	 *            All the fragments of the message, including this object
-	 */
-	public abstract void reassemble(Vector<Message> fragments);
-
-	/**
-	 * @return True if this message consists of several fragments.
-	 */
-	public abstract boolean fragmented();
 
 	/**
 	 * Default class constructor, creates "empty" message in invalid state

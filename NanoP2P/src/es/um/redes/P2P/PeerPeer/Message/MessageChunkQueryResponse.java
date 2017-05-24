@@ -162,19 +162,6 @@ public class MessageChunkQueryResponse extends Message {
 			throw new RuntimeException("Opcode " + opcode + " no es de tipo ChunkACK.");
 	}
 
-	@Override
-	public int getTotalFragments() {
-		return 1;
-	}
-
-	@Override
-	public void reassemble(Vector<Message> fragments) {
-	}
-
-	@Override
-	public boolean fragmented() {
-		return false;
-	}
 
 	/**
 	 * Metodo estatico que recibe arrays de short y los concatena retornando un
