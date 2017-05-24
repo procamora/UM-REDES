@@ -9,7 +9,10 @@
 + [ ] Revisar toda la automata de UDP
 + [ ] Revisar toda la automata de TCP
 + [ ] La descarga de un fichero por un seeder que no tiene todos los trozos creo que no funciona correctamente
-+ [ ] Tratar los 2 ultimos casos de error
++ [x] Tratar los 2 ultimos casos de error
++ [ ] En las  estadisticas repasar la velocidad, aveces sale infinity
++ [ ] Progressbar no funciona para ficheros muy pequeños por division por 0
++ [x] Tratar error en el caso de que se borre archivo que se comparte
 
 
 ## Dudas

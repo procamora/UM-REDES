@@ -110,8 +110,18 @@ public class PeerController implements PeerControllerIface {
 
 		// analisis de casos, PODEMOS BORARLO?
 		switch (currentCommand) {
-			case PeerCommands.COM_CONFIG:
 			case PeerCommands.COM_ADDSEED:
+				MessageFileInfo addseed = (MessageFileInfo) m;
+				if (addseed.fragmented()) {
+					for (FileInfo[] files : MessageFileInfo.computeFragments(addseed.getFileList())) {
+						response = reporter
+								.conversationWithTracker(Message.makeAddSeedRequest(seeder.getSeederPort(), files));
+						processMessageFromTracker(response);
+					}
+				}
+				break;
+
+			case PeerCommands.COM_CONFIG:
 			case PeerCommands.COM_QUERY:
 			case PeerCommands.COM_DOWNLOAD:
 			case PeerCommands.COM_QUIT:
@@ -260,10 +270,7 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case Message.OP_ADD_SEED_ACK:
-				// si solo enviamos un paquete y llegamos aqui correcto
-
-				// si enviamos muchos contar el numero de paquetes que enviamos
-				// y contar el numero de ack
+				// si enviamos un paquete y llegamos aqui correcto
 				break;
 
 			case Message.OP_FILE_LIST:
