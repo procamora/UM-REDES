@@ -16,8 +16,9 @@ public class Ficheros {
 	 * @param pos
 	 *            posición dentro del fichero
 	 * @return array byes leidos
+	 * @throws IOException 
 	 */
-	public static byte[] lectura(String fichero, int CHUNK_SIZE, long pos) {
+	public static byte[] lectura(String fichero, int CHUNK_SIZE, long pos) throws IOException {
 		if (pos < 0)
 			throw new IllegalArgumentException("Posicion tiene que ser >= 0");
 
@@ -26,7 +27,7 @@ public class Ficheros {
 		int leidos = 0; // variable de control del bucle
 		int leidosTotal = 0; // bytes leidos del fichero
 		if (!file.exists())
-			throw new IllegalStateException("No existe el fichero: " + fichero);
+			throw new IOException("No existe el fichero: " + fichero);
 
 		try {
 			RandomAccessFile rfi = new RandomAccessFile(file, "r");

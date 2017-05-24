@@ -66,9 +66,16 @@ public class SeederThread extends Thread {
 		if (rutaFichero == null)
 			throw new IllegalStateException("No se ha encontrado el fichero: " + fileHashStr);
 
-		byte[] datosEnviar = Ficheros.lectura(rutaFichero, (int) chunkSize, (long) chunkNumber * chunkSize);
-		Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar);
-		sendMessageToPeer(respuesta);
+		byte[] datosEnviar;
+		try {
+			datosEnviar = Ficheros.lectura(rutaFichero, (int) chunkSize, (long) chunkNumber * chunkSize);
+			Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar);
+			sendMessageToPeer(respuesta);
+		} catch (IOException e) {
+			// Excepcion porque el fichero no existe (se ha borrado en proceso
+			// de compartir)
+			close();
+		}
 	}
 
 	private Message receiveMessageFromPeer() {
@@ -78,19 +85,21 @@ public class SeederThread extends Thread {
 			InputStream is = socket.getInputStream();
 			dis = new DataInputStream(is);
 			msg = Message.parseRequest(dis, (short) 0);
-
 			// capturamos la excepcion cuando cierran los downloaderthread y
 			// cerramos tambien el socket
 		} catch (IOException e) {
-
-			try {
-				socket.close();
-				bucle = false;
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			close();
 		}
 		return msg;
+	}
+
+	private void close() {
+		try {
+			socket.close();
+			bucle = false;
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	private void sendMessageToPeer(Message msg) {
