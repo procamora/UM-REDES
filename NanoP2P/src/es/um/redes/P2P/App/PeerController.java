@@ -112,12 +112,15 @@ public class PeerController implements PeerControllerIface {
 		switch (currentCommand) {
 			case PeerCommands.COM_ADDSEED:
 				MessageFileInfo addseed = (MessageFileInfo) m;
-				if (addseed.fragmented()) {
+				if (addseed.fragmented()) { // multiples addseed
 					for (FileInfo[] files : MessageFileInfo.computeFragments(addseed.getFileList())) {
 						response = reporter
 								.conversationWithTracker(Message.makeAddSeedRequest(seeder.getSeederPort(), files));
 						processMessageFromTracker(response);
 					}
+				} else { // unico addseed
+					response = reporter.conversationWithTracker(m);
+					processMessageFromTracker(response);
 				}
 				break;
 
