@@ -26,7 +26,8 @@ public class PeerCommands {
 		COM_DOWNLOAD,
 		COM_QUIT,
 		COM_SHOW, 
-		COM_HELP
+		COM_HELP,
+		COM_ENTER
 		};
 
 	/**
@@ -37,17 +38,24 @@ public class PeerCommands {
 		"download",
 		"quit",
 		"list",
-		"help" };
+		"help", 
+		"" };
 
 	/**
 	 * Help message for each command
 	 */
 	private static final String[] _valid_user_commands_help = {
-		"query list of available files in tracker",
-		"download files identified by <hash> list",
-		"disconnect from tracker and exit client ",
-		"list files shared by this peer", 
-		"show list of valid commands" };
+		"query [params] (consulta al tracker la lista de ficheros compartidos disponibles)\n" +
+			"\t-n  <substring> : Sirve para filtrar los resultados por subcadena en el nombre.\n" +
+			"\t-lt <bytes>: Sirve para filtrar los resultados a ficheros cuyo tamaño sea inferior "
+			+ "a la cantidad expresada en <bytes>. Se pueden utilizar sufijos como KB, MB y GB para "
+			+ "indicar, respectivamente, kilobytes, megabytes y gigabytes.\n" + 
+			"\t-ge <bytes>: Sirve para obtener ficheros cuyo tamaño sea igual o superior a <bytes>. "
+			+ "De nuevo se pueden emplear sufijos.",
+		"download <hash> (descarga el fichero de otros peers)",
+		"quit (cierra la conexión con el tracker y termina el programa)",
+		"list files shared by this peer",
+		"help (muestra la lista de comandos disponibles)"};
 
 	/**
 	 * Translates a string to its corresponding command.
@@ -72,7 +80,8 @@ public class PeerCommands {
 	public static void printCommandsHelp() {
 		System.out.println("List of commands:");
 		for (int i = 0; i < _valid_user_commands_str.length; i++) {
-			System.out.println(_valid_user_commands_str[i] + " -- "
+			if(!_valid_user_commands_str[i].equals("")) //no imprimir el enter
+				System.out.println(_valid_user_commands_str[i] + " -- "
 					+ _valid_user_commands_help[i]);
 		}		
 	}

@@ -4,41 +4,20 @@ import java.util.Scanner;
 
 public class PeerShell implements PeerShellIface {
 
-	public static final int MAX_ARGS = 5;
+	public static final int MAX_ARGS = 2;
 	private String comando;
 	private String[] argumentos;
 	private Scanner scanner;
 
 	public PeerShell() {
 		scanner = new Scanner(System.in);
-		argumentos = new String[MAX_ARGS];// max 5 argumentos
+		argumentos = new String[MAX_ARGS];// max 2 argumentos
 		comando = new String();
 	}
 
 	@Override
 	public byte getCommand() {
-		switch (comando) {
-			case "query":
-				return PeerCommands.COM_QUERY;
-
-			case "download":
-				return PeerCommands.COM_DOWNLOAD;
-
-			case "quit":
-				return PeerCommands.COM_QUIT;
-
-			case "show":
-				return PeerCommands.COM_SHOW;
-
-			case "help":
-				return PeerCommands.COM_HELP;
-
-			case "":
-				return PeerCommands.COM_ENTER;
-
-			default:
-				return PeerCommands.COM_INVALID;
-		}
+		return PeerCommands.stringToCommand(comando);
 	}
 
 	@Override
@@ -51,6 +30,9 @@ public class PeerShell implements PeerShellIface {
 		System.out.print("[procamora@p2p]# ");
 		String linea = scanner.nextLine();
 		String[] parsea = linea.split(" ");
+		// reinicio para que no se guarden en posteriores consultas
+		argumentos[0] = null;
+		argumentos[1] = null; 
 
 		for (int i = 0; i < parsea.length; i++) {
 			if (i == 0) // comando

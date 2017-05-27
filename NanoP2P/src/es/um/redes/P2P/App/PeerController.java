@@ -141,19 +141,7 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case PeerCommands.COM_HELP:
-				String ayuda = "La lista de comandos disponibles es:\n"
-						+ "query [params] (consulta al tracker la lista de ficheros compartidos disponibles)\n"
-						+ "\t-n  <substring> : Sirve para filtrar los resultados por subcadena en el nombre.\n"
-						+ "\t-lt <bytes>: Sirve para filtrar los resultados a ficheros cuyo tamaño sea inferior"
-						+ "a la cantidad expresada en <bytes>. Se pueden utilizar sufijos como KB, MB y GB para"
-						+ "indicar, respectivamente, kilobytes, megabytes y gigabytes.\n"
-						+ "\t-ge <bytes>: Sirve para obtener ficheros cuyo tamaño sea igual o "
-						+ "superior a <bytes>. De nuevo se pueden emplear sufijos.\n"
-						+ "download <hash> (descarga el fichero de otros peers)\n"
-						+ "show (muestra la lista de )           \n"
-						+ "help (muestra la lista de comandos disponibles)\n"
-						+ "quit (cierra la conexión con el tracker y termina el programa)";
-				System.out.println(ayuda);
+				PeerCommands.printCommandsHelp();
 				break;
 
 			case PeerCommands.COM_ENTER:
@@ -167,36 +155,6 @@ public class PeerController implements PeerControllerIface {
 				System.err.println("comando desconocido");
 				break;
 		}
-	}
-
-	private String[] tratarArgumentosQuery() {
-		byte filterType = 0;
-
-		if ((currentArguments[0] == null) || (currentArguments[1] == null)) {
-			System.err.println("wrong arguments for query");
-			return null;
-		}
-
-		switch (currentArguments[0]) {
-			case "-n":
-				filterType = MessageQuery.FILTERTYPE_NAME;
-				break;
-
-			case "-lt":
-				filterType = MessageQuery.FILTERTYPE_MAXSIZE;
-				break;
-
-			case "-ge":
-				filterType = MessageQuery.FILTERTYPE_MINSIZE;
-				break;
-			default:
-				System.err.println("wrong arguments for query");
-				break;
-		}
-
-		String stringFilterType = Byte.toString(filterType);
-		String[] array = { stringFilterType, currentArguments[1] };
-		return array;
 	}
 
 	@Override
@@ -217,13 +175,19 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case PeerCommands.COM_QUERY:
-				byte filterType = 0;
-				String filter = "";
-				String[] array = tratarArgumentosQuery();
-				if (array != null) {
-					filterType = Byte.valueOf(array[0]);
-					filter = array[1];
-					control = (MessageQuery) Message.makeQueryFilesRequest(filterType, filter);
+				if ((currentArguments[0] == null) || (currentArguments[1] == null))
+					System.err.println("wrong arguments for query");
+				else {
+					byte codeQuery = PeerCommands.queryFilterOptionToFilterType(currentArguments[0]);
+					if (codeQuery != MessageQuery.FILTERTYPE_INVALID) {
+						try {
+							control = (MessageQuery) Message.makeQueryFilesRequest(codeQuery, currentArguments[1]);
+
+						} catch (java.lang.NumberFormatException e) {
+							System.err.println("Tienes que introducir un numero");
+						}
+					} else
+						System.err.println("wrong arguments for query");
 				}
 				break;
 
