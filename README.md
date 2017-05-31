@@ -7,8 +7,8 @@
 
 + [x] Creo que nunChunk tiene que ser un long, ya que segun nuestras estimaciones ocupa 6 bytes y un long son 8 bytes
 + [ ] Revisar toda la automata de UDP
-+ [ ] Revisar toda la automata de TCP
-+ [ ] La descarga de un fichero por un seeder que no tiene todos los trozos creo que no funciona correctamente
++ [x] Revisar toda la automata de TCP
++ [x] La descarga de un fichero por un seeder que no tiene todos los trozos creo que no funciona correctamente
 + [x] Tratar los 2 ultimos casos de error
 + [ ] En las  estadisticas repasar la velocidad, aveces sale infinity
 + [ ] Progressbar no funciona para ficheros muy pequeños por division por 0
