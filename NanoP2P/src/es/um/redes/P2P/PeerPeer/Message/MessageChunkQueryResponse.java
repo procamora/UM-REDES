@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
 
 public class MessageChunkQueryResponse extends Message {
 
@@ -94,8 +93,17 @@ public class MessageChunkQueryResponse extends Message {
 			this.numChunk = dis.readLong();
 
 			// File Datos
-			datos = new byte[chunkSize];
-			dis.readFully(datos);
+			if (respOpcode == OP_CHUNK_ACK) {
+				datos = new byte[chunkSize];
+				dis.readFully(datos);
+			} else {
+				if (numChunk == Long.MAX_VALUE) // fichero local
+					datos = new byte[chunkSize];
+				else // fichero remoto con x trozoa
+					datos = new byte[(int) (numChunk * FIELD_NUMCHUNKSIZE)];
+
+				dis.readFully(datos);
+			}
 			valid = true;
 
 		} catch (IOException e) {
@@ -121,23 +129,27 @@ public class MessageChunkQueryResponse extends Message {
 	/**
 	 * Metodo publico usado por OP_GET_CHUNK_ACK, lee el array de bytes y lo
 	 * convierte a un array de long
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
-	public long[] desconcatenaArrayBytesDatos() throws Exception {
+	public HashSet<Long> desconcatenaArrayBytesDatos() throws Exception {
 		if (getOpCode() != OP_GET_CHUNK_ACK)
 			throw new IllegalStateException("Esta funcion solo la puede hacer OP_GET_CHUNK_ACK");
-		try{
-		// Si no tengo todos los trozos retorno los trozos exactos
-		if (numChunk != Long.MAX_VALUE) {
-			ByteBuffer buf = ByteBuffer.wrap(datos);
-			long[] a = new long[(int) numChunk];
-			for (int i = 0; i < numChunk; i++)
-				a[i] = buf.getLong();
-			return a;
-		} else // si tengo todos los trozos retorno un array[0]
-			return new long[0];
-		}
-		catch (Exception e) {
+
+		try {
+			// Si no tengo todos los trozos retorno los trozos exactos
+			if (numChunk != Long.MAX_VALUE) {
+				ByteBuffer buf = ByteBuffer.wrap(datos);
+				// long[] a = new long[(int) numChunk];
+				HashSet<Long> a = new HashSet<>();
+				for (int i = 0; i < numChunk; i++)
+					// a[i] = buf.getLong();
+					a.add(buf.getLong());
+				return a;
+			} else // si tengo todos los trozos retorno un array[0]
+				return new HashSet<Long>();
+		} catch (Exception e) {
+			System.err.println(e);
 			throw new Exception();
 		}
 	}
@@ -162,9 +174,8 @@ public class MessageChunkQueryResponse extends Message {
 			throw new RuntimeException("Opcode " + opcode + " no es de tipo ChunkACK.");
 	}
 
-
 	/**
-	 * Metodo estatico que recibe arrays de short y los concatena retornando un
+	 * Metodo estatico que recibe arrays de long y los concatena retornando un
 	 * array de bytes
 	 */
 	public static byte[] concatenateByteArrays(HashSet<Long> arraysChunks) {
