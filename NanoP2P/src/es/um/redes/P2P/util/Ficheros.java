@@ -16,7 +16,7 @@ public class Ficheros {
 	 * @param pos
 	 *            posición dentro del fichero
 	 * @return array byes leidos
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static byte[] lectura(String fichero, int CHUNK_SIZE, long pos) throws IOException {
 		if (pos < 0)
@@ -70,7 +70,6 @@ public class Ficheros {
 			}
 		}
 
-		// FIXME Confirmar que se han escrito todos los bytes que se envian
 		try {
 			RandomAccessFile rfo = new RandomAccessFile(file, "rw");
 			rfo.seek(pos);

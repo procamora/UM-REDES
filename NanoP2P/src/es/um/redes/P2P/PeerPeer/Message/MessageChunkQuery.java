@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
-
 import es.um.redes.P2P.util.FileDigest;
 
 public class MessageChunkQuery extends Message {

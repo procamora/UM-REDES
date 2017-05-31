@@ -62,21 +62,11 @@ public class Downloader implements DownloaderIface {
 		seeds = new HashSet<>();
 	}
 
-	// IMPORTANTE
-	// En esta interfaz no están definidos los métodos necesarios para gestionar
-	// la lista de trozos
-	// que se están disponibles o que se están descargando. Deberán ser
-	// definidos en la clase que la instancia.
-
-	private void actualizaMapa() {
-		// FIXME refactorizar codigo bookNextChunkNumber
-	}
-
-	public synchronized long bookNextChunkNumber(long[] listaNumChunk) {
+	public synchronized long bookNextChunkNumber(HashSet<Long> listaNumChunk) {
 		long chunkSeleccionado = NUM_CHUNK_NO_DISPONIBLE;
 		boolean getChunk = true;
 		// Si es un fichero local del peer añado a mano a cada chunk el peer
-		if (listaNumChunk.length == 0) {
+		if (listaNumChunk.isEmpty()) {
 			for (long numChunk = 0; numChunk < totalChunks; numChunk++) {
 				if (!mapaEstados.containsKey(numChunk))
 					mapaEstados.put(numChunk, Estado.NO_DESCARGADO);
@@ -89,7 +79,6 @@ public class Downloader implements DownloaderIface {
 			}
 
 		} else {
-			System.err.println("RECIBO CHUNKS SUELTOS, BIEN!!!!");
 			// comprobar listaNumChunk al inicio, si el chunk ya esta
 			// descargado, si lo esta pasar al siguiete chunk
 			for (long numChunk : listaNumChunk) {
@@ -162,6 +151,7 @@ public class Downloader implements DownloaderIface {
 	 * Compruebo que el seeder del que quiero descargarme archivos no soy yo
 	 * mismo
 	 */
+	@SuppressWarnings("unused")
 	private boolean isLocalSeeder(InetSocketAddress seedList) {
 		if (peer.getSeeder().getSeederPort() == seedList.getPort())
 			return true;
@@ -227,9 +217,10 @@ public class Downloader implements DownloaderIface {
 
 	}
 
+	/**
+	 * Metodo para añadir nuevos thread a descargar, actualmente no se usa
+	 */
 	public synchronized void addThreads() {
-		// FIXME no se si este metodo es el correcto
-
 		Message request = Message.makeGetSeedsRequest(targetFile.fileHash);
 		Message response = peer.getReporter().conversationWithTracker(request);
 		if (response.getOpCode() == Message.OP_SEED_LIST) {

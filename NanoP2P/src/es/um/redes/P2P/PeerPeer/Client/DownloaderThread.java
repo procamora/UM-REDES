@@ -20,7 +20,6 @@ import es.um.redes.P2P.util.Ficheros;
  *         provided to the constructor.
  */
 public class DownloaderThread extends Thread {
-	private final static int FRECUENCIA_UPDATE_SEEDLIST = 500;
 	private Downloader downloader;
 	private Socket downloadSocket;
 	protected DataOutputStream dos;
@@ -100,11 +99,6 @@ public class DownloaderThread extends Thread {
 			}
 		}
 		return Downloader.NUM_CHUNK_NO_DISPONIBLE;
-	}
-
-	// Número de fragmentos ya descargados por este hilo
-	private long getNumChunksDownloaded() {
-		return numChunksDownloaded;
 	}
 
 	private Message receiveMessageFromPeer(short chunkSize) {
@@ -189,9 +183,10 @@ public class DownloaderThread extends Thread {
 						downloader.setChunkDownloaded(chunkActual, false);
 				} else { // sino hay chunk valido espero 1s y volvere a probar
 					try {
-						//System.err.println("Fallo chunk " + chunkActual + " continuamos con otro");
+						// System.err.println("Fallo chunk " + chunkActual + "
+						// continuamos con otro");
 						Thread.sleep(1000);
-						// downloader.addThreads(); FIXME
+						// downloader.addThreads(); //FIXME
 					} catch (InterruptedException e) {
 					}
 				}
