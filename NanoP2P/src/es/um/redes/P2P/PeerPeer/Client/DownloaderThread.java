@@ -130,12 +130,22 @@ public class DownloaderThread extends Thread {
 	private void calculaEstadisticas() {
 		String info;
 		try {
+			String MbDescargados;
 			double byteDescargados = (numChunksDownloaded * downloader.getChunkSize());
-			String MbDescargados = String.format("%,.2f", byteDescargados / 1024 / 1024);
+			if ((byteDescargados / 1024) / 1024 < 1) {
+				 MbDescargados= String.format("%,.5f", byteDescargados / (1024 * 1024));
+			}else {
+				 MbDescargados = String.format("%,.2f", byteDescargados / (1024 * 1024));
+			}
 			String speedMb = null;
-			double seconds = (tiempoFin - tiempoInicio) / 1000;
-			double megabytes = ((byteDescargados / seconds) / 1024) / 1024;
-			speedMb = String.format("%,.2f", megabytes);
+			double miliseconds = (tiempoFin - tiempoInicio);
+			double seconds = miliseconds / 1000;
+			double megabytesPorSeg = 0;
+
+			megabytesPorSeg = ((byteDescargados / seconds) / (1024 * 1024));
+
+			speedMb = String.format("%,.2f", megabytesPorSeg);
+
 			info = "\n" + downloader.getTargetFile().fileName + "\tHilo " + getName() + "\tSeeder: " + downloadSocket
 					+ "\tMegaBytes descargados: " + MbDescargados + "Mb\tVelocidad: " + speedMb + "Mb/s\tTiempo: "
 					+ calculaTiempoDescarga();
@@ -151,7 +161,7 @@ public class DownloaderThread extends Thread {
 		long minute = (millis / (1000 * 60)) % 60;
 		long hour = (millis / (1000 * 60 * 60)) % 24;
 
-		return String.format("%02d:%02d:%02d", hour, minute, second);
+		return String.format("%02d:%02d:%02d:%02d", hour, minute, second, millis);
 	}
 
 	private void close() {
@@ -183,7 +193,7 @@ public class DownloaderThread extends Thread {
 						downloader.setChunkDownloaded(chunkActual, false);
 				} else { // sino hay chunk valido espero 1s y volvere a probar
 					try {
-						// System.err.println("Fallo chunk " + chunkActual + "
+						// System.err.println("Fallo chunk " + chunkActual + "s
 						// continuamos con otro");
 						Thread.sleep(1000);
 						// downloader.addThreads(); //FIXME
