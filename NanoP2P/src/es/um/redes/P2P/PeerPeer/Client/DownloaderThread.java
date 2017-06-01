@@ -20,6 +20,7 @@ import es.um.redes.P2P.util.Ficheros;
  *         provided to the constructor.
  */
 public class DownloaderThread extends Thread {
+	private static final int BYTES_TO_MB = 1024 * 1024;
 	private Downloader downloader;
 	private Socket downloadSocket;
 	protected DataOutputStream dos;
@@ -130,27 +131,21 @@ public class DownloaderThread extends Thread {
 	private void calculaEstadisticas() {
 		String info;
 		try {
-			String MbDescargados;
 			double byteDescargados = (numChunksDownloaded * downloader.getChunkSize());
-			if ((byteDescargados / 1024) / 1024 < 1) {
-				 MbDescargados= String.format("%,.5f", byteDescargados / (1024 * 1024));
-			}else {
-				 MbDescargados = String.format("%,.2f", byteDescargados / (1024 * 1024));
-			}
-			String speedMb = null;
+			String MbDescargados = String.format("%,.4f", byteDescargados / BYTES_TO_MB);
 			double miliseconds = (tiempoFin - tiempoInicio);
 			double seconds = miliseconds / 1000;
-			double megabytesPorSeg = 0;
+			String sizeFicheroCompleto = String.format("%,.2f",
+					(double) downloader.getTargetFile().fileSize / BYTES_TO_MB);
+			double megabytesPorSeg = ((byteDescargados / seconds) / BYTES_TO_MB);
+			String speedMb = String.format("%,.4f", megabytesPorSeg);
 
-			megabytesPorSeg = ((byteDescargados / seconds) / (1024 * 1024));
-
-			speedMb = String.format("%,.2f", megabytesPorSeg);
-
-			info = "\n" + downloader.getTargetFile().fileName + "\tHilo " + getName() + "\tSeeder: " + downloadSocket
-					+ "\tMegaBytes descargados: " + MbDescargados + "Mb\tVelocidad: " + speedMb + "Mb/s\tTiempo: "
-					+ calculaTiempoDescarga();
+			info = String.format(
+					"\nHilo: %s\tPeer: %s:%s\tChunks: %d/%d\tDescargado: %sMb/%sMb\tVelocidad: %sMb/s\tTiempo: %s",
+					getName(), downloadSocket.getInetAddress(), downloadSocket.getPort(), numChunksDownloaded,
+					downloader.getTotalChunks(), MbDescargados, sizeFicheroCompleto, speedMb, calculaTiempoDescarga());
 		} catch (ArithmeticException ae) {
-			info = "\nHilo " + getName() + " no se puieron obtener estadisticas";
+			info = "\nHilo " + getName() + ": no se puieron obtener estadisticas :(";
 		}
 		Downloader.addResumenThread(info);
 	}
@@ -161,7 +156,8 @@ public class DownloaderThread extends Thread {
 		long minute = (millis / (1000 * 60)) % 60;
 		long hour = (millis / (1000 * 60 * 60)) % 24;
 
-		return String.format("%02d:%02d:%02d:%02d", hour, minute, second, millis);
+		return (second != 0) ? String.format("%02d:%02d:%02d", hour, minute, second)
+				: String.format("%02d:%02d:%02d:%02d", hour, minute, second, millis);
 	}
 
 	private void close() {

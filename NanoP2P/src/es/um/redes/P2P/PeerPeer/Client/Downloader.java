@@ -210,7 +210,7 @@ public class Downloader implements DownloaderIface {
 			} else
 				System.err.println("\nFichero descargado con errores, vuelva a descargarlo");
 
-			System.out.println("\nEstadisticas:");
+			System.out.println("\nEstadisticas para: " + targetFile.fileName + ":");
 			System.out.println(buffer);
 			buffer = new StringBuffer(); // vacio para siguientes descargas
 		}
