@@ -212,13 +212,14 @@ public class Downloader implements DownloaderIface {
 		if (seeds.isEmpty()) {
 
 			if (isFileCorrecto()) {
-				System.out.println("\nFICHERO DESCARGADO CON EXITO!! HASH COMPROBADO");
+				System.out.println("\nFichero " + targetFile.fileName + " descargado con exito!! Hash comprobado");
 				peer.getMapaFicheros().remove(targetFile.fileHash);
 				peer.getPeerDatabase().addDownloadedFile(targetFile);
 			} else
-				System.err.println("\nFichero descargado con errores, vuelva a descargarlo");
+				System.err
+						.println("\nFichero " + targetFile.fileName + " descargado con errores, vuelva a descargarlo");
 
-			System.out.println("\nEstadisticas para: " + targetFile.fileName + ":");
+			System.out.println("Estadisticas:");
 			System.out.println(buffer);
 			buffer = new StringBuffer(); // vacio para siguientes descargas
 		}
