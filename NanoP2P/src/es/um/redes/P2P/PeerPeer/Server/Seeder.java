@@ -35,11 +35,15 @@ public class Seeder implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
-	// Pone al servidor a escuchar en un puerto libre del rango y devuelve cuál
-	// es dicho puerto
+	/**
+	 * Pone al servidor a escuchar en un puerto libre del rango y devuelve cuál
+	 * es dicho puerto, esta mas chula si se hace recursiva, pero morad no me
+	 * deja :(
+	 * 
+	 * @return
+	 */
 	public int getAvailablePort() {
 		int n = SEEDER_FIRST_PORT;
 		boolean estado = true;
@@ -71,13 +75,11 @@ public class Seeder implements Runnable {
 				// En algún momento se llamará a
 				new SeederThread(clientSocket, database, currentDownloader, chunkSize).start();
 			} catch (SocketException e) {
-				// e.printStackTrace();
+				// excepcion correcta cierre conexion
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 		}
-
 	}
 
 	public void quit() {

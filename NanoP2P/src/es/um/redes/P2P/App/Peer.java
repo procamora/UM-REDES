@@ -29,12 +29,12 @@ public class Peer {
 
 		// Begin conversation with tracker by getting configuration (chunk size)
 		commander.getConfigFromTracker();
-		
-		//lanzamos el seeder genera el puerto en el que escuchamos
-		//usaremos ese puerto en el add_seed, hacer igual que con el reporter y pasarselo como parametro al controller
-		//PUEDE QUE SEA MEJOR CREAR SEEDER COMO VARIABLE DE CLASE EN PEERCONTROLLER
+
+		// lanzamos el seeder genera el puerto en el que escuchamos
+		// usaremos ese puerto en el add_seed, hacer igual que con el reporter y
+		// pasarselo como parametro al controller
 		Seeder seeder = new Seeder(commander.getChunkSize(), db);
-		
+
 		// Send list of local files to tracker
 		commander.publishSharedFilesToTracker(seeder);
 

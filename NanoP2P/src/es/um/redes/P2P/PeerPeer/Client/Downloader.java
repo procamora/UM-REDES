@@ -6,8 +6,6 @@ import java.util.HashSet;
 
 import es.um.redes.P2P.App.Peer;
 import es.um.redes.P2P.App.PeerController;
-import es.um.redes.P2P.PeerTracker.Message.Message;
-import es.um.redes.P2P.PeerTracker.Message.MessageSeedInfo;
 import es.um.redes.P2P.util.FileDigest;
 import es.um.redes.P2P.util.FileInfo;
 
@@ -98,10 +96,8 @@ public class Downloader implements DownloaderIface {
 	}
 
 	public synchronized boolean setChunkDownloaded(long numChunk, boolean descargado) {
-		/*
-		 * Si el numero de trozo se ha descargado, se notifica al traker que ya
-		 * puede servir ese trozo de fichero
-		 */
+		// Si el numero de trozo se ha descargado, se notifica al traker que ya
+		// puede servir ese trozo de fichero
 		if (descargado) {
 			totalChunkDescargados++;
 
@@ -116,9 +112,7 @@ public class Downloader implements DownloaderIface {
 			if (totalChunkDescargados == 1) {
 				mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
 				// mandamos aadseed
-				FileInfo[] lista = { targetFile };
-				Message request = Message.makeAddSeedRequest(peer.getSeeder().getSeederPort(), lista);
-				peer.getReporter().conversationWithTracker(request);
+				peer.addSeeder(targetFile);
 
 			} else
 				mapaEstados.replace(numChunk, Estado.DESCARGADO_GUARDADO);
@@ -147,14 +141,20 @@ public class Downloader implements DownloaderIface {
 		return totalChunks;
 	}
 
+	// Devuelve el tamaño de trozo que se está utilizando
+	@Override
+	public short getChunkSize() {
+		return chunkSize;
+	}
+
 	/**
 	 * Compruebo que el seeder del que quiero descargarme archivos no soy yo
 	 * mismo
 	 */
 	@SuppressWarnings("unused")
 	private boolean isLocalSeeder(InetSocketAddress seedList) {
-		if (peer.getSeeder().getSeederPort() == seedList.getPort())
-			return true;
+		// if (peer.getSeeder().getSeederPort() == seedList.getPort())
+		// return true;
 		return false;
 	}
 
@@ -165,18 +165,20 @@ public class Downloader implements DownloaderIface {
 			if (seedList[i] != null && !seeds
 					.contains(seedList[i]) /* && !isLocalSeeder(seedList[i]) */) {
 				seeds.add(seedList[i]);
-				System.out.println("Thread " + seedList[i]);
 				new DownloaderThread(this, seedList[i]).start();
 			}
 		}
 		return isDownloadComplete();
 	}
 
-	// Devuelve el número de chunks que han sido descargados de cada uno de los
-	// Seeders
+	/**
+	 * Devuelve el número de chunks que han sido descargados de cada uno de los
+	 * Seeders Importante: Tenemos que mandar una copia sino queremso recibir
+	 * una excepcion java.util.ConcurrentModificationException
+	 */
 	@Override
 	public synchronized HashSet<Long> getChunksDownloadedFromSeeders() {
-		return new HashSet<>(chunksDownloadedFromSeeders);
+		return new HashSet<Long>(chunksDownloadedFromSeeders);
 	}
 
 	// Informa si la descarga del fichero ya se ha completado
@@ -185,6 +187,12 @@ public class Downloader implements DownloaderIface {
 		return totalChunkDescargados == totalChunks;
 	}
 
+	/**
+	 * Metodo para comprobar si el hash del fichero descargado coincide con el
+	 * que deberia tener
+	 * 
+	 * @return
+	 */
 	private boolean isFileCorrecto() {
 		String fileRuta = Peer.db.getSharedFolderPath() + targetFile.fileName;
 		byte[] byteHash = FileDigest.computeFileChecksum(fileRuta);
@@ -221,18 +229,15 @@ public class Downloader implements DownloaderIface {
 	 * Metodo para añadir nuevos thread a descargar, actualmente no se usa
 	 */
 	public synchronized void addThreads() {
-		Message request = Message.makeGetSeedsRequest(targetFile.fileHash);
-		Message response = peer.getReporter().conversationWithTracker(request);
-		if (response.getOpCode() == Message.OP_SEED_LIST) {
-			InetSocketAddress[] seedList = ((MessageSeedInfo) response).getSeedList();
-			downloadFile(seedList);
-		}
-	}
 
-	// Devuelve el tamaño de trozo que se está utilizando
-	@Override
-	public short getChunkSize() {
-		return chunkSize;
+		// Message request = Message.makeGetSeedsRequest(targetFile.fileHash);
+		// Message response =
+		// peer.getReporter().conversationWithTracker(request);
+		// if (response.getOpCode() == Message.OP_SEED_LIST) {
+		// InetSocketAddress[] seedList = ((MessageSeedInfo)
+		// response).getSeedList();
+		// downloadFile(seedList);
+		// }
 	}
 
 	public static synchronized void addResumenThread(String texto) {

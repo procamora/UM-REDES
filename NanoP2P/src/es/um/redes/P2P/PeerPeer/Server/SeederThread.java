@@ -70,7 +70,6 @@ public class SeederThread extends Thread {
 				Message respuesta = Message.makeChunkResponseRequest(chunkNumber, datosEnviar);
 				sendMessageToPeer(respuesta);
 			} catch (IOException e) {
-				System.out.println(e);
 				// Excepcion porque el fichero no existe (se ha borrado en
 				// proceso de compartir)
 				close();
@@ -99,9 +98,9 @@ public class SeederThread extends Thread {
 			InputStream is = socket.getInputStream();
 			dis = new DataInputStream(is);
 			msg = Message.parseRequest(dis, (short) 0);
+		} catch (IOException e) {
 			// capturamos la excepcion cuando cierran los downloaderthread y
 			// cerramos tambien el socket
-		} catch (IOException e) {
 			close();
 		}
 		return msg;
@@ -151,7 +150,5 @@ public class SeederThread extends Thread {
 			if (msgRecibido != null)
 				processMessageFromPeer(msgRecibido);
 		}
-		System.out.println("final correcto seeder");
-
 	}
 }

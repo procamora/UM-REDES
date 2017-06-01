@@ -38,20 +38,12 @@ public class PeerController implements PeerControllerIface {
 		this.mapaFicheros = new TreeMap<>();
 	}
 
-	public Reporter getReporter() {
-		return reporter;
-	}
-
 	public PeerDatabase getPeerDatabase() {
 		return peerDatabase;
 	}
 
 	public byte getCurrentCommand() {
 		return currentCommand;
-	}
-
-	public Seeder getSeeder() {
-		return seeder;
 	}
 
 	public TreeMap<String, FileInfo> getMapaFicheros() {
@@ -64,6 +56,16 @@ public class PeerController implements PeerControllerIface {
 
 	public void setCurrentCommand(byte command) {
 		currentCommand = command;
+	}
+
+	/**
+	 * Metodo usado por Downloader cuando se descarga un chunk para indicar al
+	 * tracker que es seeder de ese fichero
+	 */
+	public void addSeeder(FileInfo targetFile) {
+		FileInfo[] lista = { targetFile };
+		Message request = Message.makeAddSeedRequest(seeder.getSeederPort(), lista);
+		reporter.conversationWithTracker(request);
 	}
 
 	public void readCommandFromShell() {
@@ -108,7 +110,7 @@ public class PeerController implements PeerControllerIface {
 		Message m = createMessageFromCurrentCommand();
 		Message response = null;
 
-		// analisis de casos, PODEMOS BORARLO?
+		// analisis de casos
 		switch (currentCommand) {
 			case PeerCommands.COM_ADDSEED:
 				MessageFileInfo addseed = (MessageFileInfo) m;
@@ -128,7 +130,7 @@ public class PeerController implements PeerControllerIface {
 			case PeerCommands.COM_QUERY:
 			case PeerCommands.COM_DOWNLOAD:
 			case PeerCommands.COM_QUIT:
-				// m es null si no hemos puesto parametros correctos
+				// m es null si no hemos puesto parametros correctos en query
 				if (m != null) {
 					response = reporter.conversationWithTracker(m);
 					processMessageFromTracker(response);
@@ -151,7 +153,7 @@ public class PeerController implements PeerControllerIface {
 				System.err.println("COM_INVALID");
 				break;
 
-			default:
+			default: // no deberiamos llegar nunca aqui
 				System.err.println("comando desconocido");
 				break;
 		}
@@ -196,10 +198,9 @@ public class PeerController implements PeerControllerIface {
 					FileInfo[] opcionesHash = lookupQueryResult(currentArguments[0]);
 
 					int contador = 0;
-					for (int i = 0; i < opcionesHash.length; i++) {
+					for (int i = 0; i < opcionesHash.length; i++)
 						if (opcionesHash[i] != null)
 							contador++;
-					}
 
 					if (contador > 1) {
 						System.out.println(
@@ -211,7 +212,6 @@ public class PeerController implements PeerControllerIface {
 						control = (MessageSeedInfo) Message.makeGetSeedsRequest(opcionesHash[0].fileHash);
 					else
 						System.out.println("El hash introducido no coincide con ningun fichero");
-
 				}
 				break;
 
@@ -252,8 +252,7 @@ public class PeerController implements PeerControllerIface {
 				break;
 
 			case Message.OP_REMOVE_SEED_ACK:
-				// comprobar que has sido dado de baja
-				// opcion 1, mandar un get_seed y comprobar que no estas
+				// confirmacion de que hemos sido dade de baja
 				break;
 
 			case Message.INVALID_OPCODE:
@@ -261,12 +260,18 @@ public class PeerController implements PeerControllerIface {
 				processCurrentCommand(); // suponemos
 				break;
 
-			default:
-				System.err.println("MAL!!");
+			default: // no deberiamos llegar nunca aqui
+				System.err.println("respuesta del tracker desconocida :(");
 				break;
 		}
 	}
 
+	/**
+	 * Comprobamos si es un fichero que tenemos en nuestro directorio
+	 * 
+	 * @param hash
+	 * @return
+	 */
 	private boolean isLocal(String hash) {
 		for (FileInfo file : peerDatabase.getLocalSharedFiles())
 			if (file.fileHash.equals(hash))

@@ -5,6 +5,12 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 
+/**
+ * @author procamora
+ * 
+ *         Clase encargada de los metodos de leer y escribir en ficheros
+ *         binarioss
+ */
 public class Ficheros {
 
 	/**

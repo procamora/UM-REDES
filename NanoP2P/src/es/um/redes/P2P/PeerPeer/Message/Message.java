@@ -60,7 +60,6 @@ public abstract class Message {
 
 	public abstract String toString();
 
-
 	/**
 	 * Default class constructor, creates "empty" message in invalid state
 	 */

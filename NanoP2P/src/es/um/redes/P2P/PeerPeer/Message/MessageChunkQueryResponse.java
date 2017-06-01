@@ -107,7 +107,6 @@ public class MessageChunkQueryResponse extends Message {
 			valid = true;
 
 		} catch (IOException e) {
-			e.printStackTrace();
 			assert (valid == false);
 		}
 		return valid;
@@ -131,27 +130,24 @@ public class MessageChunkQueryResponse extends Message {
 	 * convierte a un array de long
 	 * 
 	 * @throws Exception
+	 *             para que el downloader cierre la conexion por formato
+	 *             incorrecto
 	 */
 	public HashSet<Long> desconcatenaArrayBytesDatos() throws Exception {
 		if (getOpCode() != OP_GET_CHUNK_ACK)
 			throw new IllegalStateException("Esta funcion solo la puede hacer OP_GET_CHUNK_ACK");
 
-		try {
-			// Si no tengo todos los trozos retorno los trozos exactos
-			if (numChunk != Long.MAX_VALUE) {
-				ByteBuffer buf = ByteBuffer.wrap(datos);
-				// long[] a = new long[(int) numChunk];
-				HashSet<Long> a = new HashSet<>();
-				for (int i = 0; i < numChunk; i++)
-					// a[i] = buf.getLong();
-					a.add(buf.getLong());
-				return a;
-			} else // si tengo todos los trozos retorno un array[0]
-				return new HashSet<Long>();
-		} catch (Exception e) {
-			System.err.println(e);
-			throw new Exception();
-		}
+		// Si no tengo todos los trozos retorno los trozos exactos
+		if (numChunk != Long.MAX_VALUE) {
+			ByteBuffer buf = ByteBuffer.wrap(datos);
+			// long[] a = new long[(int) numChunk];
+			HashSet<Long> a = new HashSet<>();
+			for (int i = 0; i < numChunk; i++)
+				// a[i] = buf.getLong();
+				a.add(buf.getLong());
+			return a;
+		} else // si tengo todos los trozos retorno un array[0]
+			return new HashSet<Long>();
 	}
 
 	public String toString() {

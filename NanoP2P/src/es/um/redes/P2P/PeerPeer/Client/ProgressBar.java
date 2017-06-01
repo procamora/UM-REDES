@@ -3,7 +3,7 @@ package es.um.redes.P2P.PeerPeer.Client;
 import java.util.concurrent.Semaphore;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
-
+//Fuente
 // https://stackoverflow.com/questions/1001290/console-based-progress-in-java
 
 public class ProgressBar extends Thread {
@@ -53,6 +53,5 @@ public class ProgressBar extends Thread {
 			} catch (Exception e) {
 			}
 		}
-		System.err.println("fin profressbar");
 	}
 }

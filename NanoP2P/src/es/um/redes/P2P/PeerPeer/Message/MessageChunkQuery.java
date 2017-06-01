@@ -105,7 +105,6 @@ public class MessageChunkQuery extends Message {
 			valid = true;
 
 		} catch (IOException e) {
-			e.printStackTrace();
 			assert (valid == false);
 		}
 		return valid;

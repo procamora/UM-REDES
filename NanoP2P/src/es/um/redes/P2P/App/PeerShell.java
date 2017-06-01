@@ -32,7 +32,7 @@ public class PeerShell implements PeerShellIface {
 		String[] parsea = linea.split(" ");
 		// reinicio para que no se guarden en posteriores consultas
 		argumentos[0] = null;
-		argumentos[1] = null; 
+		argumentos[1] = null;
 
 		for (int i = 0; i < parsea.length; i++) {
 			if (i == 0) // comando

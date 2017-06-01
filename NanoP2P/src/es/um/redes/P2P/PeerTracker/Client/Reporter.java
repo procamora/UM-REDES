@@ -36,7 +36,6 @@ public class Reporter implements ReporterIface {
 			peerTrackerSocket = new DatagramSocket();
 		} catch (SocketException e) {
 			System.err.println("Reporter cannot create datagram socket for communication with tracker");
-			// e.printStackTrace();
 		}
 	}
 
@@ -59,7 +58,6 @@ public class Reporter implements ReporterIface {
 			return true;
 		} catch (IOException e) {
 			return false;
-			// e.printStackTrace();
 		}
 	}
 

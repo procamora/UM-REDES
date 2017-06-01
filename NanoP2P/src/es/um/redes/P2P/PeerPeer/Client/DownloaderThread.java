@@ -13,7 +13,7 @@ import es.um.redes.P2P.PeerPeer.Message.*;
 import es.um.redes.P2P.util.Ficheros;
 
 /**
- * @author rtitos
+ * @author procamora
  * 
  *         Threads of this class handle the download of file chunks from a given
  *         seed through a TCP socket established to the seed socket address
@@ -55,7 +55,6 @@ public class DownloaderThread extends Thread {
 
 		Message msgRecibido = receiveMessageFromPeer(getSizeChunkRead(chunkActual));
 		if (msgRecibido != null) {
-			// if (msgRecibido1.getOpCode() == Message.OP_CHUNK_ACK)
 			MessageChunkQueryResponse response = (MessageChunkQueryResponse) msgRecibido;
 
 			Ficheros.escritura(Peer.db.getSharedFolderPath() + downloader.getTargetFile().fileName, response.getDatos(),
@@ -123,8 +122,8 @@ public class DownloaderThread extends Thread {
 		} catch (IOException e) {
 			// excepcion causada por cierre del seederthread (porque no tiene el
 			// fichero compartido)
-			close();
 			System.err.println("El seeder" + downloadSocket + " ya no dispone del fichero");
+			close();
 		}
 	}
 
@@ -171,8 +170,6 @@ public class DownloaderThread extends Thread {
 	// Main code to request chunk lists and chunks
 	public void run() {
 		long chunkActual = 0;
-		System.out.println("Inicia hilo " + getName());
-
 		do {
 			// if (numChunksDownloaded % FRECUENCIA_UPDATE_SEEDLIST == 0)
 			// FIXME preguntamos por nuevos seeders
@@ -197,9 +194,7 @@ public class DownloaderThread extends Thread {
 					}
 				}
 			}
-
 		} while (!downloader.isDownloadComplete());
-		System.err.println("fin thread");
 		close();
 
 		tiempoFin = System.currentTimeMillis();
