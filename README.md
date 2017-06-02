@@ -4,7 +4,7 @@
 
 
 ## Tareas pendientes
-
++ [ ] DownloaderThread comprobar cada x tiempo si hay nuevos seeders, en caso afirmativo crear nuevo downloaderThread para el
 + [x] Creo que nunChunk tiene que ser un long, ya que segun nuestras estimaciones ocupa 6 bytes y un long son 8 bytes
 + [x] Revisar toda la automata de UDP
 + [ ] UDP query files no funciona para recibir varios mensajes fragmentados
