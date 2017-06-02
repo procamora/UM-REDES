@@ -6,11 +6,12 @@
 ## Tareas pendientes
 
 + [x] Creo que nunChunk tiene que ser un long, ya que segun nuestras estimaciones ocupa 6 bytes y un long son 8 bytes
-+ [ ] Revisar toda la automata de UDP
++ [x] Revisar toda la automata de UDP
++ [ ] UDP query files no funciona para recibir varios mensajes fragmentados
 + [x] Revisar toda la automata de TCP
 + [x] La descarga de un fichero por un seeder que no tiene todos los trozos creo que no funciona correctamente
 + [x] Tratar los 2 ultimos casos de error
-+ [ ] En las  estadisticas repasar la velocidad, aveces sale infinity
++ [x] En las  estadisticas repasar la velocidad, aveces sale infinity
 + [ ] Progressbar no funciona para ficheros muy pequeños por division por 0
 + [x] Tratar error en el caso de que se borre archivo que se comparte
 
